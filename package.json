@@ -4,10 +4,15 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
     "@rnmapbox/maps": "^10.1.31",
+    "@types/react": "~18.2.79",
+    "android": "^0.0.8",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "expo": "^51.0.34",
     "react-native-config": "^1.5.3",
     "react-native-gesture-handler": "^2.19.0",
     "react-native-reanimated": "^3.15.3",
     "react-native-safe-area-context": "^4.11.0",
-    "react-native-screens": "^3.34.0"
+    "react-native-screens": "^3.34.0",
+    "typescript": "~5.3.3"
   }
 }

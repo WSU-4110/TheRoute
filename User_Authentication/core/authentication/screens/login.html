@@ -1,0 +1,27 @@
+{% load static %}
+
+<html>
+<head>
+<title>Login</title>
+<link rel="stylesheet" href="{% static 'style2.css' %}"/>
+<script src="{% static 'lvalidate.js' %}"></script>
+</head>
+<body>
+<div class="container">
+<div class="main">
+<h2>Login</h2>
+<form id="form_id" method="post" name="myform">
+<label>User Name: </label>
+<input type="text" name="username" id="username"/>
+<label>Password: </label>
+<input type="password" name="password" id="password"/>
+<input type="button" value="Login" id="submit" onclick="validate()"/>
+</form>
+<span><b class="note">Note : </b>For example <br/><b class="valid">User Name : bohra<br/>Password : password#123<br><br></b></span>
+<a href="{% static 'signup.html' %">  
+       <button>Sign up</button>  
+     </a>
+</div>
+</div>
+</body>
+</html>
