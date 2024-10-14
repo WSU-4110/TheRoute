@@ -44,6 +44,7 @@ const App = () => {
       console.error('Error fetching trips:', error);
     }
   };
+// Updated to handle trip details storage using Repository Pattern
 
   // Handle form submission to add a new trip
   const handleAddTrip = async (e) => {
