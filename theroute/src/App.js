@@ -1,10 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
+import './App.css'; // Assuming you have some custom styles
+import { Geocoder } from "@mapbox/search-js-react";
+
+// Import Mapbox CSS
 import './App.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-const App = () => {
+export default function MapWithGeocoder() {
   const mapContainerRef = useRef(null);
+  const mapInstanceRef = useRef();
+  //const [, setMapLoaded] = useState(false);
+  const [inputValue, setInputValue] = useState("");
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
   const [trips, setTrips] = useState([]);
@@ -23,15 +30,17 @@ const App = () => {
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_KEY;
 
     // Initialize Mapbox map
-    const map = new mapboxgl.Map({
+      mapInstanceRef.current = new mapboxgl.Map({
       container: mapContainerRef.current, // Ref to the map container div
       style: 'mapbox://styles/mapbox/outdoors-v12', // Your map style
       center: [-83.06680531, 42.35908111], // Starting position [lng, lat]
       zoom: 14, // Starting zoom
     });
 
+    
+
     // Clean up on unmount
-    return () => map.remove();
+    return () => mapInstanceRef.current.remove();
   }, []);
 
   // Fetch trips from backend
@@ -80,6 +89,19 @@ const App = () => {
   };
 
   return (
+    <>
+      <Geocoder
+        accessToken={process.env.REACT_APP_MAPBOX_ACCESS_KEY}
+        map={mapInstanceRef.current}
+        mapboxgl={mapboxgl}
+        value={inputValue}
+        onChange={(d) => {
+          setInputValue(d);
+        }}
+        marker
+      />
+      
+    
     <div>
       <div ref={mapContainerRef} style={{ width: '100%', height: '60vh' }} />
 
@@ -177,7 +199,8 @@ const App = () => {
         </ul>
       </div>
     </div>
+  </>
   );
 };
 
-export default App;
+//export default App;
