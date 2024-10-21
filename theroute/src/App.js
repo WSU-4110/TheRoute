@@ -1,41 +1,91 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import './App.css'; // Assuming you have some custom styles
-
-// Import Mapbox CSS
+import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
+import './App.css';
+import { Geocoder } from '@mapbox/search-js-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const App = () => {
   const mapContainerRef = useRef(null);
-  const [instructions, setInstructions] = useState([]); // State to hold driving directions
+  const mapInstanceRef = useRef();
+  const directionsControlRef = useRef();
+  const [instructions, setInstructions] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]); // Default starting location
+  const [endCoords, setEndCoords] = useState(null);
+  const [trips, setTrips] = useState([]);
+  const [tripDistance, setTripDistance] = useState('');
+  const [tripDate, setTripDate] = useState('');
+  const [email, setEmail] = useState('');
+  const [vehicleInfo, setVehicleInfo] = useState('');
+  const [expenses, setExpenses] = useState('');
+  const [plannedLocations, setPlannedLocations] = useState('');
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_KEY;
-    
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current, // Ref to the map container div
-      style: 'mapbox://styles/mapbox/streets-v12', // Your map style
-      center: [-83.06680531, 42.35908111], // Detroit, MI [lng, lat]
-      zoom: 18, // Starting zoom
+
+    // Initialize the map
+    mapInstanceRef.current = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/outdoors-v12',
+      center: startCoords,
+      zoom: 14,
     });
 
-    // Add a marker for the starting point
-    new mapboxgl.Marker().setLngLat([-83.06680531, 42.35908111]).addTo(map);
+    // Add a marker for the starting location
+    new mapboxgl.Marker().setLngLat(startCoords).addTo(mapInstanceRef.current);
 
-    // After the map loads, make a request for the route
-    map.on('load', () => {
-      const start = [-83.06680531, 42.35908111]; // Start coordinates (Detroit, MI)
-      const end = [ -115.1391 ,36.1716]; // End coordinates (Another point in Detroit)
+    // Get user's current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setStartCoords([longitude, latitude]);
+          mapInstanceRef.current.setCenter([longitude, latitude]);
+          new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(mapInstanceRef.current);
+        },
+        (error) => {
+          console.error('Error fetching user location:', error);
+        },
+        { enableHighAccuracy: true }
+      );
+    } else {
+      console.error('Geolocation not supported by this browser.');
+    }
 
-      // Call the function to get the route and instructions
-      getRoute(start, end, map);
+    // Add Directions Control
+    directionsControlRef.current = new MapboxDirections({
+      accessToken: mapboxgl.accessToken,
     });
+    mapInstanceRef.current.addControl(directionsControlRef.current, 'top-left');
 
-    return () => map.remove();
+    // Clean up on unmount
+    return () => {
+      mapInstanceRef.current.removeControl(directionsControlRef.current);
+      mapInstanceRef.current.remove();
+    };
   }, []);
 
-  // Function to make a directions request and get instructions
-  async function getRoute(start, end, map) {
+  useEffect(() => {
+    if (startCoords && endCoords) {
+      directionsControlRef.current.setOrigin(startCoords);
+      directionsControlRef.current.setDestination(endCoords);
+      getRoute(startCoords, endCoords);
+    }
+  }, [startCoords, endCoords]);
+
+  const fetchTrips = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/trips');
+      const data = await response.json();
+      setTrips(data);
+    } catch (error) {
+      console.error('Error fetching trips:', error);
+    }
+  };
+
+  // Function to get route and directions
+  async function getRoute(start, end) {
     try {
       const query = await fetch(
         `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
@@ -44,59 +94,151 @@ const App = () => {
       const json = await query.json();
       const data = json.routes[0];
       const route = data.geometry.coordinates;
-      
-      // Extract the driving instructions (steps)
-      const instructions = data.legs[0].steps.map((step) => step.maneuver.instruction);
-      setInstructions(instructions); // Update state with driving instructions
 
-      const geojson = {
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'LineString',
-          coordinates: route,
-        },
-      };
-
-      // If the route exists, update it, otherwise add it
-      if (map.getSource('route')) {
-        map.getSource('route').setData(geojson);
-      } else {
-        map.addLayer({
-          id: 'route',
-          type: 'line',
-          source: {
-            type: 'geojson',
-            data: geojson,
-          },
-          layout: {
-            'line-join': 'round',
-            'line-cap': 'round',
-          },
-          paint: {
-            'line-color': '#3887be',
-            'line-width': 5,
-            'line-opacity': 0.75,
-          },
-        });
-      }
+      // Extract driving instructions (steps)
+      const newInstructions = data.legs[0].steps.map((step) => step.maneuver.instruction);
+      setInstructions(newInstructions);
     } catch (error) {
       console.error('Error fetching directions:', error);
     }
   }
 
-  
+  // Handle form submission to add a new trip
+  const handleAddTrip = async (e) => {
+    e.preventDefault();
+    const tripData = {
+      startLocation: startCoords.toString(),
+      endLocation: endCoords ? endCoords.toString() : '',
+      tripDistance,
+      tripDate,
+      email,
+      vehicleInfo,
+      expenses,
+      plannedLocations,
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/trips', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tripData),
+      });
+
+      if (response.ok) {
+        console.log('Trip added successfully!');
+        fetchTrips(); // Refresh trip list
+      } else {
+        console.error('Error adding trip');
+      }
+    } catch (error) {
+      console.error('Error saving trip:', error);
+    }
+  };
+
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div>
+      {/* Geocoder and Go Button */}
+      <Geocoder
+        accessToken={process.env.REACT_APP_MAPBOX_ACCESS_KEY}
+        map={mapInstanceRef.current}
+        mapboxgl={mapboxgl}
+        value={inputValue}
+        onChange={(event) => {
+          const selectedResult = event.result; // Get the search result
+          if (selectedResult && selectedResult.geometry) {
+            const [lng, lat] = selectedResult.geometry.coordinates;
+            setEndCoords([lng, lat]); // Set the destination coordinates
+            getRoute(startCoords, [lng, lat]);
+          }
+          setInputValue(event.value); // Set the input value properly
+        }}
+        marker
+      />
+
       {/* Map Container */}
-      <div ref={mapContainerRef} style={{ width: '70%', height: '100%' }} />
-      
-      {/* Instructions Container */}
+      <div ref={mapContainerRef} style={{ width: '100%', height: '60vh' }} />
+
+      {/* Driving Instructions */}
       <div style={{ width: '30%', padding: '20px', overflowY: 'scroll' }}>
         <h2>Driving Directions</h2>
         <ul>
           {instructions.map((instruction, index) => (
             <li key={index}>{instruction}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Trip Form */}
+      <div className="trip-form">
+        <h2>Add a Trip</h2>
+        <form onSubmit={handleAddTrip}>
+          <label>
+            Trip Distance (in miles):
+            <input
+              type="number"
+              value={tripDistance}
+              onChange={(e) => setTripDistance(e.target.value)}
+              placeholder="Enter trip distance"
+            />
+          </label>
+          <br />
+          <label>
+            Trip Date:
+            <input
+              type="date"
+              value={tripDate}
+              onChange={(e) => setTripDate(e.target.value)}
+            />
+          </label>
+          <br />
+          <label>
+            Email:
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email"
+            />
+          </label>
+          <br />
+          <label>
+            Vehicle Information:
+            <input
+              type="text"
+              value={vehicleInfo}
+              onChange={(e) => setVehicleInfo(e.target.value)}
+              placeholder="Enter vehicle info"
+            />
+          </label>
+          <br />
+          <label>
+            Planned Locations:
+            <textarea
+              value={plannedLocations}
+              onChange={(e) => setPlannedLocations(e.target.value)}
+              placeholder="Enter planned locations"
+            />
+          </label>
+          <br />
+          <label>
+            Expenses:
+            <input
+              type="number"
+              value={expenses}
+              onChange={(e) => setExpenses(e.target.value)}
+              placeholder="Enter expenses"
+            />
+          </label>
+          <br />
+          <button type="submit">Save Trip</button>
+        </form>
+
+        <h2>Trip List</h2>
+        <ul>
+          {trips.map((trip) => (
+            <li key={trip.id}>
+              From {trip.startLocation} to {trip.endLocation}, Distance: {trip.tripDistance} miles, Date: {new Date(trip.tripDate).toLocaleDateString()}, Email: {trip.email}, Vehicle: {trip.vehicleInfo}, Expenses: ${trip.expenses}, Planned Locations: {trip.plannedLocations}
+            </li>
           ))}
         </ul>
       </div>
