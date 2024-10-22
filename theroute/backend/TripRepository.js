@@ -10,11 +10,9 @@ class TripRepository {
     return new Promise((resolve, reject) => {
       db.query(query, [startLocation, endLocation, tripDistance, tripDate, email, vehicleInfo, expenses, plannedLocations], (err, result) => {
         if (err) {
-          console.error('Database error:',err);
+          console.error('Database error:')
           return reject(err);
         }
-        console.log('Inserted data with ID:', result.insertId); // This logs successful inserts
-        
         resolve(result.insertId);
       });
     });
