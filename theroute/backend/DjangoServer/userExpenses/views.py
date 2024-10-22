@@ -1,20 +1,25 @@
+from rest_framework import viewsets, permissions
+from .models import Expense
+from .serializers import ExpenseSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-#from .models import Expense
-#from .serializers import ExpenseSerializer
+from rest_framework.decorators import action
 
-#@api_view(['POST'])
-#def add_expense(request):
-    #serializer = ExpenseSerializer(data=request.data)
-    #if serializer.is_valid():
-        #serializer.save()
-        #return Response(serializer.data, status=201)
-    #return Response(serializer.errors, status=400)
+class ExpenseView(viewsets.ModelViewSet):
+    serializer_class = ExpenseSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-#@api_view(['GET'])
-#def get_expenses(request):
-    #expenses = Expense.objects.all()
-    #serializer = ExpenseSerializer(expenses, many=True)
-    #return Response(serializer.data)
-    
-#def delete_expenses(request):
+    def get_queryset(self):
+        # Filter expenses for the logged-in user
+        return Expense.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Assign the logged-in user to the expense
+        serializer.save(user=self.request.user)
+
+    @action(detail=True, methods=['delete'])
+    def delete_expense(self, request, pk=None):
+        expense = self.get_object()
+        if expense.user != request.user:
+            return Response({"error": "You are not allowed to delete this expense."}, status=403)
+        expense.delete()
+        return Response({"success": "Expense deleted successfully."})
