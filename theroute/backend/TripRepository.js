@@ -13,6 +13,7 @@ class TripRepository {
           console.error('Database error:')
           return reject(err);
         }
+        console.log('Inserted data with ID:', result.insertId);
         resolve(result.insertId);
       });
     });
