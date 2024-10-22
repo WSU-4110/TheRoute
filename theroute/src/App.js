@@ -13,6 +13,8 @@ const App = () => {
   const [inputValue, setInputValue] = useState('');
   const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]); // Default starting location
   const [endCoords, setEndCoords] = useState(null);
+  const [startLocation, setStartLocation] = useState('');
+  const [endLocation, setEndLocation] = useState('');
   const [trips, setTrips] = useState([]);
   const [tripDistance, setTripDistance] = useState('');
   const [tripDate, setTripDate] = useState('');
@@ -107,8 +109,8 @@ const App = () => {
   const handleAddTrip = async (e) => {
     e.preventDefault();
     const tripData = {
-      startLocation: startCoords.toString(),
-      endLocation: endCoords ? endCoords.toString() : '',
+      startLocation,
+      endLocation,
       tripDistance,
       tripDate,
       email,
@@ -116,6 +118,7 @@ const App = () => {
       expenses,
       plannedLocations,
     };
+    console.log('Trip data to be saved:', tripData); // Debug: Check trip data
 
     try {
       const response = await fetch('http://localhost:5000/api/trips', {
@@ -148,6 +151,7 @@ const App = () => {
           if (selectedResult && selectedResult.geometry) {
             const [lng, lat] = selectedResult.geometry.coordinates;
             setEndCoords([lng, lat]); // Set the destination coordinates
+            setEndLocation(selectedResult.place_name); // Set end location name
             getRoute(startCoords, [lng, lat]);
           }
           setInputValue(event.value); // Set the input value properly
@@ -172,6 +176,27 @@ const App = () => {
       <div className="trip-form">
         <h2>Add a Trip</h2>
         <form onSubmit={handleAddTrip}>
+          <label>
+            Start Location:
+            <input
+              type="text"
+              value={startLocation}
+              onChange={(e) => setStartLocation(e.target.value)}
+              placeholder="Enter start location"
+            />
+          </label>
+          <br />
+          <label>
+            End Location:
+            <input
+              type="text"
+              value={endLocation}
+              onChange={(e) => setEndLocation(e.target.value)}
+              placeholder="Enter end location"
+            />
+          </label>
+          <br />
+          {/* Other Form Fields */}
           <label>
             Trip Distance (in miles):
             <input
