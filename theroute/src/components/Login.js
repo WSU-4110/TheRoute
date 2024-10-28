@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Make sure to import axios
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 
@@ -13,7 +13,6 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
-    // Simple validation
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
@@ -22,7 +21,6 @@ const Login = () => {
     setLoading(true); // Start loading
 
     try {
-      // Call the backend to check credentials using POST
       const response = await axios.post('http://127.0.0.1:8000/api/login/', {
         email,
         password,
@@ -32,7 +30,6 @@ const Login = () => {
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
 
-      // Redirect to Map page on success
       navigate('/map'); // Change the route to '/map'
     } catch (error) {
       console.error('Login failed:', error);

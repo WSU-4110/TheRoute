@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
-import backgroundVideo from '../styles/video.mp4'; // Adjust the path if needed
+import backgroundVideo from '../styles/video.mp4'; 
 
 const Home = () => {
   const navigate = useNavigate();
 
   const handleStartClick = () => {
-    navigate('/login'); // Corrected navigation for React Router v6
+    navigate('/login'); 
   };
 
   return (
