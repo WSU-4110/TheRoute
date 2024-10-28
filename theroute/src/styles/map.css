@@ -1,0 +1,36 @@
+.mapboxgl-ctrl-geocoder {
+  background-color:rgb(255, 255, 255);
+  }
+
+.mapboxgl-ctrl-directions {
+    background-color: rgb(245, 186, 164); 
+    border-radius: 12px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    margin: 10px;
+  }
+  .mapboxgl-ctrl-directions {
+    padding: 20px 15px; 
+  }
+
+  .trip-button {
+    position: absolute; 
+    top: 5px; 
+    right: 10px;
+    z-index: 1000; 
+  }
+  
+  .trip-button button {
+    padding: 10px 15px; /* Adjust padding for the button */
+    background-color: #007bff; /* Button color */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+  }
+  
+  .trip-button button:hover {
+    background-color: #0056b3; /* Darker color on hover */
+  }
+  
+  
