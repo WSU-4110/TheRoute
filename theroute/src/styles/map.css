@@ -1,0 +1,169 @@
+.mapboxgl-ctrl-geocoder {
+  background-color:rgb(255, 255, 255);
+  }
+
+.mapboxgl-ctrl-directions {
+    background-color: rgb(245, 186, 164); 
+    border-radius: 12px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    margin: 10px;
+  }
+  .mapboxgl-ctrl-directions {
+    padding: 20px 15px; 
+  }
+
+  .trip-button, .expenses, .home-button {
+    position: absolute; 
+    top: 5px; 
+    right: 10px;
+    z-index: 1000; 
+  }
+
+  .expenses {
+    margin-top: 55px; 
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-button {
+    margin-top: 110px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 15px;
+  }
+
+
+  .expenses button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .expenses button:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 768px) {
+    .trip-button,
+    .expenses, .home-button {
+      right: 5px;
+      top: 5px;
+    }
+    
+    .expenses, .home-button {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+  }
+
+  .trip-button button {
+    padding: 10px 15px; /* Adjust padding for the button */
+    background-color: #007bff; /* Button color */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+  }
+
+  .home-button button {
+    padding: 10px 15px; /* Adjust padding for the button */
+    background-color: #007bff; /* Button color */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+  }
+  
+  .home-button button:hover {
+    background-color: #0056b3; /* Darker color on hover */
+  }
+
+
+  
+  
+.weather-overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 200px;
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  border-radius: 12px; /* Rounded corners */
+  color: #ffffff; /* White text for contrast */
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4); /* Box shadow for depth */
+  padding: 20px; /* Padding inside the card */
+  z-index: 1;
+  font-family: Arial, sans-serif; /* Readable font */
+}
+.weather-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+
+}
+
+.weather-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.weather-icon img {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 15px;
+}
+.weather-details {
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.temperature {
+  color: #ffcc00; /* Yellow color for temperature to make it stand out */
+  font-weight: bold;
+}
+
+.condition, .humidity {
+  margin-top: 5px;
+}
+
+.loading-message, .weather-error {
+  color: #ff6b6b; /* Red color for loading or error messages */
+  font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .weather-overlay {
+    width: 220px;
+    top: 10px;
+    right: 10px;
+    padding: 15px;
+  }
+
+  .weather-title {
+    font-size: 18px;
+  }
+
+  .weather-icon img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .weather-details {
+    font-size: 14px;
+  }
+}
