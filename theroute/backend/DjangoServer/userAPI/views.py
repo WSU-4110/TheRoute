@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model, logout
+from django.contrib.auth import get_user_model, logout, authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
@@ -9,7 +9,6 @@ from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerial
 from .validations import custom_validation, validate_email, validate_password
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate
 
 User = get_user_model()
 
@@ -53,14 +52,18 @@ class UserLogin(APIView):
         if not validate_password(password):
             raise ValidationError("Password must meet security criteria.")
 
-        user = authenticate(email=email, password=password)
-        if user is not None:
-            tokens = get_tokens_for_user(user)
-            return Response({
-                "message": "Login successful",
-                "tokens": tokens,
-            }, status=status.HTTP_200_OK)
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        user = authenticate(request, username=email, password=password)
+        if user is None:
+            # Check if user exists to provide specific error messages
+            if not User.objects.filter(email=email).exists():
+                return Response({"error": "User with this email does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Incorrect password."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        tokens = get_tokens_for_user(user)
+        return Response({
+            "message": "Login successful",
+            "tokens": tokens,
+        }, status=status.HTTP_200_OK)
 
 
 class UserLogout(APIView):
