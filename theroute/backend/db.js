@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'Nir01620622513', // Your MySQL password
+  password: 'Nir01620622513', //  MySQL password
   database: 'tripdb', // The database created earlier
 });
 
