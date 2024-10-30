@@ -1,12 +1,11 @@
-// src/components/Login.js
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext'; // Import AuthContext
+import { AuthContext } from '../context/AuthContext'; 
 import '../styles/Login.css';
 
 const Login = () => {
-  const { login } = useContext(AuthContext); // Access login function
+  const { login } = useContext(AuthContext); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,19 +15,16 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Validation checks
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
     }
 
-    // Check if password is shorter than 8 characters
     if (password.length < 8) {
       setError('Password must be at least 8 characters long');
       return;
     }
 
-    // Check if email contains an '@' symbol
     if (!email.includes('@') || email.length < 8) {
       setError('Please enter a valid email');
       return;
@@ -42,12 +38,18 @@ const Login = () => {
         password,
       });
 
-      // Store tokens in context
-      login(response.data.user, response.data.access); // Pass user and token to context
+      console.log('Login response:', response.data); // Check the response structure
 
-      navigate('/map'); // Change the route to '/map'
+      if (response.data && response.data.user && response.data.access) {
+        console.log('User and token received, attempting to log in');
+        login(response.data.user, response.data.access);
+        console.log('Navigating to /map');
+        navigate('/map');
+      } else {
+        console.error('Unexpected response structure:', response.data);
+      }
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Login failed:', error.response ? error.response.data : error);
       setError('Invalid credentials. Please try again.');
     } finally {
       setLoading(false);

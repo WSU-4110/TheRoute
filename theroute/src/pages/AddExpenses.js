@@ -1,16 +1,16 @@
-// src/components/AddExpense.js
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/AddExpense.css';
 import { AuthContext } from '../context/AuthContext';
+import { getAccessTokenFromStorage } from '../utils/storage';
 
 const AddExpense = ({ fetchExpenses }) => {
   const [category, setCategory] = useState('food');
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { user, getAccessToken } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +21,12 @@ const AddExpense = ({ fetchExpenses }) => {
     }
 
     try {
-      const token = await getAccessToken(); // Get valid access token
+      const token = getAccessTokenFromStorage();
+
+      if (!user || !user.email) {
+        setError('User is not authenticated. Please log in.');
+        return;
+      }
 
       await axios.post(
         'http://127.0.0.1:8000/api/expenses/',
@@ -46,12 +51,11 @@ const AddExpense = ({ fetchExpenses }) => {
   };
 
   const handleGoBack = () => {
-    navigate('/map'); // Adjust the route to your map screen
+    navigate('/map');
   };
 
   return (
     <div className="add-expense-container">
-      {/* Go Back Button positioned at the top left */}
       <button onClick={handleGoBack} className="go-back-button">
         Go Back
       </button>

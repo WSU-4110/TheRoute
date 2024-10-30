@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom'; 
 import '../styles/SignUp.css'; 
+import { AuthContext } from '../context/AuthContext'; 
 
 const SignUp = () => {
+  const { login } = useContext(AuthContext); 
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState(''); 
   const [password, setPassword] = useState('');
@@ -12,50 +14,41 @@ const SignUp = () => {
   const navigate = useNavigate(); 
 
   const handleSignUp = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault(); 
 
-    // Validation checks
     if (!email || !username || !password || !confirmPassword) {
       setError('Please fill in all fields');
       return;
     }
 
-    // Check if password is shorter than 8 characters
     if (password.length < 8) {
       setError('Password must be at least 8 characters long');
       return;
     }
 
-    // Check if email contains an '@' symbol
     if (!email.includes('@') || email.length < 8) {
       setError('Please enter a valid email');
       return;
     }
 
-    // Check if passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    // Reset error message
     setError('');
 
-    console.log('Signing up with:', { email, username, password });
-
     try {
-      // Call the backend to check credentials using POST
       const response = await axios.post('http://127.0.0.1:8000/api/register/', {
         email,
         username,
         password,
       });
 
-      // Store tokens in localStorage
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
-
-      navigate('/map'); 
+      if (response.data && response.data.user && response.data.access) {
+        login(response.data.user, response.data.access); 
+        navigate('/map'); 
+      }
     } catch (error) {
       console.error('Registration failed:', error);
       const errorMessage = error.response?.data?.detail || 'Invalid credentials. Please try again.'; 

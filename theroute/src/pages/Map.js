@@ -222,16 +222,6 @@ export const Map = () => {
         <button>Add a Trip</button>
         </Link>
       </div>
-      <div className='expenses'>
-        <Link to='/add-expense'>
-        <button>Expenses</button>
-        </Link>
-      </div>
-      <dive className='home-button'>
-        <Link to='/'>
-          <button>Home</button>
-        </Link>
-      </dive>
      
       {/* Map Container */}
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
