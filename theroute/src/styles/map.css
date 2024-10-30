@@ -1,16 +1,8 @@
-.mapboxgl-ctrl-geocoder {
-  background-color:rgb(255, 255, 255);
-  }
+.mapbox-form-label{
+  margin: 0;
+}
 
-.mapboxgl-ctrl-directions {
-    background-color: rgb(245, 186, 164); 
-    border-radius: 12px; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
-    margin: 10px;
-  }
-  .mapboxgl-ctrl-directions {
-    padding: 20px 15px; 
-  }
+
 
   .trip-button {
     position: absolute; 
