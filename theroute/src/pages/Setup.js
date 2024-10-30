@@ -138,7 +138,7 @@ export const Setup = ()=>{
             </ul>
           </>
         )}
-        <Link to="/">
+        <Link to="/map">
           <button>Go to theRoute!</button>
         </Link>
       </div>
