@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState} from 'react';
-import {Link} from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
-import '../App.css';
 import { Geocoder } from '@mapbox/search-js-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 
-export const Map = () => {
+export default function MapView() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef();
   const directionsControlRef = useRef();
@@ -43,15 +42,13 @@ export const Map = () => {
       zoom: 14,
     });
 
-    new mapboxgl.Marker().setLngLat(startCoords).addTo(mapInstanceRef.current);
-
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setStartCoords([longitude, latitude]);
           mapInstanceRef.current.setCenter([longitude, latitude]);
-          new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(mapInstanceRef.current);
+          //new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(mapInstanceRef.current);
         },
         (error) => {
           console.error('Error fetching user location:', error);
@@ -113,20 +110,24 @@ export const Map = () => {
       const response = await fetch(
         `https://pro.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_WEATHER_API_KEY}&units=imperial`
       );
-
+  
       if (response.status !== 200) throw new Error(`Invalid response status: ${response.status}`);
-      
-      const weatherData = response.json();
+  
+      const weatherData = await response.json();  // Await the JSON response here
+      console.log("Fetched weather data:", weatherData);  // Debugging log
+  
       if (!weatherData || !weatherData.main || !weatherData.weather) {
         throw new Error('Invalid weather data');
       }
-
-      setWeather(weatherData);
-     
+  
+      setWeather(weatherData);  // Update weather state with the correct data
     } catch (error) {
-      setWeather(null);
+      console.error('Error fetching weather:', error);
+      setWeather(null);  // Set weather to null on error for error handling
     }
   };
+  
+  
 
   const handleCityInput = async () => {
     const coordinates = await getCoordinates(cityInput);
@@ -193,38 +194,37 @@ export const Map = () => {
 
   return (
     <div>
-       {weather && (
-          <div className="weather-overlay"
+      {weather && (
+        <div
+          className="weather-overlay"
           style={{
             backgroundImage: weather ? weatherBackgrounds[weather.weather[0].main] : null,
             backgroundSize: 'cover',
           }}
-          >
-            <h3>Weather at Destination</h3>
-            <p>Temperature: {Math.round(weather.main.temp)} °F</p>
-            <p>Feels Like: {Math.round(weather.main.feels_like)} °F</p> {/* Added Feels Like */}
-            <p>Condition: {weather.weather[0].description}</p>
-            <img 
-              src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`} 
-              alt={weather.weather[0].description} 
-            />
-            <p>Humidity: {weather.main.humidity} %</p>
-            <p>Pressure: {weather.main.pressure} hPa</p> {/* Pressure */}
-            <p>Visibility: {(weather.visibility / 1000).toFixed(1)} km</p> {/* Visibility */}
-            
-            <p>Sunrise: {new Date(weather.sys.sunrise * 1000).toLocaleTimeString()}</p> {/* Sunrise time */}
-            <p>Sunset: {new Date(weather.sys.sunset * 1000).toLocaleTimeString()}</p> {/* Sunset time */}
-            
-          </div>
-        )}
-      <div className='trip-button'>
+        >
+          <h3>Weather at Destination</h3>
+          <p>Temperature: {Math.round(weather.main.temp)} °F</p>
+          <p>Feels Like: {Math.round(weather.main.feels_like)} °F</p>
+          <p>Condition: {weather.weather[0].description}</p>
+          <img 
+            src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`} 
+            alt={weather.weather[0].description} 
+          />
+          <p>Humidity: {weather.main.humidity} %</p>
+          <p>Pressure: {weather.main.pressure} hPa</p>
+          <p>Visibility: {(weather.visibility / 1000).toFixed(1)} km</p>
+          <p>Sunrise: {new Date(weather.sys.sunrise * 1000).toLocaleTimeString()}</p>
+          <p>Sunset: {new Date(weather.sys.sunset * 1000).toLocaleTimeString()}</p>
+        </div>
+      )}
+      <div className="trip-button">
         <Link to="/setup">
-        <button>Add a Trip</button>
+          <button>Add a Trip</button>
         </Link>
       </div>
-     
-      {/* Map Container */}
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
     </div>
   );
-};
+}
+
+
