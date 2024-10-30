@@ -116,3 +116,34 @@
     font-size: 14px;
   }
 }
+
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background: #5b5b5a;
+  height: 20px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 3px;
+  padding-right: 3px;
+  font-size: 13px;
+  border-radius: 5px;
+  background: #007bff;
+  transition: background 0.1s;
+}
+
+.navbar a:hover {
+  background: #0056b3;
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  color:aliceblue;
+}
