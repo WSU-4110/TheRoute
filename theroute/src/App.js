@@ -5,6 +5,7 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Map from './pages/Map';
 import {Setup} from './pages/Setup';
+import ViewTrips from './pages/ViewTrips';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/map" element={<Map />} />
         <Route path="/setup" element={<Setup/>}/>
+        <Route path="/view-trips" element={<ViewTrips />} />
       </Routes>
     </Router>
   );
