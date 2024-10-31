@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/AddExpense.css';
 import { AuthContext } from '../context/AuthContext';
+import { notifyObservers } from '../utils/observer';
 
 const AddExpense = ({ fetchExpenses }) => {
   const [category, setCategory] = useState('food');
@@ -37,7 +38,9 @@ const AddExpense = ({ fetchExpenses }) => {
         }
       );
 
-      fetchExpenses();
+      // Notify all registered observers that a new expense was added
+      notifyObservers();
+
       navigate('/view-expenses');
     } catch (error) {
       console.error('Error adding expense:', error);
@@ -51,7 +54,6 @@ const AddExpense = ({ fetchExpenses }) => {
 
   return (
     <div className="add-expense-container">
-      {/* Go Back Button positioned at the top left */}
       <button onClick={handleGoBack} className="go-back-button">
         Go Back
       </button>
