@@ -1,18 +1,14 @@
-// ViewExpenses.js
-import React, { useState, useEffect } from 'react';
+// src/components/ViewExpenses.js
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import '../styles/ViewExpenses.css'; // Add styles as needed
-import { useContext } from 'react'; 
-import { AuthContext } from '../context/AuthContext'; // Import AuthContext
+import '../styles/ViewExpenses.css';
+import { AuthContext } from '../context/AuthContext';
+import { addObserver, removeObserver } from '../utils/observer';
 
 const ViewExpenses = () => {
   const [expenses, setExpenses] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const { accessToken } = useContext(AuthContext); // Access the token from context
-
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
+  const { accessToken } = useContext(AuthContext);
 
   const fetchExpenses = async () => {
     try {
@@ -26,6 +22,17 @@ const ViewExpenses = () => {
       setErrorMessage('Error fetching expenses');
     }
   };
+
+  useEffect(() => {
+    // Register fetchExpenses as an observer when the component mounts
+    addObserver(fetchExpenses);
+
+    // Fetch expenses initially
+    fetchExpenses();
+
+    // Clean up: Remove fetchExpenses from observers when component unmounts
+    return () => removeObserver(fetchExpenses);
+  }, []);
 
   const deleteExpense = async (id) => {
     try {
