@@ -32,3 +32,15 @@ backend/DjangoServer/myenv/
 # Node modules
 node_modules/
 node_modules/
+get-pip.py
+wsgi 2.py
+urls 2.py
+settings 2.py
+asgi 2.py
+__init__2.py
+manage 2.py
+package-lock.json
+package.json
+db 2.sqlite3
+TheRoute 2.sqlite3
+
