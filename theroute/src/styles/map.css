@@ -28,15 +28,16 @@
   
 .weather-overlay {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 200px;
+  top: 60px;
+  right: 60px;
+  
+  width: 220px;
   background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-  border-radius: 12px; /* Rounded corners */
+  border-radius: 8px; /* Rounded corners */
   color: #ffffff; /* White text for contrast */
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4); /* Box shadow for depth */
-  padding: 20px; /* Padding inside the card */
-  z-index: 1;
+  padding: 0px; /* Padding inside the card */
+  z-index: 999;
   font-family: Arial, sans-serif; /* Readable font */
 }
 .weather-container {
@@ -47,9 +48,9 @@
 }
 
 .weather-title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   text-align: center;
 }
 .weather-info {
@@ -58,50 +59,20 @@
   align-items: center;
 }
 .weather-icon img {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 15px;
+  width: 20px;
+  height: 20px;
+  margin-bottom: 30px;
 }
 .weather-details {
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 10px;
+  line-height: 0;
   text-align: center;
 }
 
-.temperature {
-  color: #ffcc00; /* Yellow color for temperature to make it stand out */
-  font-weight: bold;
-}
 
-.condition, .humidity {
-  margin-top: 5px;
-}
 
-.loading-message, .weather-error {
-  color: #ff6b6b; /* Red color for loading or error messages */
-  font-size: 14px;
-  text-align: center;
-  margin-top: 10px;
-}
 
-@media (max-width: 768px) {
-  .weather-overlay {
-    width: 220px;
-    top: 10px;
-    right: 10px;
-    padding: 15px;
-  }
 
-  .weather-title {
-    font-size: 18px;
-  }
 
-  .weather-icon img {
-    width: 50px;
-    height: 50px;
-  }
 
-  .weather-details {
-    font-size: 14px;
-  }
-}
+
