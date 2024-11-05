@@ -30,44 +30,81 @@
   position: absolute;
   top: 60px;
   right: 60px;
-  
   width: 220px;
-  background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-  border-radius: 8px; /* Rounded corners */
-  color: #ffffff; /* White text for contrast */
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4); /* Box shadow for depth */
-  padding: 0px; /* Padding inside the card */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  color: #000;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 15px;
   z-index: 999;
-  font-family: Arial, sans-serif; /* Readable font */
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
-.weather-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center content horizontally */
 
+.weather-overlay:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 .weather-title {
   font-size: 16px;
   font-weight: bold;
-  margin-bottom: 6px;
+  margin: 0 0 10px 0;
+  text-align: center;
+  color: #444;
+}
+
+.weather-basic-info {
   text-align: center;
 }
-.weather-info {
+
+.weather-main {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
-.weather-icon img {
-  width: 20px;
-  height: 20px;
-  margin-bottom: 30px;
+
+.weather-main img {
+  width: 50px;
+  height: 50px;
 }
+
+.temp-main {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.temp-range {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #666;
+}
+
+.weather-description {
+  font-size: 14px;
+  margin: 5px 0;
+  text-transform: capitalize;
+}
+
 .weather-details {
-  font-size: 10px;
-  line-height: 0;
-  text-align: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
 }
+
+.weather-details p {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #666;
+}
+
 
 
 

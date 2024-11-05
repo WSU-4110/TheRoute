@@ -24,6 +24,7 @@ export default function MapView() {
   const [plannedLocations, setPlannedLocations] = useState('');
   const [weather, setWeather] = useState(null);
   const [cityInput, setCityInput] = useState('');
+  const [isWeatherExpanded, setIsWeatherExpanded] = useState(false);
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_KEY;
@@ -141,22 +142,34 @@ export default function MapView() {
   return (
     <div>
       {weather && (
-        <div
-          className="weather-overlay"
+        <div 
+          className={`weather-overlay ${isWeatherExpanded ? 'expanded' : ''}`}
+          onClick={() => setIsWeatherExpanded(!isWeatherExpanded)}
         >
           <h3 className="weather-title">Weather at Destination</h3>
-          <p>Temperature: {Math.round(weather.main.temp)} °F</p>
-          <p>Feels Like: {Math.round(weather.main.feels_like)} °F</p>
-          <p>Condition: {weather.weather[0].description}</p>
-          <img
-            src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`}
-            alt={weather.weather[0].description}
-          />
-          <p>Humidity: {weather.main.humidity} %</p>
-          
-          
-          <p>Sunrise: {new Date(weather.sys.sunrise * 1000).toLocaleTimeString()}</p>
-          <p>Sunset: {new Date(weather.sys.sunset * 1000).toLocaleTimeString()}</p>
+          <div className="weather-basic-info">
+            <div className="weather-main">
+              <img
+                src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`}
+                alt={weather.weather[0].description}
+              />
+              <p className="temp-main">{Math.round(weather.main.temp)}°F</p>
+            </div>
+            <p className="temp-range">
+              H: {Math.round(weather.main.temp_max)}°F  
+              L: {Math.round(weather.main.temp_min)}°F
+            </p>
+            <p className="weather-description">{weather.weather[0].description}</p>
+          </div>
+
+          {isWeatherExpanded && (
+            <div className="weather-details">
+              <p>Feels Like: {Math.round(weather.main.feels_like)}°F</p>
+              <p>Humidity: {weather.main.humidity}%</p>
+              <p>Sunrise: {new Date(weather.sys.sunrise * 1000).toLocaleTimeString()}</p>
+              <p>Sunset: {new Date(weather.sys.sunset * 1000).toLocaleTimeString()}</p>
+            </div>
+          )}
         </div>
       )}
       <div className="trip-button">
