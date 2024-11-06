@@ -15,6 +15,7 @@ export default function MapView() {
   const [inputValue, setInputValue] = useState('');
   const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
   const [endCoords, setEndCoords] = useState(null);
+  const [waypoints, setWaypoints] = useState([]); 
   const [trips, setTrips] = useState([]);
   const [tripDistance, setTripDistance] = useState('');
   const [tripDate, setTripDate] = useState('');
@@ -57,6 +58,10 @@ export default function MapView() {
       );
     }
 
+    //increase/decrease the view and move the angle
+    const nav = new mapboxgl.NavigationControl();
+    mapInstanceRef.current.addControl(nav);
+
     directionsControlRef.current = new MapboxDirections({
       accessToken: mapboxgl.accessToken,
     });
@@ -68,6 +73,8 @@ export default function MapView() {
     };
   }, []);
 
+  
+
   useEffect(() => {
     if (startCoords && endCoords) {
       directionsControlRef.current.setOrigin(startCoords);
@@ -75,7 +82,15 @@ export default function MapView() {
       getRoute(startCoords, endCoords);
       fetchWeather(endCoords[0], endCoords[1]);
     }
-  }, [startCoords, endCoords]);
+
+    waypoints.forEach((waypoint, index) => {
+      directionsControlRef.current.addWaypoint(index, waypoint);
+    });
+  }, [startCoords, endCoords, waypoints]);
+
+  const handleAddWaypoint = (newWaypoint) => {
+    setWaypoints([...waypoints, newWaypoint]);
+  };
 
   const getCoordinates = async (cityName) => {
     try {
