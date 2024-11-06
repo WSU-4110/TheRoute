@@ -1,14 +1,12 @@
 // ViewExpenses.js
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../styles/ViewExpenses.css'; // Add styles as needed
-import { useContext } from 'react'; 
-import { AuthContext } from '../context/AuthContext'; // Import AuthContext
+import React, { useState, useEffect, useContext } from 'react';
+import axiosInstance from './axios';
+import { AuthContext } from '../context/AuthContext';
 
 const ViewExpenses = () => {
   const [expenses, setExpenses] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const { accessToken } = useContext(AuthContext); // Access the token from context
+  const { getAccessToken } = useContext(AuthContext);
 
   useEffect(() => {
     fetchExpenses();
@@ -16,27 +14,21 @@ const ViewExpenses = () => {
 
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/expenses/', {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`, // Use the access token for authorization
-        },
+      const token = await getAccessToken();
+      if (!token) {
+        setErrorMessage('Authentication required. Please log in again.');
+        return;
+      }
+
+      const response = await axiosInstance.get('/expenses/', {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      
+      console.log("Fetched expenses:", response.data);
       setExpenses(response.data);
     } catch (error) {
+      console.error("Error fetching expenses:", error.response?.data || error);
       setErrorMessage('Error fetching expenses');
-    }
-  };
-
-  const deleteExpense = async (id) => {
-    try {
-      await axios.delete(`http://127.0.0.1:8000/api/expenses/${id}/`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`, // Use the access token for authorization
-        },
-      });
-      fetchExpenses(); // Refresh the list after deleting an expense
-    } catch (error) {
-      setErrorMessage('Error deleting expense');
     }
   };
 
@@ -48,7 +40,6 @@ const ViewExpenses = () => {
         {expenses.map((item) => (
           <li key={item.id}>
             {item.category}: ${item.amount} on {new Date(item.date).toLocaleDateString()}
-            <button onClick={() => deleteExpense(item.id)}>Delete</button>
           </li>
         ))}
       </ul>
