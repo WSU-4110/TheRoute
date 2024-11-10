@@ -1,4 +1,3 @@
-// src/components/Login.js
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -37,17 +36,20 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login/', {
+      const response = await axios.post('http://127.0.0.1:8000/api/token/', {
         email,
         password,
       });
 
-      // Store tokens in context
-      login(response.data.user, response.data.access); // Pass user and token to context
+      // Extract tokens and user data from response
+      const { access, refresh } = response.data;
 
-      navigate('/map'); // Change the route to '/map'
+      // Pass user data and tokens to context
+      login({ email }, access, refresh); // Store access and refresh tokens
+
+      navigate('/map'); // Redirect to '/map'
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Login failed:', error.response?.data || error);
       setError('Invalid credentials. Please try again.');
     } finally {
       setLoading(false);
@@ -89,7 +91,8 @@ const Login = () => {
           {loading ? 'Logging in...' : 'Login'}
         </button>
         <p style={{ fontSize: '1em' }}>
-          Don't have an account? <span onClick={handleRegisterClick} style={{ color: 'blue', cursor: 'pointer' }}>Register</span>
+          Don't have an account?{' '}
+          <span onClick={handleRegisterClick} style={{ color: 'blue', cursor: 'pointer' }}>Register</span>
         </p>
       </form>
     </div>

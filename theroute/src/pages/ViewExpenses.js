@@ -1,4 +1,3 @@
-// ViewExpenses.js
 import React, { useState, useEffect, useContext } from 'react';
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
@@ -20,6 +19,7 @@ const ViewExpenses = () => {
         return;
       }
 
+      // Assuming the backend can filter by user ID from the token or has a way to get the current user
       const response = await axiosInstance.get('/expenses/', {
         headers: { Authorization: `Bearer ${token}` },
       });

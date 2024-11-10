@@ -7,12 +7,13 @@ import Map from './pages/Map';
 import Setup from "./pages/Setup";
 import AddExpense from "./pages/AddExpenses";
 import ViewExpense from "./pages/ViewExpenses";
-
+import Sidebar from './pages/SideBar';
 
 
 function App () {
   return (
     <Router>
+      <Sidebar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
