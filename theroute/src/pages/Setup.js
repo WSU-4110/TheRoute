@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/setup.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const Setup = () => {
   const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
@@ -15,6 +15,7 @@ export const Setup = () => {
   const [expenses, setExpenses] = useState('');
   const [plannedLocations, setPlannedLocations] = useState('');
   const [isFetchingLocation, setIsFetchingLocation] = useState(true);
+  const navigate = useNavigate();
 
   // Fetch city name based on coordinates
   const getCityName = async () => {
@@ -58,52 +59,37 @@ export const Setup = () => {
   }, []);
 
   // Handle form submission to add a new trip
-  const handleAddTrip = async (e) => {
+  const handleAddTrip = (e) => {
     e.preventDefault();
 
-    if (!startLocation || startLocation === 'Unknown Location' || startLocation === 'Error fetching location') {
-      console.error('Start location is not set properly. Please wait for the location to load.');
+    // Get logged-in user's email
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      alert('Please log in to save trips');
+      navigate('/login');
       return;
     }
 
     const tripData = {
       startLocation,
-      endLocation: endLocation || null,
+      endLocation,
       tripDistance,
       tripDate,
       returnDate,
-      email,
+      email: userEmail,  // Use logged-in user's email
       vehicleInfo,
       expenses,
       plannedLocations,
     };
 
-    console.log("Trip data to be sent:", tripData);
-
     try {
-      // Save trip data to Local Storage
       const existingTrips = JSON.parse(localStorage.getItem('trips')) || [];
-      existingTrips.push(tripData);
-      localStorage.setItem('trips', JSON.stringify(existingTrips));
-  
-      // You can also save to backend here if needed
-      const response = await fetch('http://localhost:5000/api/trips', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(tripData),
-      });
-  
-      if (response.ok) {
-        console.log('Trip added successfully!');
-        fetchTrips(); // Refresh trip list from backend if needed
-      } else {
-        console.error('Error adding trip');
-      }
-      fetchTrips(); // Refresh trip list from Local Storage
+      localStorage.setItem('trips', JSON.stringify([...existingTrips, tripData]));
+      alert('Trip saved successfully!');
     } catch (error) {
       console.error('Error saving trip:', error);
-  }
-    
+      alert('Error saving trip');
+    }
   };
 
   return (

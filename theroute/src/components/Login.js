@@ -29,6 +29,7 @@ const Login = () => {
       // Store tokens in localStorage
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
+      localStorage.setItem('userEmail', email);
 
       navigate('/map'); // Change the route to '/map'
     } catch (error) {
