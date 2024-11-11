@@ -81,21 +81,29 @@ export const Setup = () => {
     console.log("Trip data to be sent:", tripData);
 
     try {
+      // Save trip data to Local Storage
+      const existingTrips = JSON.parse(localStorage.getItem('trips')) || [];
+      existingTrips.push(tripData);
+      localStorage.setItem('trips', JSON.stringify(existingTrips));
+  
+      // You can also save to backend here if needed
       const response = await fetch('http://localhost:5000/api/trips', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(tripData),
       });
-
+  
       if (response.ok) {
         console.log('Trip added successfully!');
-        fetchTrips();
+        fetchTrips(); // Refresh trip list from backend if needed
       } else {
         console.error('Error adding trip');
       }
+      fetchTrips(); // Refresh trip list from Local Storage
     } catch (error) {
       console.error('Error saving trip:', error);
-    }
+  }
+    
   };
 
   return (

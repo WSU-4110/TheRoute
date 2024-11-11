@@ -1,65 +1,87 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-//import '../styles/ViewTrips.css'; 
-export default function ViewTrips() {
-    const [trips, setTrips] = useState([]);
-    const navigate = useNavigate(); // Hook to navigate programmatically
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import '../styles/viewTrips.css';
 
+export const ViewTrips = () => {
+  const [trips, setTrips] = useState([]);
+  const [userEmail, setUserEmail] = useState('');
+  const [isEmailSubmitted, setIsEmailSubmitted] = useState(false);
+  const navigate = useNavigate();
 
-  // Fetch saved trips from the backend
-  useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/trips');
-        const data = await response.json();
-        setTrips(data);
-      } catch (error) {
-        console.error('Error fetching trips:', error);
-      }
-    };
-    fetchTrips();
-  }, []);
+  const handleEmailSubmit = (e) => {
+    e.preventDefault();
+    if (userEmail) {
+      const savedTrips = JSON.parse(localStorage.getItem('trips')) || [];
+      const userTrips = savedTrips.filter(trip => trip.email === userEmail);
+      setTrips(userTrips);
+      setIsEmailSubmitted(true);
+    }
+  };
 
   return (
-    <div className="view-trips">
-      <button className="back-button" onClick={() => navigate(-1)}>Back</button>
-      <h2>Saved Trips</h2>
-      {trips.length > 0 ? (
-        <table className="trips-table">
-          <thead>
-            <tr>
-              <th>Start Location</th>
-              <th>End Location</th>
-              <th>Distance (miles)</th>
-              <th>Trip Date</th>
-              <th>Return Date</th>
-              <th>Email</th>
-              <th>Vehicle</th>
-              <th>Expenses</th>
-              <th>Planned Locations</th>
-            </tr>
-          </thead>
-          <tbody>
-          {trips.map((trip, index) => (
-              <tr key={index}>
-                <td>{trip.startLocation}</td>
-                <td>{trip.endLocation ? trip.endLocation : 'N/A'}</td>
-                <td>{trip.tripDistance}</td>
-                <td>{trip.tripDate ? new Date(trip.tripDate).toLocaleDateString() : 'N/A'}</td>
-                <td>{trip.returnDate ? new Date(trip.returnDate).toLocaleDateString() : 'N/A'}</td>
-                <td>{trip.email}</td>
-                <td>{trip.vehicleInfo}</td>
-                <td>${trip.expenses}</td>
-                <td>{trip.plannedLocations}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="view-trips-container">
+      <h2>Your Saved Trips</h2>
+
+      {!isEmailSubmitted ? (
+        <div className="email-form-container">
+          <form onSubmit={handleEmailSubmit} className="email-form">
+            <input
+              type="email"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+              placeholder="Enter your email to view trips"
+              required
+            />
+            <button type="submit">View My Trips</button>
+          </form>
+        </div>
       ) : (
-        <p>No trips have been saved yet.</p>
+        <>
+          <p className="user-email">Showing trips for: {userEmail}</p>
+          
+          {trips.length === 0 ? (
+            <div className="no-trips">
+              <p>No trips found for {userEmail}</p>
+              <Link to="/setup" className="add-trip-button">Add Your First Trip</Link>
+            </div>
+          ) : (
+            <div className="trips-grid">
+              {trips.map((trip, index) => (
+                <div key={index} className="trip-card">
+                  <div className="trip-header">
+                    <h3>{trip.startLocation} → {trip.endLocation}</h3>
+                    <span className="trip-date">{trip.tripDate}</span>
+                  </div>
+                  
+                  <div className="trip-details">
+                    <p><strong>Distance:</strong> {trip.tripDistance} miles</p>
+                    <p><strong>Return Date:</strong> {trip.returnDate}</p>
+                    <p><strong>Vehicle:</strong> {trip.vehicleInfo}</p>
+                    <p><strong>Expenses:</strong> ${trip.expenses}</p>
+                    {trip.plannedLocations && (
+                      <p><strong>Planned Stops:</strong> {trip.plannedLocations}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          <div className="button-container">
+            <button 
+              onClick={() => setIsEmailSubmitted(false)} 
+              className="change-email-button"
+            >
+              Change Email
+            </button>
+            <Link to="/setup" className="add-trip-button">Add New Trip</Link>
+          </div>
+        </>
       )}
       
-   
+      <button className="back-button" onClick={() => navigate(-1)}>Back</button>
     </div>
   );
-}
+};
+
+export default ViewTrips;
