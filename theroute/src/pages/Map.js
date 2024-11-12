@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState} from 'react';
 import {Link} from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
-import '../App.css';
+import '../styles/App.css';
 import { Geocoder } from '@mapbox/search-js-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
@@ -227,4 +227,6 @@ export const Map = () => {
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
     </div>
   );
+
 };
+export default Map;
