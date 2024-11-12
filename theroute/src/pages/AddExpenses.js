@@ -3,6 +3,8 @@ import React, { useState, useContext } from 'react';
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
 import {Link} from 'react-router-dom';
+import { FaMap, FaDollarSign, FaHome, FaCar, FaUser, FaSignOutAlt, FaTimes } from 'react-icons/fa';
+import axios from 'axios';
 
 const AddExpense = () => {
   const { getAccessToken } = useContext(AuthContext);
