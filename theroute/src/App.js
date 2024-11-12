@@ -8,6 +8,7 @@ import Setup from "./pages/Setup";
 import AddExpense from "./components/AddExpenses";
 import ViewExpense from "./components/ViewExpenses";
 import Sidebar from './components/SideBar';
+import ViewTrips from './pages/ViewTrips';
 
 
 function App () {
@@ -22,6 +23,7 @@ function App () {
         <Route path="/setup" element = {<Setup/>}/>
         <Route path="/add-expense" element = {<AddExpense/>}/>
         <Route path="/view-expense" element = {<ViewExpense/>}/>
+        <Route path="/view-trips" element = {<ViewTrips/>}/>
       </Routes>
     </Router>
   );
