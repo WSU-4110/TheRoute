@@ -32,3 +32,4 @@ backend/DjangoServer/myenv/
 # Ignore Python cache files
 **/__pycache__/
 *.pyc
+
