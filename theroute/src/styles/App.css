@@ -36,3 +36,98 @@
     transform: rotate(360deg);
   }
 }
+
+.weather-overlay {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 120px; /* Reduced width to make the widget smaller */
+  background: rgba(0, 0, 0, 0.8); /* Adjusted opacity for better readability */
+  border-radius: 10px; /* Slightly smaller border radius */
+  color: #ffffff;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+  padding: 10px; /* Reduced padding */
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+  max-height: 60vh; /* Reduced height to prevent overflow */
+  overflow-y: auto;
+}
+
+.weather-title {
+  font-size: 16px; /* Reduced font size */
+  font-weight: bold;
+  margin-bottom: 6px; /* Reduced margin */
+  text-align: center;
+}
+
+.weather-icon img {
+  width: 40px; /* Reduced icon size */
+  height: 40px; /* Reduced icon size */
+  margin-bottom: 8px; /* Reduced margin */
+}
+
+.weather-details {
+  font-size: 12px; /* Reduced font size for details */
+  line-height: 1.2; /* Reduced line height for compact spacing */
+  text-align: center;
+}
+
+.temperature {
+  color: #ffcc00;
+  font-weight: bold;
+}
+
+.condition, .humidity {
+  margin-top: 4px; /* Reduced margin */
+}
+
+.loading-message, .weather-error {
+  color: #ff6b6b;
+  font-size: 12px; /* Reduced font size */
+  text-align: center;
+  margin-top: 6px; /* Reduced margin */
+}
+
+@media (max-width: 768px) {
+  .weather-overlay {
+    width: 150px; /* Further reduced width for smaller screens */
+    top: 10px;
+    right: 10px;
+    padding: 8px;
+  }
+
+  .weather-title {
+    font-size: 14px; /* Reduced font size for smaller screens */
+  }
+
+  .weather-icon img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .weather-details {
+    font-size: 11px; /* Reduced font size for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-overlay {
+    width: 20px; /* Further reduced width for very small screens */
+    top: 5px;
+    right: 5px;
+    padding: 6px;
+  }
+
+  .weather-title {
+    font-size: 12px;
+  }
+
+  .weather-icon img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .weather-details {
+    font-size: 10px;
+  }
+}

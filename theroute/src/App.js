@@ -4,7 +4,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Map from './pages/Map';
-import Setup from "./pages/Setup";
+import {Setup} from "./pages/Setup";
 import AddExpense from "./components/AddExpenses";
 import ViewExpense from "./components/ViewExpenses";
 import Sidebar from './components/SideBar';

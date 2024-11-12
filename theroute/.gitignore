@@ -1,15 +1,18 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.js
 
+# Ignore node_modules in backend for clarity
+backend/node_modules/
+
 # testing
-/coverage
+coverage/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
@@ -22,6 +25,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .env
+
 # Ignore virtual environment
 backend/DjangoServer/myenv/
 
@@ -29,6 +33,3 @@ backend/DjangoServer/myenv/
 **/__pycache__/
 *.pyc
 
-# Node modules
-node_modules/
-node_modules/
