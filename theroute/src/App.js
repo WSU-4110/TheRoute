@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
+import Home from './components/Home';
+import Login from './components/Login';
+import SignUp from './components/SignUp';
 import Map from './pages/Map';
 import Setup from "./pages/Setup";
-import AddExpense from "./pages/AddExpenses";
-import ViewExpense from "./pages/ViewExpenses";
-import Sidebar from './pages/SideBar';
+import AddExpense from "./components/AddExpenses";
+import ViewExpense from "./components/ViewExpenses";
+import Sidebar from './components/SideBar';
 
 
 function App () {
