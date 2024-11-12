@@ -1,2 +1,4 @@
 node_modules
 .DS_Store
+
+theroute/backend/DjangoServer/TheRoute.sqlite3
