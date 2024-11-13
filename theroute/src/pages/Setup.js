@@ -203,3 +203,4 @@ export const Setup = () => {
     </div>
   );
 };
+export default Setup;
