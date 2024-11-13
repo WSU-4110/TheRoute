@@ -1,45 +1,82 @@
 import React, { createContext, useState, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode';
+import axios from 'axios';
 
-// Create AuthContext
 export const AuthContext = createContext();
 
-// AuthContext Provider Component
-const AuthContextProvider = ({ children }) => {
-  const [user, setUser] = useState(null);  // User object or null
-  const [isLoading, setIsLoading] = useState(true); // Loading state
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
 
-  // Example: Simulate checking user session (you can replace with an API call)
   useEffect(() => {
-    const checkUserSession = async () => {
+    const storedToken = localStorage.getItem('accessToken');
+    console.log("Retrieved Stored Access Token on load:", storedToken);
+
+    if (storedToken) {
+      setAccessToken(storedToken);
       try {
-        const storedUser = JSON.parse(localStorage.getItem('user')); // Check user from storage
-        if (storedUser) setUser(storedUser);
+        const decoded = jwtDecode(storedToken);
+        console.log("Decoded Token:", decoded);
+        setUser({ email: decoded.email });
       } catch (error) {
-        console.error('Failed to load user session', error);
-      } finally {
-        setIsLoading(false); // Finish loading
+        console.error('Invalid token on load:', error);
       }
-    };
-    checkUserSession();
+    }
   }, []);
 
-  // Function to log in the user
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData)); // Store user data
+  const getAccessToken = async () => {
+    if (!accessToken) {
+      console.error("No access token found.");
+      return null;
+    }
+
+    try {
+      const now = Date.now() / 1000;
+      const decoded = jwtDecode(accessToken);
+
+      if (decoded.exp < now) {
+        const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {
+          refresh: localStorage.getItem('refreshToken'),
+        });
+
+        const newAccessToken = response.data.access;
+        setAccessToken(newAccessToken);
+        localStorage.setItem('accessToken', newAccessToken);
+        console.log('Access token refreshed:', newAccessToken);
+
+        return newAccessToken;
+      }
+      return accessToken;
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      setUser(null);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      return null;
+    }
   };
 
-  // Function to log out the user
+  const login = (userData, token, refreshToken) => {
+    setUser(userData);
+    setAccessToken(token);
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('refreshToken', refreshToken); // Save refresh token
+    console.log('User logged in:', userData, 'AccessToken:', token, 'RefreshToken:', refreshToken);
+  };
+
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user'); // Clear user data
+    setAccessToken(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    console.log('User logged out');
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, getAccessToken, login, logout, accessToken }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export default AuthContextProvider;
+export default AuthProvider;

@@ -172,11 +172,7 @@ export default function MapView() {
           )}
         </div>
       )}
-      <div className="trip-button">
-        <Link to="/setup">
-          <button>Add a Trip</button>
-        </Link>
-      </div>
+      
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
     </div>
   );

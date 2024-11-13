@@ -1,0 +1,113 @@
+/* Background for the entire screen */ 
+.view-expenses {
+  background-color: #f0f0f0; 
+  padding: 20px; 
+  min-height: 100vh; 
+}
+
+.expenses-container {
+  max-width: 600px; 
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff; 
+}
+
+h1 {
+  text-align: center;
+  color: #1d6df8; 
+  margin-bottom: 20px; 
+}
+
+/* Expense item container style */
+.expense-item {
+  position: relative; /* This ensures the delete button positions relative to the expense item */
+  background-color: #ffffff; 
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.expense-item .category {
+  text-transform: capitalize;
+  flex-grow: 1; 
+}
+
+.expense-item .date {
+  color: #aea9a9; 
+  font-size: 0.9rem;
+  margin-top: 5px; 
+  margin-left: 0px;
+  display: block; /* Ensure date is on a new line below category */
+}
+
+/* Expense item paragraph styling */
+.expense-item p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+  flex-wrap: wrap; 
+}
+
+/* Style for Expense Amount (move to the right side) */
+.expense-amount {
+  margin-left: 20px; 
+  font-size: 1.5rem; 
+  font-weight: bold; 
+  color: #ff0000;
+  text-align: right;
+}
+
+/* Delete Button Styles */
+.delete-button {
+  background-color: #dc3545; /* Danger button color */
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 40px;
+  position: absolute; /* Position relative to the nearest parent with position set */
+  top: -8px; /* Adjust top spacing */
+  right: 0px; /* Adjust right spacing */
+}
+
+.delete-button:hover {
+  background-color: #c82333; /* Darker shade on hover */
+}
+
+/* Error Message Styles */
+.error {
+  color: red;
+  text-align: center; /* Centered error messages */
+  margin-bottom: 20px;
+}
+
+/* Progress Bar Container */
+.progress-bar-container {
+  width: 100%;
+  background-color: #e0e0e0; 
+  border-radius: 10px;
+  height: 20px;
+  margin: 20px 0; 
+  overflow: hidden;
+}
+
+/* Progress Bar Fill */
+.progress-bar {
+  height: 100%;
+  background-color: #1d6df8; /* Blue color for progress */
+  border-radius: 10px 0 0 10px;
+  transition: width 0.4s ease;
+}
+
+/* Progress Text */
+.progress-text {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
