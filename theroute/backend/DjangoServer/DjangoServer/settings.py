@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "corsheaders",  # To handle CORS
     "userAPI.apps.UserApiConfig",  # Keep this one
     "userExpenses",  # Another custom app
+    'UserAchievements', # Custom app for achievements
     "rest_framework_simplejwt.token_blacklist",
 ]
 
