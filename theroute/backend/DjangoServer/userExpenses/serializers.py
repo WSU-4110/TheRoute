@@ -5,14 +5,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class ExpenseSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(source='user.email', read_only=True)  # Display email
-    # No write access for 'user' field, it will be assigned automatically
+    email = serializers.EmailField(source='user.email', read_only=True)
 
     class Meta:
         model = Expense
-        fields = ['id', 'email', 'category', 'amount', 'date']  # Include 'email' in fields
-        read_only_fields = ['id', 'date', 'user']  # 'user' should be read-only
+        fields = ['id', 'email', 'category', 'amount', 'date']
+        read_only_fields = ['id', 'date', 'user']
 
     def create(self, validated_data):
-        # The 'user' field will be assigned later in the view
         return Expense.objects.create(**validated_data)

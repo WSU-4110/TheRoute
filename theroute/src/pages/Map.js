@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState} from 'react';
-import {Link} from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
-import '../styles/App.css';
 import { Geocoder } from '@mapbox/search-js-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 
-export const Map = () => {
+export default function MapView() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef();
   const directionsControlRef = useRef();
@@ -25,12 +24,7 @@ export const Map = () => {
   const [plannedLocations, setPlannedLocations] = useState('');
   const [weather, setWeather] = useState(null);
   const [cityInput, setCityInput] = useState('');
-  const weatherBackgrounds = {
-    Clouds: "url('/images/cloudy.jpg')",
-    Clear: "url('/images/clear.jpg')",
-    Rain: "url('/images/rainy.jpg')",
-    Snow: "url('/images/snowy.jpg')",
-  };
+  const [isWeatherExpanded, setIsWeatherExpanded] = useState(false);
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_KEY;
@@ -43,15 +37,12 @@ export const Map = () => {
       zoom: 14,
     });
 
-    new mapboxgl.Marker().setLngLat(startCoords).addTo(mapInstanceRef.current);
-
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setStartCoords([longitude, latitude]);
           mapInstanceRef.current.setCenter([longitude, latitude]);
-          new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(mapInstanceRef.current);
         },
         (error) => {
           console.error('Error fetching user location:', error);
@@ -65,48 +56,30 @@ export const Map = () => {
     });
     mapInstanceRef.current.addControl(directionsControlRef.current, 'top-left');
 
+    // Event listener for changes in destination (point B)
+    directionsControlRef.current.on('destination', (e) => {
+      if (e && e.feature && e.feature.geometry) {
+        const [lon, lat] = e.feature.geometry.coordinates;
+
+        // Update endCoords only if they have changed to avoid unnecessary fetches
+        if (!endCoords || endCoords[0] !== lon || endCoords[1] !== lat) {
+          setEndCoords([lon, lat]);
+        }
+      }
+    });
+
     return () => {
       mapInstanceRef.current.removeControl(directionsControlRef.current);
       mapInstanceRef.current.remove();
     };
   }, []);
 
+  // Effect for fetching weather information when endCoords change
   useEffect(() => {
-    if (startCoords && endCoords) {
-      directionsControlRef.current.setOrigin(startCoords);
-      directionsControlRef.current.setDestination(endCoords);
-      getRoute(startCoords, endCoords);
-      fetchWeather(endCoords[0], endCoords[1]);
+    if (endCoords) {
+      fetchWeather(endCoords[1], endCoords[0]);
     }
-  }, [startCoords, endCoords]);
-
-  const getCoordinates = async (cityName) => {
-    try {
-      const response = await fetch(
-        `https://pro.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${process.env.REACT_APP_WEATHER_API_KEY}`
-      );
-
-      if (response.data.length > 0) {
-        const { lat, lon } = response.data[0];
-        return { lat, lon };
-      } else {
-        console.error('City not found!');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching coordinates:', error);
-    }
-  };
-
-  const fetchTrips = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/trips');
-      const data = await response.json();
-      setTrips(data);
-    } catch (error) {
-      console.error('Error fetching trips:', error);
-    }
-  };
+  }, [endCoords]);
 
   const fetchWeather = async (lat, lon) => {
     try {
@@ -115,15 +88,18 @@ export const Map = () => {
       );
 
       if (response.status !== 200) throw new Error(`Invalid response status: ${response.status}`);
-      
-      const weatherData = response.json();
+
+      const weatherData = await response.json();
+      console.log("Fetched weather data:", weatherData);
+
       if (!weatherData || !weatherData.main || !weatherData.weather) {
         throw new Error('Invalid weather data');
       }
 
+      // Update weather state only if the data has changed
       setWeather(weatherData);
-     
     } catch (error) {
+      console.error('Error fetching weather:', error);
       setWeather(null);
     }
   };
@@ -138,95 +114,66 @@ export const Map = () => {
           zoom: 14,
         });
       }
-      fetchWeather(coordinates.lat, coordinates.lon);
+      setEndCoords([coordinates.lon, coordinates.lat]);
     } else {
       console.error('Could not get coordinates for the given city/state.');
     }
   };
 
-  async function getRoute(start, end) {
+  const getCoordinates = async (cityName) => {
     try {
-      const query = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
-        { method: 'GET' }
+      const response = await fetch(
+        `https://pro.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${process.env.REACT_APP_WEATHER_API_KEY}`
       );
-      const json = await query.json();
-      const data = json.routes[0];
-      const route = data.geometry.coordinates;
 
-      const newInstructions = data.legs[0].steps.map((step) => step.maneuver.instruction);
-      setInstructions(newInstructions);
-    } catch (error) {
-      console.error('Error fetching directions:', error);
-    }
-  }
-
-  const handleAddTrip = async (e) => {
-    e.preventDefault();
-    const tripData = {
-      startLocation: startCoords.join(','),
-      endCoords,
-      tripDistance,
-      tripDate,
-      email,
-      vehicleInfo,
-      expenses,
-      plannedLocations,
-    };
-
-    try {
-      const response = await fetch('http://localhost:5000/api/trips', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(tripData),
-      });
-
-      if (response.ok) {
-        fetchTrips();
+      const data = await response.json();
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        return { lat, lon };
       } else {
-        console.error('Error adding trip');
+        console.error('City not found!');
+        return null;
       }
     } catch (error) {
-      console.error('Error saving trip:', error);
+      console.error('Error fetching coordinates:', error);
     }
   };
 
   return (
     <div>
-       {weather && (
-          <div className="weather-overlay"
-          style={{
-            backgroundImage: weather ? weatherBackgrounds[weather.weather[0].main] : null,
-            backgroundSize: 'cover',
-          }}
-          >
-            <h3>Weather at Destination</h3>
-            <p>Temperature: {Math.round(weather.main.temp)} °F</p>
-            <p>Feels Like: {Math.round(weather.main.feels_like)} °F</p> {/* Added Feels Like */}
-            <p>Condition: {weather.weather[0].description}</p>
-            <img 
-              src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`} 
-              alt={weather.weather[0].description} 
-            />
-            <p>Humidity: {weather.main.humidity} %</p>
-            <p>Pressure: {weather.main.pressure} hPa</p> {/* Pressure */}
-            <p>Visibility: {(weather.visibility / 1000).toFixed(1)} km</p> {/* Visibility */}
-            
-            <p>Sunrise: {new Date(weather.sys.sunrise * 1000).toLocaleTimeString()}</p> {/* Sunrise time */}
-            <p>Sunset: {new Date(weather.sys.sunset * 1000).toLocaleTimeString()}</p> {/* Sunset time */}
-            
+      {weather && (
+        <div 
+          className={`weather-overlay ${isWeatherExpanded ? 'expanded' : ''}`}
+          onClick={() => setIsWeatherExpanded(!isWeatherExpanded)}
+        >
+          <h3 className="weather-title">Weather at Destination</h3>
+          <div className="weather-basic-info">
+            <div className="weather-main">
+              <img
+                src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`}
+                alt={weather.weather[0].description}
+              />
+              <p className="temp-main">{Math.round(weather.main.temp)}°F</p>
+            </div>
+            <p className="temp-range">
+              H: {Math.round(weather.main.temp_max)}°F  
+              L: {Math.round(weather.main.temp_min)}°F
+            </p>
+            <p className="weather-description">{weather.weather[0].description}</p>
           </div>
-        )}
-      <div className='trip-button'>
-        <Link to="/setup">
-        <button>Add a Trip</button>
-        </Link>
-      </div>
-     
-      {/* Map Container */}
+
+          {isWeatherExpanded && (
+            <div className="weather-details">
+              <p>Feels Like: {Math.round(weather.main.feels_like)}°F</p>
+              <p>Humidity: {weather.main.humidity}%</p>
+              <p>Sunrise: {new Date(weather.sys.sunrise * 1000).toLocaleTimeString()}</p>
+              <p>Sunset: {new Date(weather.sys.sunset * 1000).toLocaleTimeString()}</p>
+            </div>
+          )}
+        </div>
+      )}
+      
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
     </div>
   );
-
-};
-export default Map;
+}
