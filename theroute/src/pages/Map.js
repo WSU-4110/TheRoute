@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
-import { Geocoder } from '@mapbox/search-js-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 
@@ -11,17 +10,12 @@ export default function MapView() {
   const mapInstanceRef = useRef();
   const directionsControlRef = useRef();
 
+
   const [instructions, setInstructions] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
   const [endCoords, setEndCoords] = useState(null);
-  const [trips, setTrips] = useState([]);
-  const [tripDistance, setTripDistance] = useState('');
-  const [tripDate, setTripDate] = useState('');
-  const [email, setEmail] = useState('');
-  const [vehicleInfo, setVehicleInfo] = useState('');
-  const [expenses, setExpenses] = useState('');
-  const [plannedLocations, setPlannedLocations] = useState('');
+  const [waypoints, setWaypoints] = useState([]);
   const [weather, setWeather] = useState(null);
   const [cityInput, setCityInput] = useState('');
   const [isWeatherExpanded, setIsWeatherExpanded] = useState(false);
@@ -29,7 +23,18 @@ export default function MapView() {
   useEffect(() => {
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_KEY;
 
-    // Initialize the map
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setStartCoords([longitude, latitude]);
+          mapInstanceRef.current.setCenter([longitude, latitude]);
+        },
+        (error) => console.error('Error fetching user location:', error),
+        { enableHighAccuracy: true }
+      );
+    }
+
     mapInstanceRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/outdoors-v12',
@@ -50,10 +55,13 @@ export default function MapView() {
         { enableHighAccuracy: true }
       );
     }
+    const nav = new mapboxgl.NavigationControl();
 
     directionsControlRef.current = new MapboxDirections({
       accessToken: mapboxgl.accessToken,
     });
+
+    mapInstanceRef.current.addControl(nav);
     mapInstanceRef.current.addControl(directionsControlRef.current, 'top-left');
 
     // Event listener for changes in destination (point B)
@@ -134,6 +142,8 @@ export default function MapView() {
         console.error('City not found!');
         return null;
       }
+
+      setWeather(weatherData);
     } catch (error) {
       console.error('Error fetching coordinates:', error);
     }
@@ -174,6 +184,7 @@ export default function MapView() {
       )}
       
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
+      
     </div>
   );
 }
