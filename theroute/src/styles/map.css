@@ -2,7 +2,27 @@
   margin: 0;
 }
 
+.waypoint-input{
+  position: absolute;
+  top: 80px;
+  z-index: 1000;
+  width: 300px;
+  
+}
 
+.input-field{
+  padding-top: 12px;
+  padding-bottom: 12px;
+  box-shadow:0 1px 0 0 #ddd;
+}
+
+.geocoder-container {
+  position: absolute;
+  top: 20px; /* Adjust as needed */
+  left: 20px; /* Adjust as needed */
+  z-index: 1;
+  width: 300px; /* Adjust as needed */
+}
 
   .trip-button {
     position: absolute; 
