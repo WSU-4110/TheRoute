@@ -9,11 +9,9 @@ class ExpenseView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Filter expenses for the logged-in user
         return Expense.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        # Assign the logged-in user to the expense
         serializer.save(user=self.request.user)
 
     @action(detail=True, methods=['delete'])

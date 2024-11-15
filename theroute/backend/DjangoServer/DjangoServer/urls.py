@@ -8,12 +8,10 @@ from rest_framework_simplejwt.views import (
 )
 from userAPI import views as user_views
 from userExpenses.views import ExpenseView
-from UserAchievements.views import AchievementView  # Import Achievement view
 
 # Create a router to automatically handle routes for expenses and achievements
 router = DefaultRouter()
 router.register(r'expenses', ExpenseView, basename='expense')
-router.register(r'achievements', AchievementView, basename='achievement')  # Add achievement routes
 
 urlpatterns = [
     # Admin

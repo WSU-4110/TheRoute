@@ -1,0 +1,84 @@
+/* Sidebar.css */
+.sidebar {
+  height: 100%;
+  width: 150px;
+  position: fixed;
+  top: 0;
+  right: -150px; /* Initially hidden off-screen to the right */
+  background-color: #1d6df8; /* Lighter blue */
+  overflow-x: hidden;
+  transition: right 0.3s ease; /* Smooth slide-in effect */
+  padding-top: 60px;
+  z-index: 1000; /* Ensure the sidebar is above most elements */
+}
+
+.sidebar.open {
+  right: 0; /* Slide into view when open */
+}
+
+.sidebar a {
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #ffffff;
+  display: block;
+  transition: color 0.3s ease;
+}
+
+.sidebar a:hover {
+  color: #7618f1;
+}
+
+/* Button to open sidebar */
+.sidebar-toggle {
+  position: fixed;
+  top:-10px;
+  right: -1px; /* Position button in the top-right corner */
+  font-size: 30px;
+  background: #1d6df8; /* Lighter blue */
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  z-index: 1001; /* Ensure button stays above other elements */
+  width: 65px;
+}
+
+.sidebar .profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 15px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.sidebar .profile svg {
+  color: #ffffff;
+}
+
+.sidebar .profile h2 {
+  font-size: 1.2em;
+  color: #ffffff;
+}
+
+.sidebar .logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  margin-top: auto; /* Pushes the logout to the bottom */
+  font-weight: bold;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.sidebar .logout-link:hover {
+  background-color: #f8f8f8;
+  cursor: pointer;
+}
+
+.sidebar .close {
+  position: 'absolute';
+  top: '10px';
+  right: '10px';
+  color: #ffffff;
+}

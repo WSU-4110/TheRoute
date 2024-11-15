@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/setup.css';
-import {Link} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-export const Setup = ()=>{
-  const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]); // Default starting location
-  const [endCoords, setEndCoords] = useState(null);
+export const Setup = () => {
+  const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
+  const [startLocation, setStartLocation] = useState('');
+  const [endLocation, setEndLocation] = useState('');
+  const [returnDate, setReturnDate] = useState('');
   const [trips, setTrips] = useState([]);
   const [tripDistance, setTripDistance] = useState('');
   const [tripDate, setTripDate] = useState('');
@@ -12,56 +14,109 @@ export const Setup = ()=>{
   const [vehicleInfo, setVehicleInfo] = useState('');
   const [expenses, setExpenses] = useState('');
   const [plannedLocations, setPlannedLocations] = useState('');
+  const [isFetchingLocation, setIsFetchingLocation] = useState(true);
+  const navigate = useNavigate();
 
+  // Fetch city name based on coordinates
+  const getCityName = async () => {
+    try {
+      setIsFetchingLocation(true);
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${startCoords[0]},${startCoords[1]}.json?access_token=YOUR_MAPBOX_ACCESS_TOKEN`
+      );
+      const data = await response.json();
+      if (data && data.features && data.features.length > 0) {
+        setStartLocation(data.features[0].text);
+      } else {
+        setStartLocation('Unknown Location');
+      }
+    } catch (error) {
+      console.error('Error fetching city name:', error);
+      setStartLocation('Error fetching location');
+    } finally {
+      setIsFetchingLocation(false);
+    }
+  };
 
+  useEffect(() => {
+    getCityName();
+  }, [startCoords]);
+
+  // Fetch all saved trips from the backend
   const fetchTrips = async () => {
     try {
       const response = await fetch('http://localhost:5000/api/trips');
       const data = await response.json();
+      console.log("Fetched trips:", data); 
       setTrips(data);
     } catch (error) {
       console.error('Error fetching trips:', error);
     }
   };
 
-    // Handle form submission to add a new trip
-  const handleAddTrip = async (e) => {
+  useEffect(() => {
+    fetchTrips();
+  }, []);
+
+  // Handle form submission to add a new trip
+  const handleAddTrip = (e) => {
     e.preventDefault();
+
+    // Get logged-in user's email
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      alert('Please log in to save trips');
+      navigate('/login');
+      return;
+    }
+
     const tripData = {
-      startLocation: startCoords.toString(),
-      endLocation: endCoords ? endCoords.toString() : '',
+      startLocation,
+      endLocation,
       tripDistance,
       tripDate,
-      email,
+      returnDate,
+      email: userEmail,  // Use logged-in user's email
       vehicleInfo,
       expenses,
       plannedLocations,
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/trips', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(tripData),
-      });
-
-      if (response.ok) {
-        console.log('Trip added successfully!');
-        fetchTrips(); // Refresh trip list
-      } else {
-        console.error('Error adding trip');
-      }
+      const existingTrips = JSON.parse(localStorage.getItem('trips')) || [];
+      localStorage.setItem('trips', JSON.stringify([...existingTrips, tripData]));
+      alert('Trip saved successfully!');
     } catch (error) {
       console.error('Error saving trip:', error);
+      alert('Error saving trip');
     }
   };
 
   return (
-    <div >
-      {/* Trip Form */}
+    <div>
       <div className="trip-form">
         <h2>Add a Trip</h2>
         <form onSubmit={handleAddTrip}>
+          <label>
+            Starting Location:
+            <input
+              type="text"
+              value={startLocation}
+              onChange={(e) => setStartLocation(e.target.value)}
+              placeholder="Enter starting location"
+            />
+          </label>
+          <br />
+          <label>
+            End Location:
+            <input
+              type="text"
+              value={endLocation}
+              onChange={(e) => setEndLocation(e.target.value)}
+              placeholder="Enter end location"
+            />
+          </label>
+          <br />
           <label>
             Trip Distance (in miles):
             <input
@@ -78,6 +133,15 @@ export const Setup = ()=>{
               type="date"
               value={tripDate}
               onChange={(e) => setTripDate(e.target.value)}
+            />
+          </label>
+          <br />
+          <label>
+            Return Date:
+            <input
+              type="date"
+              value={returnDate}
+              onChange={(e) => setReturnDate(e.target.value)}
             />
           </label>
           <br />
@@ -120,28 +184,23 @@ export const Setup = ()=>{
             />
           </label>
           <br />
-          <button type="submit">Save Trip</button>
+          <button type="submit" disabled={isFetchingLocation}>
+            {isFetchingLocation ? 'Loading Location...' : 'Save Trip'}
+          </button>
         </form>
+      </div>
 
-        {trips.length > 1 && (
-          <>
-            <h2>Trip List</h2>
-            <ul>
-              {trips.map((trip, index) => (
-                <li key={index}>
-                From {trip.startLocation} to {trip.endLocation}, Distance: {trip.tripDistance} miles, 
-                Date: {new Date(trip.tripDate).toLocaleDateString()}, Email: {trip.email}, 
-                Vehicle: {trip.vehicleInfo}, Expenses: ${trip.expenses}, 
-                Planned Locations: {trip.plannedLocations}
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-        <Link to="/map">
-          <button>Go to theRoute!</button>
+      {/* Button to navigate to view saved trips page */}
+      <div className="view-trips-button">
+        <Link to="/view-trips">
+          <button>View Saved Trips</button>
         </Link>
       </div>
+
+      <Link to="/map">
+        <button>Go to theRoute!</button>
+      </Link>
     </div>
   );
 };
+export default Setup;

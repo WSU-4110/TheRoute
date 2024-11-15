@@ -14,10 +14,25 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
+    // Validation checks
     if (!email || !username || !password || !confirmPassword) {
       setError('Please fill in all fields');
       return;
     }
+
+    // Check if password is shorter than 8 characters
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return;
+    }
+
+    // Check if email contains an '@' symbol
+    if (!email.includes('@') || email.length < 8) {
+      setError('Please enter a valid email');
+      return;
+    }
+
+    // Check if passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
