@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "userAPI.apps.UserApiConfig",  # Keep this one
     "userExpenses",  # Another custom app
     'UserAchievements', # Custom app for achievements
+    #'UserAchievements.apps.AchievementsConfig',
     "rest_framework_simplejwt.token_blacklist",
 ]
 
@@ -159,3 +160,30 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ACHIEVEMENT_CLASSES = []
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',  # Set this to DEBUG for detailed logs
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'userAPI': {  # Add logging for your app
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

@@ -1,15 +1,15 @@
+from userAPI import views as user_views
+from userExpenses.views import ExpenseView
 from django.urls import path, include
-from django.contrib import admin
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView
 )
-from userAPI import views as user_views
-from userExpenses.views import ExpenseView
+from django.contrib import admin
 
-# Create a router to automatically handle routes for expenses and achievements
+# Create a router to automatically handle routes for expenses
 router = DefaultRouter()
 router.register(r'expenses', ExpenseView, basename='expense')
 
@@ -28,6 +28,12 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
-    # User expenses and achievements: add, delete, get
-    path('api/', include(router.urls)),  # API routes for expenses and achievements
+    # User expenses
+    path('api/', include(router.urls)),
+
+    # Achievement-related routes
+    path('api/achievements/list/', user_views.list_user_achievements, name='list_user_achievements'),
+    path('api/achievements/details/<int:achievement_id>/', user_views.achievement_details, name='achievement_details'),
+    path('api/achievements/award/<str:achievement_key>/', user_views.award_achievement_view, name='award_achievement'),
+    path('api/achievements/all/', user_views.list_all_achievements, name='list_all_achievements'),  # Added endpoint
 ]
