@@ -2,16 +2,42 @@
   margin: 0;
 }
 
+.waypoint-input{
+  position: absolute;
+  top: 80px;
+  z-index: 1000;
+  width: 300px;
+  
+}
 
+.input-field{
+  padding-top: 12px;
+  padding-bottom: 12px;
+  box-shadow:0 1px 0 0 #ddd;
+}
 
-  .trip-button {
+.geocoder-container {
+  position: absolute;
+  top: 20px; /* Adjust as needed */
+  left: 20px; /* Adjust as needed */
+  z-index: 1;
+  width: 300px; /* Adjust as needed */
+}
+
+  button {
     position: absolute; 
     top: 5px; 
-    right: 10px;
+    right: 50px;
     z-index: 1000; 
   }
   
-  .trip-button button {
+  .save-button {
+    left: 325px;
+    width: 100px;
+    top: 32px;
+  }
+
+  button {
     padding: 10px 15px; /* Adjust padding for the button */
     background-color: #007bff; /* Button color */
     color: white; /* Text color */
@@ -104,12 +130,3 @@
   margin: 5px 0;
   color: #666;
 }
-
-
-
-
-
-
-
-
-

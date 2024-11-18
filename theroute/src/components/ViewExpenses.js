@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react'; 
+import React, { useState, useEffect, useContext } from 'react';
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
-import { FaHome, FaCar, FaUtensils, FaRunning, FaQuestionCircle, FaShoppingBag, FaTrash } from 'react-icons/fa';  
+import { FaTrash, FaHome, FaQuestionCircle, FaCarCrash, FaRunning, FaShoppingBag, FaUtensils, FaCar} from 'react-icons/fa';
 import '../styles/ViewExpenses.css';
 
 const ViewExpenses = () => {

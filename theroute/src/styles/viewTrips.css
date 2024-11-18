@@ -1,44 +1,9 @@
+/* Main container for the view trips page */
+
 .view-trips-container {
   max-width: 1200px;
   margin: 40px auto;
   padding: 20px;
-}
-
-.email-form-container {
-  max-width: 400px;
-  margin: 30px auto;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.email-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.email-form input {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.email-form button {
-  padding: 12px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
-
-.email-form button:hover {
-  background-color: #2980b9;
 }
 
 .trips-grid {
@@ -49,6 +14,7 @@
 }
 
 .trip-card {
+  position: relative; /* So the delete button can be absolutely positioned */
   background: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   padding: 20px;
@@ -58,6 +24,29 @@
 
 .trip-card:hover {
   transform: translateY(-5px);
+}
+
+.delete-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: none; /* Initially hidden */
+  background-color: #e74c3c;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.trip-card:hover .delete-button {
+  display: block; /* Show the button on hover */
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
 }
 
 .trip-header {
@@ -93,8 +82,7 @@
   margin-top: 20px;
 }
 
-.back-button, 
-.add-trip-button,
+.back-button,
 .change-email-button {
   padding: 10px 20px;
   border: none;
@@ -106,8 +94,9 @@
 }
 
 .back-button {
-  background-color: #95a5a6;
+  background-color: #0071eb;
   color: white;
+  font-size: 1.30rem;
 }
 
 .add-trip-button {
@@ -126,17 +115,6 @@
 
 .add-trip-button:hover {
   background-color: #2980b9;
-}
-
-.change-email-button:hover {
-  background-color: #c0392b;
-}
-
-.user-email {
-  text-align: center;
-  color: #2c3e50;
-  font-size: 18px;
-  margin: 20px 0;
 }
 
 .no-trips {
@@ -158,3 +136,5 @@
     flex-direction: column;
   }
 }
+
+
