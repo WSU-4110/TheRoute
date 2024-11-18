@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 
@@ -9,31 +10,16 @@ export default function MapView() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef();
   const directionsControlRef = useRef();
+  const [routeType, setRouteType] = useState("mapbox/driving");
 
-
-  const [instructions, setInstructions] = useState([]);
-  const [inputValue, setInputValue] = useState('');
   const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
   const [endCoords, setEndCoords] = useState(null);
   const [waypoints, setWaypoints] = useState([]);
   const [weather, setWeather] = useState(null);
-  const [cityInput, setCityInput] = useState('');
   const [isWeatherExpanded, setIsWeatherExpanded] = useState(false);
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_KEY;
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setStartCoords([longitude, latitude]);
-          mapInstanceRef.current.setCenter([longitude, latitude]);
-        },
-        (error) => console.error('Error fetching user location:', error),
-        { enableHighAccuracy: true }
-      );
-    }
 
     mapInstanceRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -59,17 +45,16 @@ export default function MapView() {
 
     directionsControlRef.current = new MapboxDirections({
       accessToken: mapboxgl.accessToken,
+      controls: { inputs: false },
     });
 
     mapInstanceRef.current.addControl(nav);
-    mapInstanceRef.current.addControl(directionsControlRef.current, 'top-left');
+    mapInstanceRef.current.addControl(directionsControlRef.current, 'bottom-left');
 
-    // Event listener for changes in destination (point B)
     directionsControlRef.current.on('destination', (e) => {
       if (e && e.feature && e.feature.geometry) {
         const [lon, lat] = e.feature.geometry.coordinates;
 
-        // Update endCoords only if they have changed to avoid unnecessary fetches
         if (!endCoords || endCoords[0] !== lon || endCoords[1] !== lat) {
           setEndCoords([lon, lat]);
         }
@@ -79,6 +64,56 @@ export default function MapView() {
     return () => {
       mapInstanceRef.current.removeControl(directionsControlRef.current);
       mapInstanceRef.current.remove();
+    };
+  }, []);
+
+  const handleGeocoderResult = (type, coordinates) => {
+    if (type === 'start') {
+      setStartCoords(coordinates);
+      directionsControlRef.current.setOrigin(coordinates);
+    } else if (type === 'end') {
+      setEndCoords(coordinates);
+      directionsControlRef.current.setDestination(coordinates);
+    } else if (type === 'waypoint') {
+      setWaypoints([...waypoints, coordinates]);
+      directionsControlRef.current.addWaypoint(waypoints.length, coordinates);
+    }
+  };
+
+  const addGeocoder = (type, placeholder) => {
+    const geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl,
+      placeholder: placeholder,
+    });
+
+    geocoder.on('result', (event) => {
+      const location = event.result.geometry.coordinates;
+      handleGeocoderResult(type, location);
+    });
+
+    const container = document.getElementById(`${type}-input`);
+    if (container) {
+      container.appendChild(geocoder.onAdd(mapInstanceRef.current));
+    }
+  };
+
+  const handleRouteTypeChange = (event) => {
+    const selectedRouteType = event.target.value;
+    setRouteType(selectedRouteType);
+    directionsControlRef.current.setProfile(selectedRouteType); // Updates the routing profile
+  };
+
+  useEffect(() => {
+    addGeocoder('start', 'Enter start location');
+    addGeocoder('end', 'Enter end location');
+    addGeocoder('waypoint', 'Enter waypoint location');
+    return () => {
+      // Cleanup geocoder elements
+      ['start-input', 'end-input', 'waypoint-input'].forEach((id) => {
+        const geocoder = document.querySelector(`#${id} .mapboxgl-ctrl-geocoder`);
+        if (geocoder) geocoder.remove();
+      });
     };
   }, []);
 
@@ -109,43 +144,6 @@ export default function MapView() {
     } catch (error) {
       console.error('Error fetching weather:', error);
       setWeather(null);
-    }
-  };
-
-  const handleCityInput = async () => {
-    const coordinates = await getCoordinates(cityInput);
-    if (coordinates) {
-      setStartCoords([coordinates.lon, coordinates.lat]);
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.flyTo({
-          center: [coordinates.lon, coordinates.lat],
-          zoom: 14,
-        });
-      }
-      setEndCoords([coordinates.lon, coordinates.lat]);
-    } else {
-      console.error('Could not get coordinates for the given city/state.');
-    }
-  };
-
-  const getCoordinates = async (cityName) => {
-    try {
-      const response = await fetch(
-        `https://pro.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${process.env.REACT_APP_WEATHER_API_KEY}`
-      );
-
-      const data = await response.json();
-      if (data.length > 0) {
-        const { lat, lon } = data[0];
-        return { lat, lon };
-      } else {
-        console.error('City not found!');
-        return null;
-      }
-
-      setWeather(weatherData);
-    } catch (error) {
-      console.error('Error fetching coordinates:', error);
     }
   };
 
@@ -182,9 +180,19 @@ export default function MapView() {
           )}
         </div>
       )}
-      
+      <div className="input">
+        <div id="start-input"></div>
+        <div id="end-input" ></div>
+        <div id="waypoint-input" ></div>
+      </div>
+      <select id="routeType" value={routeType} onChange={handleRouteTypeChange}>
+        <option value="mapbox/driving">Driving</option>
+        <option value="mapbox/driving-traffic">Driving (with Traffic)</option>
+        <option value="mapbox/walking">Walking</option>
+        <option value="mapbox/cycling">Cycling</option>
+      </select>
+
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
-      
     </div>
   );
 }
