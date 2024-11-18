@@ -1,15 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
+//import {Link} from 'react-router-dom';
+
 
 export default function MapView() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef();
-  const directionsControlRef = useRef();
+  const directionsControlRef = useRef(null);
+  const navigate = useNavigate();
 
   const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
   const [endCoords, setEndCoords] = useState(null);
@@ -305,6 +308,8 @@ export default function MapView() {
         <button className='save' onClick={saveTrip}>Save Trip</button>
       </div>
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      <button className="save-button" onClick={handleSaveTrip}>Save Trip</button>
     </div>
   );
 }

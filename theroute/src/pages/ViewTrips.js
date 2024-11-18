@@ -82,7 +82,11 @@ const ViewTrips = () => {
 
               <div className="trip-details">
                 <p><strong>Trip Name:</strong> {trip.trip_name}</p>
+<<<<<<< HEAD
                 <p><strong>Distance:</strong> {trip.trip_distance} mi</p>
+=======
+                <p><strong>Distance:</strong> {trip.total_distance} miles</p>
+>>>>>>> 203ff1d (Working on displaying user trips)
                 <p><strong>Start Date:</strong> {new Date(trip.start_date).toLocaleDateString()}</p>
                 <p><strong>Return Date:</strong> {new Date(trip.end_date).toLocaleDateString()}</p>
                 <p><strong>Budget:</strong> ${trip.budget}</p>
