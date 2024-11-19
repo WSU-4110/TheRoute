@@ -6,8 +6,9 @@
 }
 
 .expenses-container {
+  left: 0ex; 
   max-width: 600px; 
-  margin: 50px auto;
+  margin: 75px;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -110,4 +111,29 @@ h1 {
   text-align: center;
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+.dropdown-container {
+  margin: 20px;
+  width: 200px;
+}
+
+.dropdown {
+  margin-left: 4.6em;
+  width: 20%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pieChart {
+  position: absolute;
+  top: 60%;
+  right: 0;
+  transform: translateY(-50%);
+  margin: 20px
 }
