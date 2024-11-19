@@ -46,7 +46,8 @@ const Login = () => {
 
       // Pass user data and tokens to context
       login({ email }, access, refresh); // Store access and refresh tokens
-
+      
+      alert("Do you consent to your information being stored?");
       navigate('/map'); // Redirect to '/map'
     } catch (error) {
       console.error('Login failed:', error.response?.data || error);
