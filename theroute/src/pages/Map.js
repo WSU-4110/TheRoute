@@ -10,7 +10,6 @@ export default function MapView() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef();
   const directionsControlRef = useRef();
-  const [routeType, setRouteType] = useState("mapbox/driving");
 
   const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
   const [endCoords, setEndCoords] = useState(null);
@@ -46,10 +45,15 @@ export default function MapView() {
     directionsControlRef.current = new MapboxDirections({
       accessToken: mapboxgl.accessToken,
       controls: { inputs: false },
+      interactive: false,
     });
 
-    mapInstanceRef.current.addControl(nav);
-    mapInstanceRef.current.addControl(directionsControlRef.current, 'bottom-left');
+    mapInstanceRef.current.addControl(nav, 'top-left');
+    mapInstanceRef.current.addControl(directionsControlRef.current,'top-left');
+
+    mapInstanceRef.current.on('click', (e) => {
+      e.preventDefault();  // Prevent the default click behavior
+    });
 
     directionsControlRef.current.on('destination', (e) => {
       if (e && e.feature && e.feature.geometry) {
@@ -75,8 +79,11 @@ export default function MapView() {
       setEndCoords(coordinates);
       directionsControlRef.current.setDestination(coordinates);
     } else if (type === 'waypoint') {
-      setWaypoints([...waypoints, coordinates]);
-      directionsControlRef.current.addWaypoint(waypoints.length, coordinates);
+      setWaypoints((prevWaypoints) => {
+        const newWaypoints = [...prevWaypoints, coordinates];
+        directionsControlRef.current.addWaypoint(prevWaypoints.length, coordinates);
+        return newWaypoints;
+      });
     }
   };
 
@@ -97,12 +104,8 @@ export default function MapView() {
       container.appendChild(geocoder.onAdd(mapInstanceRef.current));
     }
   };
-
-  const handleRouteTypeChange = (event) => {
-    const selectedRouteType = event.target.value;
-    setRouteType(selectedRouteType);
-    directionsControlRef.current.setProfile(selectedRouteType); // Updates the routing profile
-  };
+  
+  
 
   useEffect(() => {
     addGeocoder('start', 'Enter start location');
@@ -147,6 +150,49 @@ export default function MapView() {
     }
   };
 
+  const addMarkers = () => {
+    const startMarker = new mapboxgl.Marker({ color: 'green' })
+      .setLngLat(startCoords)
+      .addTo(mapInstanceRef.current);
+  
+    const startPopup = new mapboxgl.Popup({ offset: 25 })
+      .setHTML(`<h3>Start Location</h3><p>Coordinates: ${startCoords.join(', ')}</p><p>Date: ${new Date().toLocaleDateString()}</p>`);
+  
+    startMarker.setPopup(startPopup);
+    startMarker.togglePopup();
+  
+    if (endCoords) {
+      const endMarker = new mapboxgl.Marker({ color: 'red' })
+        .setLngLat(endCoords)
+        .addTo(mapInstanceRef.current);
+  
+      const endPopup = new mapboxgl.Popup({ offset: 25 })
+        .setHTML(`<h3>End Location</h3><p>Coordinates: ${endCoords.join(', ')}</p><p>Date: ${new Date().toLocaleDateString()}</p>`);
+  
+      endMarker.setPopup(endPopup);
+      endMarker.togglePopup();
+    }
+  
+    waypoints.forEach((coordinates, index) => {
+      const marker = new mapboxgl.Marker()
+        .setLngLat(coordinates)
+        .addTo(mapInstanceRef.current);
+  
+      const popup = new mapboxgl.Popup({ offset: 25 })
+        .setHTML(`<h3>Waypoint ${index + 1}</h3><p>Coordinates: ${coordinates.join(', ')}</p><p>Date: ${new Date().toLocaleDateString()}</p>`);
+  
+      marker.setPopup(popup);
+      marker.togglePopup();
+    });
+  };
+  
+
+  useEffect(() => {
+    if (mapInstanceRef.current && waypoints.length > 0) {
+      addMarkers();
+    }
+  }, [waypoints]);
+
   return (
     <div>
       {weather && (
@@ -185,13 +231,7 @@ export default function MapView() {
         <div id="end-input" ></div>
         <div id="waypoint-input" ></div>
       </div>
-      <select id="routeType" value={routeType} onChange={handleRouteTypeChange}>
-        <option value="mapbox/driving">Driving</option>
-        <option value="mapbox/driving-traffic">Driving (with Traffic)</option>
-        <option value="mapbox/walking">Walking</option>
-        <option value="mapbox/cycling">Cycling</option>
-      </select>
-
+    
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
     </div>
   );
