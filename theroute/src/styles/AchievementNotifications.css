@@ -1,0 +1,46 @@
+.achievement-notifications {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+  
+  .notification {
+    background-color: #4caf50;
+    color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    animation: slide-in 0.5s ease-out;
+  }
+  
+  .notification h3 {
+    margin: 0 0 5px;
+  }
+  
+  .notification button {
+    background-color: white;
+    color: #4caf50;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .notification button:hover {
+    background-color: #f1f1f1;
+  }
+  
+  @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  

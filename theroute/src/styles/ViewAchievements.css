@@ -1,0 +1,155 @@
+/* Improved Background and Overall Styling */
+.view-achievements {
+  background-color: #f9fafb; /* Subtle light gray background */
+  color: #000000; /* Text color for contrast */
+  font-family: 'Arial', sans-serif;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* Header Styling */
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px; /* Increased spacing below the header */
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2.5rem; /* Slightly larger font size */
+  font-weight: bold;
+  color: #1e90ff; /* Bright blue for a focal point */
+}
+
+/* Progress Bar Container and Styling */
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px; /* Add space between progress bar and achievement grid */
+}
+
+.progress-bar-wrapper {
+  position: relative;
+  width: 140px; /* Slightly larger */
+  height: 140px;
+  margin-bottom: 15px;
+}
+
+.circular-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(
+      #4caf50 calc(var(--progress) * 1%),
+      #e0e0e0 calc(var(--progress) * 1%)
+  ); /* Brighter and more engaging */
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Lighter shadow */
+  animation: progress-animation 2s ease-in-out; /* Smooth animation */
+}
+
+.circular-progress-bar span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #333333; /* Darker text color for readability */
+  font-size: 1.7rem; /* Slightly larger */
+  font-weight: bold;
+}
+
+/* Progress Details */
+.progress-details {
+  font-size: 1.2rem; /* Slightly larger */
+  color: #555555; /* Neutral text color */
+  font-weight: bold;
+}
+
+/* Achievement Grid */
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px; /* Increased spacing between cards */
+  padding: 10px;
+}
+
+/* Achievement Cards */
+.achievement-card {
+  background-color: #ffffff; /* White background for contrast */
+  border: 1px solid #e0e0e0; /* Subtle border */
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  color: #333333; /* Darker text color */
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Softer shadow */
+}
+
+/* Hover Effects for Achievement Cards */
+.achievement-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Softer hover shadow */
+}
+
+/* Achievement Image */
+.achievement-card img {
+  width: 70px; /* Slightly larger for prominence */
+  height: 70px;
+  margin-bottom: 15px;
+  border-radius: 50%;
+  border: 2px solid #1e90ff;
+}
+
+/* Achievement Name and Description */
+.achievement-name {
+  font-size: 1.2rem; /* Slightly larger */
+  font-weight: bold;
+  margin: 10px 0;
+  color: #333333; /* Darker text for better readability */
+}
+
+.achievement-description {
+  font-size: 1rem; /* Increased font size */
+  color: #555555; /* Neutral color for the description */
+  margin-bottom: 10px;
+}
+
+/* Obtained Badge */
+.achievement-obtained {
+  background-color: #4caf50; /* Brighter green */
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem; /* Slightly larger */
+  color: #ffffff;
+  font-weight: bold;
+  margin-top: 10px;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+/* No Achievements Message */
+.no-achievements {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555555; /* Neutral color for the message */
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* Smooth Animation for Progress Bar */
+@keyframes progress-animation {
+  from {
+    background: conic-gradient(
+        #e0e0e0 0%,
+        #e0e0e0 100%
+    );
+  }
+  to {
+    background: conic-gradient(
+        #4caf50 calc(var(--progress) * 1%),
+        #e0e0e0 calc(var(--progress) * 1%)
+    );
+  }
+}
