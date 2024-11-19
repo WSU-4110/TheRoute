@@ -143,7 +143,7 @@ export default function MapView() {
         return null;
       }
 
-      setWeather(weatherData);
+      //setWeather(weatherData);
     } catch (error) {
       console.error('Error fetching coordinates:', error);
     }
