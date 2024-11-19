@@ -32,7 +32,7 @@ def award_first_login_achievement(sender, instance, created, **kwargs):
 
 
 # Signal to award the 'Trip Planner' achievement
-@receiver(post_save, sender=apps.get_model('trips', 'Trip'))  # Replace 'trips' with your app label
+@receiver(post_save, sender=apps.get_model('userTrips', 'TripDetails'))  # Replace 'trips' with your app label
 def award_trip_planner_achievement(sender, instance, created, **kwargs):
     """
     Awards the 'Trip Planner' achievement to the user upon successfully planning and setting up their first trip.
