@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 node_modules/.package-lock.json
 node_modules/.bin/loose-envify
 node_modules/.bin/loose-envify.cmd
@@ -198,3 +199,6 @@ node_modules/react-icons/wi/index.d.ts
 node_modules/react-icons/wi/index.js
 node_modules/react-icons/wi/index.mjs
 node_modules/react-icons/wi/package.json
+=======
+node_modules
+>>>>>>> 01042efa71bb6fb6493f22ce64efe87689227296

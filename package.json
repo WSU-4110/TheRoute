@@ -1,6 +1,33 @@
 {
+<<<<<<< HEAD
   "dependencies": {
     "jwt-decode": "^4.0.0",
     "react-icons": "^5.3.0"
+=======
+  "name": "theroute",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@mapbox/mapbox-gl-directions": "^4.3.1",
+    "@mapbox/mapbox-gl-geocoder": "^5.0.3",
+    "@mapbox/search-js-react": "^1.0.0-beta.22",
+    "axios": "^1.7.7",
+    "jwt-decode": "^4.0.0",
+    "mapbox-gl": "^3.7.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.3.0",
+    "react-native-dotenv": "^3.4.11",
+    "react-router-dom": "^6.27.0",
+    "react-scripts": "^5.0.1",
+    "web-vitals": "^4.2.3"
+>>>>>>> 01042efa71bb6fb6493f22ce64efe87689227296
   }
 }
