@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'; 
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { FaHome, FaCar, FaUtensils, FaRunning, FaQuestionCircle, FaShoppingBag, FaTrash } from 'react-icons/fa';  
 import '../styles/ViewExpenses.css';
+
 
 const ViewExpenses = () => {
   const [expenses, setExpenses] = useState([]);
@@ -11,6 +13,24 @@ const ViewExpenses = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [totalBudget, setTotalBudget] = useState(300000);  // Set a total budget (e.g., 300000)
   const { getAccessToken } = useContext(AuthContext);
+
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  /* Loading Data For Pie Chart */
+    const data = [
+        { name: 'Housing', budget: 1000 },
+        { name: 'Transportation', budget: 300 },
+        { name: 'Food', budget: 200 },
+        { name: 'Activities', budget: 1000 },
+        { name: 'Shopping', budget: 1000 },
+        { name: 'Other', budget: 1000 }
+    ];
+
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#808080'];
+
+    const onPieEnter = (_, index) => {
+        setActiveIndex(index);
+    }; 
 
   useEffect(() => {
     fetchExpenses();
@@ -95,6 +115,7 @@ const ViewExpenses = () => {
       <br></br>
       <br></br>
       <h1>Expenses</h1>
+      <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
 
       {/* Display Error Message */}
       {errorMessage && <p className="error">{errorMessage}</p>}
@@ -106,15 +127,17 @@ const ViewExpenses = () => {
       <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
       
       {/* Category Dropdown */}
-      <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory} className="category-filter">
-        <option value="">All Categories</option>
-        <option value="housing">Housing</option>
-        <option value="transportation">Transportation</option>
-        <option value="food">Food</option>
-        <option value="activities">Activities</option>
-        <option value="shopping">Shopping</option>
-        <option value="other">Other</option>
-      </select>
+      <div classname='dropdown-container'>
+        <select className='dropdown' onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
+          <option value="">All Categories</option>
+          <option value="housing">Housing</option>
+          <option value="transportation">Transportation</option>
+          <option value="food">Food</option>
+          <option value="activities">Activities</option>
+          <option value="shopping">Shopping</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
 
       <div className="expenses-container">
         {filteredExpenses.length > 0 ? (
@@ -137,6 +160,26 @@ const ViewExpenses = () => {
           <p>No expenses to display for this category.</p>
         )}
       </div>
+
+      <div className='pieChart'>
+        <PieChart width={500} height={500}>
+              <Pie
+                  activeIndex={activeIndex}
+                  data={data}
+                  dataKey="budget"
+                  outerRadius={250}
+                  fill="green"
+                  onMouseEnter={onPieEnter}
+                  style={{ cursor: 'pointer', outline: 'none' }} // Ensure no outline on focus
+              >
+                  {data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+              </Pie>
+              <Tooltip />
+          </PieChart>
+        </div> 
+
     </div>
   );
 };

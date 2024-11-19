@@ -28,3 +28,45 @@
 .delete-button:hover {
   background-color: #c0392b;
 }
+
+.input-field {
+  right: 0;
+  width: 30%;
+  font-size: 20px;
+  color: green;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  border-width: 4px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.button-click {
+  font-size: 20px;
+  color: green;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  border-width: 4px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.add-dropdown-container {
+  margin: 20px;
+  width: 200px;
+}
+
+.add-dropdown {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
