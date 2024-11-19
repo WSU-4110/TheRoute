@@ -7,6 +7,7 @@ node_modules/
 
 # Ignore node_modules in backend for clarity
 backend/node_modules/
+backend/DjangoServer/db.sqlite3
 
 # testing
 coverage/
