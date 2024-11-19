@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaMap, FaDollarSign, FaHome, FaCar, FaUser, FaSignOutAlt, FaTimes } from 'react-icons/fa';
+import { FaMap, FaDollarSign, FaHome, FaCar, FaUser, FaSignOutAlt, FaTimes, FaTrophy } from 'react-icons/fa'; // Added FaTrophy icon
 import axios from 'axios';
 import '../styles/SideBar.css';
 
@@ -41,54 +41,29 @@ const Sidebar = () => {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const getSidebarOptions = () => {
-    if (location.pathname === '/map') {
-      return (
-        <>
-          <Link to="/" onClick={toggleSidebar}>
-            <FaHome /> Home
-          </Link>
-          <Link to="/add-expense" onClick={toggleSidebar}>
-            <FaDollarSign /> Expenses
-          </Link>
-          <Link to="/setup" onClick={toggleSidebar}>
-            <FaCar /> Trip Details
-          </Link>
-        </>
-      );
-    } else if (location.pathname === '/add-expense' || location.pathname === '/view-expense') {
-      return (
-        <>
-          <Link to="/" onClick={toggleSidebar}>
-            <FaHome /> Home
-          </Link>
-          <Link to="/map" onClick={toggleSidebar}>
-            <FaMap /> Map
-          </Link>
-          <Link to="/setup" onClick={toggleSidebar}>
-            <FaCar /> Trip Details
-          </Link>
-        </>
-      );
-    } else if (location.pathname === '/setup') {
-      return (
-        <>
-          <Link to="/" onClick={toggleSidebar}>
-            <FaHome /> Home
-          </Link>
-          <Link to="/map" onClick={toggleSidebar}>
-            <FaMap /> Map
-          </Link>
-          <Link to="/add-expense" onClick={toggleSidebar}>
-            <FaDollarSign /> Expenses
-          </Link>
-        </>
-      );
-    } else {
-      return null;
-    }
+    return (
+      <>
+        <Link to="/" onClick={toggleSidebar}>
+          <FaHome /> Home
+        </Link>
+        <Link to="/view-expense" onClick={toggleSidebar}>
+          <FaDollarSign /> Expenses
+        </Link>
+        <Link to="/map" onClick={toggleSidebar}>
+          <FaMap /> Map
+        </Link>
+        <Link to="/view-achievements" onClick={toggleSidebar}>
+          <FaTrophy /> Achievements {/* New Achievements Option */}
+        </Link>
+        <Link to="/setup" onClick={toggleSidebar}>
+          <FaCar /> Trip Details
+        </Link>
+      </>
+    );
   };
 
-  if (!['/map', '/add-expense', '/view-expense', '/setup'].includes(location.pathname)) {
+  // Only render the sidebar for specified paths
+  if (!['/map', '/add-expense', '/view-expense', '/setup', '/view-achievements'].includes(location.pathname)) {
     return null;
   }
 
@@ -100,8 +75,8 @@ const Sidebar = () => {
         </button>
       )}
       <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-        <div className='close'>
-          <FaTimes onClick={toggleSidebar} style={{position: 'absolute', top: '10px', right: '10px' }} />
+        <div className="close">
+          <FaTimes onClick={toggleSidebar} style={{ position: 'absolute', top: '10px', right: '10px' }} />
         </div>
         <div className="profile">
           <FaUser size={32} />
