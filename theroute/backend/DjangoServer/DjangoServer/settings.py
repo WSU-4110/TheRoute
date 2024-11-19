@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "userAPI.apps.UserApiConfig",  # Keep this one
     "userExpenses",  # Another custom app
     "rest_framework_simplejwt.token_blacklist",
+    "userTrips",
 ]
 
 # REST Framework settings
