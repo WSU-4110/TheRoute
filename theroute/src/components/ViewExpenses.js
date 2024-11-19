@@ -115,6 +115,7 @@ const ViewExpenses = () => {
       <br></br>
       <br></br>
       <h1>Expenses</h1>
+      <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
 
       {/* Display Error Message */}
       {errorMessage && <p className="error">{errorMessage}</p>}

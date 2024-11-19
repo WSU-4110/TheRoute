@@ -3,8 +3,7 @@ import React, { useState, useContext } from 'react';
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
 import {Link} from 'react-router-dom';
-import '../styles/Dropdown.css';
-
+import '../styles/AddExpense.css';
 import { FaMap, FaDollarSign, FaHome, FaCar, FaUser, FaSignOutAlt, FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 
@@ -13,6 +12,7 @@ const AddExpense = () => {
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
+  const [result, setResult] = useState('');
 
   const handleAddExpense = async (e) => {
     e.preventDefault();
@@ -41,13 +41,17 @@ const AddExpense = () => {
     }
   };
 
+  const handleClick = () => {
+    setResult('Expense Added!');
+  };
+
   return (
     <div>
       <h2>Add Expense</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleAddExpense}>
       <div className='dropdown-container'>
-        <select className='dropdown'
+        <select className='add-dropdown'
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           required
@@ -61,15 +65,18 @@ const AddExpense = () => {
           <option value="shopping">Shopping</option>
         </select>
       </div>
-        <input
+        <input className='input-field'
           type="number"
           placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           required
         />
-        <button type="submit">Add Expense</button>
-        <div className='expenses'>
+        <div className='button-click'>
+          <button onClick={handleClick} type="submit">Add Expense</button>
+          {result && <p>{result}</p>}
+          </div>
+        <div className='button-click'>
           <Link to='/view-expense'>
         <button>View Expenses</button>
         </Link>
