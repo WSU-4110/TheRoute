@@ -1,0 +1,34 @@
+/* Basic container styling */
+.dropdown-container {
+    margin: 20px;
+    width: 200px;
+  }
+  
+  /* Styling the select element */
+  .dropdown {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Hover effect */
+  .dropdown:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Focus effect */
+  .dropdown:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Option styling */
+  .dropdown option {
+    font-size: 12px;
+    padding: 5px;
+  }

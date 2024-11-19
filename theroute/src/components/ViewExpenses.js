@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react'; 
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { FaHome, FaCar, FaUtensils, FaRunning, FaQuestionCircle, FaShoppingBag, FaTrash } from 'react-icons/fa';  
 import '../styles/ViewExpenses.css';
+import '../styles/Dropdown.css';
+
 
 const ViewExpenses = () => {
   const [expenses, setExpenses] = useState([]);
@@ -11,6 +14,24 @@ const ViewExpenses = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [totalBudget, setTotalBudget] = useState(300000);  // Set a total budget (e.g., 300000)
   const { getAccessToken } = useContext(AuthContext);
+
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  /* Loading Data For Pie Chart */
+    const data = [
+        { name: 'Housing', budget: 1000 },
+        { name: 'Transportation', budget: 300 },
+        { name: 'Food', budget: 200 },
+        { name: 'Activities', budget: 1000 },
+        { name: 'Shopping', budget: 1000 },
+        { name: 'Other', budget: 1000 }
+    ];
+
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#808080'];
+
+    const onPieEnter = (_, index) => {
+        setActiveIndex(index);
+    }; 
 
   useEffect(() => {
     fetchExpenses();
@@ -137,6 +158,26 @@ const ViewExpenses = () => {
           <p>No expenses to display for this category.</p>
         )}
       </div>
+
+      <div className='pieChart'>
+        <PieChart width={500} height={500}>
+              <Pie
+                  activeIndex={activeIndex}
+                  data={data}
+                  dataKey="budget"
+                  outerRadius={250}
+                  fill="green"
+                  onMouseEnter={onPieEnter}
+                  style={{ cursor: 'pointer', outline: 'none' }} // Ensure no outline on focus
+              >
+                  {data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+              </Pie>
+              <Tooltip />
+          </PieChart>
+        </div> 
+
     </div>
   );
 };
