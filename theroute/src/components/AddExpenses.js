@@ -3,6 +3,8 @@ import React, { useState, useContext } from 'react';
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
 import {Link} from 'react-router-dom';
+import '../styles/Dropdown.css';
+
 import { FaMap, FaDollarSign, FaHome, FaCar, FaUser, FaSignOutAlt, FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 
@@ -44,7 +46,8 @@ const AddExpense = () => {
       <h2>Add Expense</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleAddExpense}>
-        <select
+      <div className='dropdown-container'>
+        <select className='dropdown'
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           required
@@ -57,6 +60,7 @@ const AddExpense = () => {
           <option value="housing">Housing</option>
           <option value="shopping">Shopping</option>
         </select>
+      </div>
         <input
           type="number"
           placeholder="Amount"

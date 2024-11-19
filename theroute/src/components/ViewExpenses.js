@@ -4,7 +4,6 @@ import { AuthContext } from '../context/AuthContext';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { FaHome, FaCar, FaUtensils, FaRunning, FaQuestionCircle, FaShoppingBag, FaTrash } from 'react-icons/fa';  
 import '../styles/ViewExpenses.css';
-import '../styles/Dropdown.css';
 
 
 const ViewExpenses = () => {
@@ -127,15 +126,17 @@ const ViewExpenses = () => {
       <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
       
       {/* Category Dropdown */}
-      <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory} className="category-filter">
-        <option value="">All Categories</option>
-        <option value="housing">Housing</option>
-        <option value="transportation">Transportation</option>
-        <option value="food">Food</option>
-        <option value="activities">Activities</option>
-        <option value="shopping">Shopping</option>
-        <option value="other">Other</option>
-      </select>
+      <div classname='dropdown-container'>
+        <select className='dropdown' onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
+          <option value="">All Categories</option>
+          <option value="housing">Housing</option>
+          <option value="transportation">Transportation</option>
+          <option value="food">Food</option>
+          <option value="activities">Activities</option>
+          <option value="shopping">Shopping</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
 
       <div className="expenses-container">
         {filteredExpenses.length > 0 ? (
