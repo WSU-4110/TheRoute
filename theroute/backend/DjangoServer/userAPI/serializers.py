@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
-from UserAchievements.models import UserAchievement, Achievement
+from UserAchievements.models import Achievement, UserAchievement
+
 
 UserModel = get_user_model()
 
