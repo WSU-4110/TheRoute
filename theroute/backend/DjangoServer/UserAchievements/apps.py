@@ -4,7 +4,7 @@ from django.apps import AppConfig
 
 class AchievementsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'  # Optional
-    name = 'achievements'
+    name = 'UserAchievements'
 
     def ready(self):
         """
@@ -12,6 +12,6 @@ class AchievementsConfig(AppConfig):
         This method is called once when the app is ready, ensuring signal handlers are active.
         """
         try:
-            import achievements.signals  # Import signals to register them
+            import UserAchievements.signals  # Import signals to register them
         except ImportError as e:
             raise ImportError(f"Error importing signals in 'achievements': {e}")

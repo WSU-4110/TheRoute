@@ -22,7 +22,7 @@ class UserAchievement(models.Model):
         related_name='achievement_userachievements'
     )
     achievement = models.ForeignKey(
-        'achievements.Achievement',
+        'UserAchievements.Achievement',
         on_delete=models.CASCADE,
         related_name='achievement_userachievements'
     )
