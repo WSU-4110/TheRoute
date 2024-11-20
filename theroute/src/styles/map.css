@@ -1,13 +1,114 @@
+.geocoder {
+  position: absolute;
+  z-index: 20;
+  right: 10%;
+  top: 14%;
+  text-decoration: none;
+  list-style-type: none;
+  }
+  
 .mapbox-form-label{
   margin: 0;
 }
 
+.input-container{
+  width: 300px;
+}
 
+.waypoint-input{
+  width: 30vw;
+}
+
+.mapboxgl-ctrl-geocoder.mapboxgl-input{
+  width: 300px;
+  border: 1px solid #ccc;
+}
+
+.mapboxgl-ctrl-geocoder.mapboxgl-ctrl{
+  width: 300px;
+}
+
+.mapboxgl-ctrl-geocoder--icon-search{
+  display: none;
+}
+
+.mapboxgl-ctrl-geocoder--icon-loading{
+  display: none;
+}
+
+.mapboxgl-ctrl-geocoder--button {
+  position: absolute; 
+  left: 230px; 
+  width: 20px;
+  height: 20px;
+  top: 30%; 
+  background: none; 
+  border: none;
+  cursor: pointer;
+  z-index: 1; 
+}
+
+.mapboxgl-ctrl-geocoder:first-child {
+  z-index: 1001;
+}
+
+.mapboxgl-ctrl-geocoder-input{
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  z-index: 2000;
+  width: 100%;
+  
+}
+
+.input-container{
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  z-index: 200;
+  width: 250px;
+ 
+}
+
+.input{
+  position: absolute;
+  top: 10px;
+  width: 300px;
+  left: 10px;
+  
+}
+
+/* Ensure the suggestions appear above the input box */
+.mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--results {
+  position: absolute;
+  
+  left: 0;
+  width: 100%;
+  z-index: 9999; /* Make sure it's above other elements */
+}
+
+/* Optional: Adjust the input field to give space for suggestions */
+.mapboxgl-ctrl-geocoder input {
+  z-index: 10; /* Keep the input field above the map */
+}
+
+
+.mapboxgl-ctrl-geocoder-dropdown{
+  z-index: 4000;
+}
+
+.geocoder-container {
+  position: absolute;
+  top: 20px;
+  left: 20px; 
+  z-index: 10;
+  width: 100%;
+}
 
   .trip-button {
     position: absolute; 
     top: 5px; 
-    right: 10px;
+    right: 50px;
     z-index: 1000; 
   }
   
@@ -104,7 +205,6 @@
   margin: 5px 0;
   color: #666;
 }
-
 
 
 
