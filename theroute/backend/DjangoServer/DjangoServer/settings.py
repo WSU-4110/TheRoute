@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     #'UserAchievements.apps.AchievementsConfig',
     "rest_framework_simplejwt.token_blacklist",
     "userTrips",
+    "achievements",
 ]
 
 # REST Framework settings
