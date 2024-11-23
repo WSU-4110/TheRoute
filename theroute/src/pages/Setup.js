@@ -94,112 +94,124 @@ export const Setup = () => {
 
   return (
     <div>
-      <div className="trip-form">
-        <h2>Add a Trip</h2>
-        <form onSubmit={handleAddTrip}>
-          <label>
-            Starting Location:
-            <input
-              type="text"
-              value={startLocation}
-              onChange={(e) => setStartLocation(e.target.value)}
-              placeholder="Enter starting location"
-            />
-          </label>
-          <br />
-          <label>
-            End Location:
-            <input
-              type="text"
-              value={endLocation}
-              onChange={(e) => setEndLocation(e.target.value)}
-              placeholder="Enter end location"
-            />
-          </label>
-          <br />
-          <label>
-            Trip Distance (in miles):
-            <input
-              type="number"
-              value={tripDistance}
-              onChange={(e) => setTripDistance(e.target.value)}
-              placeholder="Enter trip distance"
-            />
-          </label>
-          <br />
-          <label>
-            Trip Date:
-            <input
-              type="date"
-              value={tripDate}
-              onChange={(e) => setTripDate(e.target.value)}
-            />
-          </label>
-          <br />
-          <label>
-            Return Date:
-            <input
-              type="date"
-              value={returnDate}
-              onChange={(e) => setReturnDate(e.target.value)}
-            />
-          </label>
-          <br />
-          <label>
-            Email:
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter email"
-            />
-          </label>
-          <br />
-          <label>
-            Vehicle Information:
-            <input
-              type="text"
-              value={vehicleInfo}
-              onChange={(e) => setVehicleInfo(e.target.value)}
-              placeholder="Enter vehicle info"
-            />
-          </label>
-          <br />
-          <label>
-            Planned Locations:
-            <textarea
-              value={plannedLocations}
-              onChange={(e) => setPlannedLocations(e.target.value)}
-              placeholder="Enter planned locations"
-            />
-          </label>
-          <br />
-          <label>
-            Expenses:
-            <input
-              type="number"
-              value={expenses}
-              onChange={(e) => setExpenses(e.target.value)}
-              placeholder="Enter expenses"
-            />
-          </label>
-          <br />
-          <button type="submit" disabled={isFetchingLocation}>
-            {isFetchingLocation ? 'Loading Location...' : 'Save Trip'}
-          </button>
-        </form>
-      </div>
+      <div className="background-div">
+        <div className="trip-form">
+          <h2>Add a Trip</h2>
+          <form onSubmit={handleAddTrip}>
+            <label className="label-name">
+              Starting Location:
+              <input
+                className="form-input"
+                type="text"
+                value={startLocation}
+                onChange={(e) => setStartLocation(e.target.value)}
+                placeholder="Enter starting location"
+              />
+            </label>
+            <br />
+            <label className="label-name">
+              End Location:
+              <input
+              className="form-input"
+                type="text"
+                value={endLocation}
+                onChange={(e) => setEndLocation(e.target.value)}
+                placeholder="Enter end location"
+              />
+            </label>
+            <br />
+            <label className="label-name">
+              Trip Distance (in miles):
+              <input
+              className="form-input"
+                type="number"
+                value={tripDistance}
+                onChange={(e) => setTripDistance(e.target.value)}
+                placeholder="Enter trip distance"
+              />
+            </label>
+            <br />
+            <label className="label-name">
+              Trip Date:
+              <input
+              className="form-input"
+                type="date"
+                value={tripDate}
+                onChange={(e) => setTripDate(e.target.value)}
+              />
+            </label>
+            <br />
+            <label className="label-name">
+              Return Date:
+              <input
+              className="form-input"
+                type="date"
+                value={returnDate}
+                onChange={(e) => setReturnDate(e.target.value)}
+              />
+            </label>
+            <br />
+            <label className="label-name">
+              Email:
+              <input
+              className="form-input"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter email"
+              />
+            </label>
+            <br />
+            <label className="label-name">
+              Vehicle Information:
+              <input
+              className="form-input"
+                type="text"
+                value={vehicleInfo}
+                onChange={(e) => setVehicleInfo(e.target.value)}
+                placeholder="Enter vehicle info"
+              />
+            </label>
+            <br />
+            <label className="label-name">
+              Planned Locations:
+              <input
+                className="form-input"
+                value={plannedLocations}
+                onChange={(e) => setPlannedLocations(e.target.value)}
+                placeholder="Enter planned locations"
+              />
+            </label>
+            <br />
+            <label className="label-name">
+              Expenses:
+              <input
+              className="form-input"
+                type="number"
+                value={expenses}
+                onChange={(e) => setExpenses(e.target.value)}
+                placeholder="Enter expenses"
+              />
+            </label>
+            <br />
+            <button type="submit" disabled={isFetchingLocation}>
+              {isFetchingLocation ? 'Loading Location...' : 'Save Trip'}
+            </button>
+          </form>
+          {/* Button to navigate to view saved trips page */}
+        <div className="view-trips-button">
+          <Link to="/view-trips">
+            <button>View Saved Trips</button>
+          </Link>
+        </div>
+        <div className="route-button">
+          <Link to="/map">
+            <button>Go to theRoute!</button>
+          </Link>
+          </div>
+        </div>
 
-      {/* Button to navigate to view saved trips page */}
-      <div className="view-trips-button">
-        <Link to="/view-trips">
-          <button>View Saved Trips</button>
-        </Link>
       </div>
-
-      <Link to="/map">
-        <button>Go to theRoute!</button>
-      </Link>
     </div>
   );
 };

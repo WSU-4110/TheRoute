@@ -1,5 +1,5 @@
 .trip-form-container {
-  max-width: 800px;
+  max-width: 600px;
   margin: 20px auto;
   padding: 15px;
   background: #f8f9fa;
@@ -7,19 +7,48 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
+.background-div{
+  background-color: #dfbdbb35;
+}
+
+textarea {
+  width: 95%;
+  height: 50px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+}
+
+.form-input{
+  width: 90%;
+  margin-left: 0;
+  margin-top: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+
 .trip-form {
+  margin-top: 0px;
   background: white;
   padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
 }
 
 h2 {
   text-align: center;
-  color: #2c3e50;
+  color: #000000;
   margin-bottom: 15px;
   font-size: 24px;
-  border-bottom: 2px solid #3498db;
+  border-bottom: 1.5px solid #000000;
   padding-bottom: 10px;
 }
 
@@ -46,7 +75,7 @@ button {
   width: 100%;
   max-width: 200px;
   padding: 10px;
-  background-color: #3498db;
+  background-color: #2a61c0;
   color: white;
   border: none;
   border-radius: 6px;
@@ -109,6 +138,7 @@ button:active {
 
 .trip-form h2 {
   margin: 0;
+  
 }
 
 a {

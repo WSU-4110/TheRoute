@@ -1,6 +1,22 @@
-/* Background for the entire screen */ 
+.main-box{
+  background-color: white;
+  height: 400px;
+  margin-left: 35px;
+  margin-right: 35px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.expenses-header{
+  color: black;
+  text-align: left;
+  font-size: 35px;
+  margin-left: 30px;
+}
+
 .view-expenses {
-  background-color: #f0f0f0; 
+  background-color: #e3c1b1; 
   padding: 20px; 
   min-height: 100vh; 
 }
@@ -91,8 +107,8 @@ h1 {
 /* Progress Bar Container */
 .progress-bar-container {
   width: 100%;
-  background-color: #e0e0e0; 
-  border-radius: 10px;
+  background-color: #918686; 
+  border-radius: 3px;
   height: 20px;
   margin: 20px 0; 
   overflow: hidden;
@@ -114,7 +130,7 @@ h1 {
 }
 
 .dropdown-container {
-  margin: 20px;
+  margin-top: 30px;
   width: 200px;
 }
 
@@ -132,8 +148,12 @@ h1 {
 
 .pieChart {
   position: absolute;
-  top: 60%;
-  right: 0;
+  top: 90%;
+  left: 100px;
   transform: translateY(-50%);
   margin: 20px
+}
+
+.profile{
+  padding-left: 30px;
 }
