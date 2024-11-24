@@ -103,29 +103,7 @@
   left: 20px; 
   z-index: 10;
   width: 100%;
-}
-
-  .trip-button {
-    position: absolute; 
-    top: 5px; 
-    right: 50px;
-    z-index: 1000; 
-  }
-  
-  .trip-button button {
-    padding: 10px 15px; /* Adjust padding for the button */
-    background-color: #007bff; /* Button color */
-    color: white; /* Text color */
-    border: none; /* Remove default border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Font size */
-  }
-  
-  .trip-button button:hover {
-    background-color: #0056b3; /* Darker color on hover */
-  }
-  
+}  
   
 .weather-overlay {
   position: absolute;
@@ -220,7 +198,18 @@
   z-index: 100000;
 }
 
+.save {
+  width: 80px;
+  position: absolute;  
+  top: 32px; 
+  left: 315px; 
+  z-index: 1000; 
+  visibility: visible; 
+  opacity: 1;  
+  color: #ffffff;
+  background-color: #006ef4;
+}
 
-
-
-
+.save:hover{
+  background-color: #3284ef;
+}

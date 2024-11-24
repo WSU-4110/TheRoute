@@ -16,6 +16,22 @@ export default function MapView() {
   const [waypoints, setWaypoints] = useState([]);
   const [weather, setWeather] = useState(null);
   const [isWeatherExpanded, setIsWeatherExpanded] = useState(false);
+  const [instructions, setInstructions] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [tripDistance, setTripDistance] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [email, setEmail] = useState('');
+  const [budget, setBudget] = useState('');
+  const [cityInput, setCityInput] = useState('');
+  const [startLocation, setStartLocation] = useState('');
+  const [endLocation, setEndLocation] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');  // Error state
+
+  useEffect(() => { //user email from local storage
+    const storedEmail = localStorage.getItem('userEmail'); // Example of fetching user data from localStorage
+    setEmail(storedEmail);
+  }, []);
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_KEY;
@@ -71,22 +87,6 @@ export default function MapView() {
     };
   }, []);
 
-  const handleGeocoderResult = (type, coordinates) => {
-    if (type === 'start') {
-      setStartCoords(coordinates);
-      directionsControlRef.current.setOrigin(coordinates);
-    } else if (type === 'end') {
-      setEndCoords(coordinates);
-      directionsControlRef.current.setDestination(coordinates);
-    } else if (type === 'waypoint') {
-      setWaypoints((prevWaypoints) => {
-        const newWaypoints = [...prevWaypoints, coordinates];
-        directionsControlRef.current.addWaypoint(prevWaypoints.length, coordinates);
-        return newWaypoints;
-      });
-    }
-  };
-
   const addGeocoder = (type, placeholder) => {
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
@@ -96,7 +96,7 @@ export default function MapView() {
 
     geocoder.on('result', (event) => {
       const location = event.result.geometry.coordinates;
-      handleGeocoderResult(type, location);
+      handleGeocoderResult(type, location, event.result);
     });
 
     const container = document.getElementById(`${type}-input`);
@@ -104,8 +104,18 @@ export default function MapView() {
       container.appendChild(geocoder.onAdd(mapInstanceRef.current));
     }
   };
-  
-  
+
+  // New useEffect for calculating the trip distance
+  useEffect(() => {
+    if (directionsControlRef.current) {
+      directionsControlRef.current.on('route', (e) => {
+      const route = e.route[0];  // Get the first route
+      const distance = route.distance / 1000;  // Convert distance from meters to kilometers
+      setTripDistance(distance.toFixed(2));  // Store the distance with 2 decimal places
+      });
+    }
+  }, [directionsControlRef.current]); // This will run whenever directionsControlRef changes
+
 
   useEffect(() => {
     addGeocoder('start', 'Enter start location');
@@ -186,13 +196,75 @@ export default function MapView() {
     });
   };
   
-
   useEffect(() => {
     if (mapInstanceRef.current && waypoints.length > 0) {
       addMarkers();
     }
   }, [waypoints]);
 
+  
+  const handleGeocoderResult = (type, coordinates) => {
+    if (type === 'start') {
+      setStartCoords(coordinates);
+      directionsControlRef.current.setOrigin(coordinates);
+    } else if (type === 'end') {
+      setEndCoords(coordinates);
+      directionsControlRef.current.setDestination(coordinates);
+    } else if (type === 'waypoint') {
+      setWaypoints((prevWaypoints) => {
+        const newWaypoints = [...prevWaypoints, coordinates];
+        directionsControlRef.current.addWaypoint(prevWaypoints.length, coordinates);
+        return newWaypoints;
+      });
+    }
+  };
+
+  const saveTrip = async () => {
+    // Fetch location details (city, state, etc.) for start and end coordinates
+    const getLocationDetails = async (coordinates) => {
+      try {
+        const response = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${coordinates[0]},${coordinates[1]}.json?access_token=${mapboxgl.accessToken}`
+        );
+        const data = await response.json();
+        if (data.features && data.features.length > 0) {
+          const place = data.features[0];
+          // Extract location name, city, and state from the response
+          const name = place.text; // e.g., 'Little Caesars Arena'
+          const city = place.context.find((item) => item.id.includes('place')).text;
+          const state = place.context.find((item) => item.id.includes('region')).text;
+          return { name, city, state };
+        } else {
+          throw new Error('No location details found');
+        }
+      } catch (error) {
+        console.error('Error fetching location details:', error);
+        return { name: 'Unknown', city: 'Unknown', state: 'Unknown' };
+      }
+    };
+  
+    // Fetch details for start and end locations
+    const startDetails = await getLocationDetails(startCoords);
+    const endDetails = await getLocationDetails(endCoords);
+  
+    // Create trip data to store in localStorage
+    const tripData = {
+      startLocation: `${startDetails.name}, ${startDetails.city}, ${startDetails.state}`,
+      endLocation: `${endDetails.name}, ${endDetails.city}, ${endDetails.state}`,
+      tripDistance,  // Assuming `tripDistance` is already calculated
+      startDate,
+      endDate,
+      email,
+      budget,
+    };
+  
+    // Save trip data in localStorage
+    localStorage.setItem('tripData', JSON.stringify(tripData));
+  
+    // Optionally, display a success message or redirect
+    alert('Trip saved successfully!');
+  };
+  
   return (
     <div>
       {weather && (
@@ -230,8 +302,8 @@ export default function MapView() {
         <div id="start-input"></div>
         <div id="end-input" ></div>
         <div id="waypoint-input" ></div>
+        <button className='save' onClick={saveTrip}>Save Trip</button>
       </div>
-    
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
     </div>
   );

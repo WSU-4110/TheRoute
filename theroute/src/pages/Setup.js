@@ -1,94 +1,91 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import '../styles/setup.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
 
 export const Setup = () => {
-  const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
+  const { getAccessToken } = useContext(AuthContext);
+  const [tripName, setTripName] = useState('');
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
-  const [returnDate, setReturnDate] = useState('');
-  const [trips, setTrips] = useState([]);
   const [tripDistance, setTripDistance] = useState('');
   const [tripDate, setTripDate] = useState('');
+  const [returnDate, setReturnDate] = useState('');
+  const [budget, setBudget] = useState('');
   const [email, setEmail] = useState('');
-  const [vehicleInfo, setVehicleInfo] = useState('');
-  const [expenses, setExpenses] = useState('');
-  const [plannedLocations, setPlannedLocations] = useState('');
   const [isFetchingLocation, setIsFetchingLocation] = useState(true);
+  const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState({}); // State for validation errors
   const navigate = useNavigate();
 
-  // Fetch city name based on coordinates
-  const getCityName = async () => {
-    try {
-      setIsFetchingLocation(true);
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${startCoords[0]},${startCoords[1]}.json?access_token=YOUR_MAPBOX_ACCESS_TOKEN`
-      );
-      const data = await response.json();
-      if (data && data.features && data.features.length > 0) {
-        setStartLocation(data.features[0].text);
-      } else {
-        setStartLocation('Unknown Location');
-      }
-    } catch (error) {
-      console.error('Error fetching city name:', error);
-      setStartLocation('Error fetching location');
-    } finally {
-      setIsFetchingLocation(false);
-    }
-  };
-
+  // Initialize state with data from local storage
   useEffect(() => {
-    getCityName();
-  }, [startCoords]);
+    const savedStartLocation = localStorage.getItem('startLocation') || '';
+    const savedEndLocation = localStorage.getItem('endLocation') || '';
+    const savedTripDistance = localStorage.getItem('tripDistance') || '';
+    const savedEmail = localStorage.getItem('email') || '';
 
-  // Fetch all saved trips from the backend
-  const fetchTrips = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/trips');
-      const data = await response.json();
-      console.log("Fetched trips:", data); 
-      setTrips(data);
-    } catch (error) {
-      console.error('Error fetching trips:', error);
-    }
-  };
+    setStartLocation(savedStartLocation);
+    setEndLocation(savedEndLocation);
+    setTripDistance(savedTripDistance);
+    setEmail(savedEmail);
 
-  useEffect(() => {
-    fetchTrips();
+    setIsFetchingLocation(false);
   }, []);
 
   // Handle form submission to add a new trip
-  const handleAddTrip = (e) => {
+  const handleAddTrip = async (e) => {
     e.preventDefault();
 
-    // Get logged-in user's email
-    const userEmail = localStorage.getItem('userEmail');
-    if (!userEmail) {
-      alert('Please log in to save trips');
-      navigate('/login');
-      return;
+    // Validate fields
+    let errors = {};
+    if (!tripName) errors.tripName = '*Trip Name is required';
+    if (!startLocation) errors.startLocation = '*Starting Location is required';
+    if (!endLocation) errors.endLocation = '*End Location is required';
+    if (!tripDistance) errors.tripDistance = '*Trip Distance is required';
+    if (!tripDate) errors.tripDate = '*Trip Date is required';
+    if (!returnDate) errors.returnDate = '*Return Date is required';
+    if (!email) errors.email = '*Email is required';
+    if (!budget) errors.budget = '*Budget is required';
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors); // Set validation errors
+      return; // Prevent form submission if there are errors
     }
 
     const tripData = {
-      startLocation,
-      endLocation,
-      tripDistance,
-      tripDate,
-      returnDate,
-      email: userEmail,  // Use logged-in user's email
-      vehicleInfo,
-      expenses,
-      plannedLocations,
+      email: email,
+      trip_name: tripName,
+      start_location: startLocation,
+      end_location: endLocation,
+      trip_distance: parseFloat(tripDistance),
+      start_date: tripDate,
+      end_date: returnDate,
+      budget: parseFloat(budget),
     };
 
     try {
-      const existingTrips = JSON.parse(localStorage.getItem('trips')) || [];
-      localStorage.setItem('trips', JSON.stringify([...existingTrips, tripData]));
+      const token = await getAccessToken();
+      if (!token) {
+        setError('Authentication required. Please log in again.');
+        return;
+      }
+
+      const response = await axios.post(
+        'http://localhost:8000/api/trips/',
+        tripData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      console.log('Trip added successfully:', response.data);
       alert('Trip saved successfully!');
+      navigate('/view-trips'); // Redirect to view trips page after success
     } catch (error) {
-      console.error('Error saving trip:', error);
-      alert('Error saving trip');
+      console.error('Failed to add trip:', error.response?.data || error);
+      alert('Failed to add trip. Please try again.');
     }
   };
 
@@ -99,120 +96,133 @@ export const Setup = () => {
           <h2>Add a Trip</h2>
           <form onSubmit={handleAddTrip}>
             <label className="label-name">
+              Trip Name:
+              <input
+                className="form-input"
+                type="text"
+                value={tripName}
+                onChange={(e) => setTripName(e.target.value)}
+                placeholder="Enter trip name"
+              />
+              {validationErrors.tripName && (
+                <span className="error-message">{validationErrors.tripName}</span>
+              )}
+            </label>
+            <br />
+            <label className="label-name">
               Starting Location:
               <input
                 className="form-input"
                 type="text"
                 value={startLocation}
-                onChange={(e) => setStartLocation(e.target.value)}
                 placeholder="Enter starting location"
+                onChange={(e) => setStartLocation(e.target.value)}
               />
+              {validationErrors.startLocation && (
+                <span className="error-message">{validationErrors.startLocation}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               End Location:
               <input
-              className="form-input"
+                className="form-input"
                 type="text"
                 value={endLocation}
-                onChange={(e) => setEndLocation(e.target.value)}
                 placeholder="Enter end location"
+                onChange={(e) => setEndLocation(e.target.value)}
               />
+              {validationErrors.endLocation && (
+                <span className="error-message">{validationErrors.endLocation}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               Trip Distance (in miles):
               <input
-              className="form-input"
+                className="form-input"
                 type="number"
                 value={tripDistance}
-                onChange={(e) => setTripDistance(e.target.value)}
                 placeholder="Enter trip distance"
+                onChange={(e) => setTripDistance(e.target.value)}
               />
+              {validationErrors.tripDistance && (
+                <span className="error-message">{validationErrors.tripDistance}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               Trip Date:
               <input
-              className="form-input"
+                className="form-input"
                 type="date"
                 value={tripDate}
                 onChange={(e) => setTripDate(e.target.value)}
               />
+              {validationErrors.tripDate && (
+                <span className="error-message">{validationErrors.tripDate}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               Return Date:
               <input
-              className="form-input"
+                className="form-input"
                 type="date"
                 value={returnDate}
                 onChange={(e) => setReturnDate(e.target.value)}
               />
+              {validationErrors.returnDate && (
+                <span className="error-message">{validationErrors.returnDate}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               Email:
               <input
-              className="form-input"
+                className="form-input"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter email"
+                onChange={(e) => setEmail(e.target.value)}
               />
+              {validationErrors.email && (
+                <span className="error-message">{validationErrors.email}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
-              Vehicle Information:
-              <input
-              className="form-input"
-                type="text"
-                value={vehicleInfo}
-                onChange={(e) => setVehicleInfo(e.target.value)}
-                placeholder="Enter vehicle info"
-              />
-            </label>
-            <br />
-            <label className="label-name">
-              Planned Locations:
+              Budget:
               <input
                 className="form-input"
-                value={plannedLocations}
-                onChange={(e) => setPlannedLocations(e.target.value)}
-                placeholder="Enter planned locations"
-              />
-            </label>
-            <br />
-            <label className="label-name">
-              Expenses:
-              <input
-              className="form-input"
                 type="number"
-                value={expenses}
-                onChange={(e) => setExpenses(e.target.value)}
-                placeholder="Enter expenses"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                placeholder="Enter budget"
               />
+              {validationErrors.budget && (
+                <span className="error-message">{validationErrors.budget}</span>
+              )}
             </label>
             <br />
             <button type="submit" disabled={isFetchingLocation}>
               {isFetchingLocation ? 'Loading Location...' : 'Save Trip'}
             </button>
           </form>
-          {/* Button to navigate to view saved trips page */}
-        <div className="view-trips-button">
-          <Link to="/view-trips">
-            <button>View Saved Trips</button>
-          </Link>
-        </div>
-        <div className="route-button">
-          <Link to="/map">
-            <button>Go to theRoute!</button>
-          </Link>
+          <div className="view-trips-button">
+            <Link to="/view-trips">
+              <button>View Saved Trips</button>
+            </Link>
+          </div>
+          <div className="route-button">
+            <Link to="/map">
+              <button>Go to theRoute!</button>
+            </Link>
           </div>
         </div>
-
       </div>
     </div>
   );
 };
+
 export default Setup;
