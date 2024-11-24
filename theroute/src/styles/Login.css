@@ -85,3 +85,7 @@ button:hover {
   text-align: center;
   font-size: 1rem;
 }
+
+h2 {
+ border-bottom: none;
+}

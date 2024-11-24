@@ -206,10 +206,18 @@
   color: #666;
 }
 
+.save {
+  width: 80px;
+  position: absolute;  
+  top: 32px; 
+  left: 315px; 
+  z-index: 1000; 
+  visibility: visible; 
+  opacity: 1;  
+  color: #ffffff;
+  background-color: #006ef4;
+}
 
-
-
-
-
-
-
+.save:hover{
+  background-color: #3284ef;
+}
