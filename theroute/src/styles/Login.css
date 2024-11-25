@@ -4,8 +4,11 @@
   margin-right: auto;
 }
 .login-container {
-  max-width: 400px;
-  margin-top: 150px; 
+  max-width: 50%;
+  width: 400px;
+  height: 500px;
+  margin-top: 80px;
+  margin-bottom: auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -13,6 +16,11 @@
   background-color: #fff;
   margin-left: auto;
   margin-right: auto;
+}
+
+.form-group{
+  color: white;
+  margin-top: 40px;
 }
 
 p{
@@ -26,11 +34,12 @@ p{
 
 label {
   display: block;
-  margin: 10px 0 5px;
+  color: black;
 }
 
 input {
   width: calc(100% - 20px); 
+  margin-left: 30px;
   padding: 20px;
   margin-bottom: 10px;
   border: 2px solid #191a19; /* Green border for better visibility */
@@ -39,18 +48,29 @@ input {
   transition: border-color 0.3s; /* Smooth transition for border changes */
 }
 
+.label-box{
+  width: 100px;
+  margin-left: 10%;
+}
+
+.input-box{
+  width: 72%;
+  margin-left: 10%;
+}
 
 input:focus {
   border-color: #0056b3; /* Darker blue on focus */
 }
 
-button {
+.login-button {
   width: 100%;
   padding: 10px;
   background-color: #66b3ff; /* Lighter blue */
   color: white;
   border: none;
   border-radius: 4px;
+  margin-bottom: 30px;
+  margin-top: 30px;
   cursor: pointer;
   transition: background-color 0.3s; /* Smooth transition for button color */
 }

@@ -110,11 +110,7 @@ const ViewExpenses = () => {
 
   return (
     <div className="view-expenses">
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <h1>Expenses</h1>
+      <text className="expenses-header">Expenses</text>
       <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
 
       {/* Display Error Message */}
@@ -126,48 +122,50 @@ const ViewExpenses = () => {
       </div>
       <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
       
-      {/* Category Dropdown */}
-      <div classname='dropdown-container'>
-        <select className='dropdown' onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
-          <option value="">All Categories</option>
-          <option value="housing">Housing</option>
-          <option value="transportation">Transportation</option>
-          <option value="food">Food</option>
-          <option value="activities">Activities</option>
-          <option value="shopping">Shopping</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
+     
+      <div className="main-box">
+        <div classname='dropdown-container'>
+          <select className='dropdown' onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
+            <option value="">All Categories</option>
+            <option value="housing">Housing</option>
+            <option value="transportation">Transportation</option>
+            <option value="food">Food</option>
+            <option value="activities">Activities</option>
+            <option value="shopping">Shopping</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
 
-      <div className="expenses-container">
-        {filteredExpenses.length > 0 ? (
-          filteredExpenses.map((item) => (
-            <div key={item.id} className="expense-item">
-              <button className="delete-button" onClick={() => handleDeleteExpense(item.id)}>
-                <FaTrash />
-              </button>
-              <p>
-                <span className="category">
-                  {getCategoryIcon(item.category)} {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-                </span>
-                <span className="expense-amount"> -{formatAmount(item.amount)}</span>
-                <br></br>
-                <div className='date'>{new Date(item.date).toLocaleDateString()}</div>
-              </p>
-            </div>
-          ))
-        ) : (
-          <p>No expenses to display for this category.</p>
-        )}
-      </div>
+        <div className="expenses-container">
+          {filteredExpenses.length > 0 ? (
+            filteredExpenses.map((item) => (
+              <div key={item.id} className="expense-item">
+                <button className="delete-button" onClick={() => handleDeleteExpense(item.id)}>
+                  <FaTrash />
+                </button>
+                <p>
+                  <span className="category">
+                    {getCategoryIcon(item.category)} {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                  </span>
+                  <span className="expense-amount"> -{formatAmount(item.amount)}</span>
+                  <br></br>
+                  <div className='date'>{new Date(item.date).toLocaleDateString()}</div>
+                </p>
+              </div>
+            ))
+          ) : (
+            <p>No expenses to display for this category.</p>
+          )}
+        </div>
+      
 
       <div className='pieChart'>
-        <PieChart width={500} height={500}>
+        <PieChart width={300} height={300}>
               <Pie
                   activeIndex={activeIndex}
                   data={data}
                   dataKey="budget"
-                  outerRadius={250}
+                  outerRadius={150}
                   fill="green"
                   onMouseEnter={onPieEnter}
                   style={{ cursor: 'pointer', outline: 'none' }} // Ensure no outline on focus
@@ -179,6 +177,7 @@ const ViewExpenses = () => {
               <Tooltip />
           </PieChart>
         </div> 
+        </div>
 
     </div>
   );

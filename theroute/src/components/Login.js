@@ -67,8 +67,9 @@ const Login = () => {
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleLogin}>
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
+          <label className="label-box" htmlFor="email">Email:</label>
           <input
+            className="input-box"
             type="text"
             id="email"
             value={email}
@@ -78,8 +79,9 @@ const Login = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="password">Password:</label>
+          <label className="label-box" htmlFor="password">Password:</label>
           <input
+            className="input-box"
             type="password"
             id="password"
             value={password}
@@ -88,7 +90,7 @@ const Login = () => {
             required
           />
         </div>
-        <button type="submit" disabled={loading}>
+        <button className="login-button" type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </button>
         <p style={{ fontSize: '1em' }}>

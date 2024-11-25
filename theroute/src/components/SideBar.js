@@ -43,9 +43,6 @@ const Sidebar = () => {
   const getSidebarOptions = () => {
     return (
       <>
-        <Link to="/" onClick={toggleSidebar}>
-          <FaHome /> Home
-        </Link>
         <Link to="/view-expense" onClick={toggleSidebar}>
           <FaDollarSign /> Expenses
         </Link>
@@ -70,9 +67,11 @@ const Sidebar = () => {
   return (
     <>
       {!isOpen && (
+        <div className="hamburger-menu">
         <button className="sidebar-toggle" onClick={toggleSidebar}>
           ☰
         </button>
+        </div>
       )}
       <div className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="close">
