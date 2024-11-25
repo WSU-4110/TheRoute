@@ -54,6 +54,48 @@ export const Setup = () => {
       return; // Prevent form submission if there are errors
     }
 
+    // Check for empty required fields and display error next to the empty fields
+    let valid = true;
+    setErrorMessage('');
+    let errorObj = {};  // Initialize an error object
+
+    if (!tripName) {
+      errorObj.tripName = 'Trip Name is required';
+      valid = false;
+    }
+    if (!startLocation) {
+      errorObj.startLocation = 'Starting Location is required';
+      valid = false;
+    }
+    if (!endLocation) {
+      errorObj.endLocation = 'End Location is required';
+      valid = false;
+    }
+    if (!totalDistance) {
+      errorObj.totalDistance = 'Total Distance is required';
+      valid = false;
+    }
+    if (!tripDate) {
+      errorObj.tripDate = 'Trip Date is required';
+      valid = false;
+    }
+    if (!endDate) {
+      errorObj.endDate = 'End Date is required';
+      valid = false;
+    }
+    if (!budget) {
+      errorObj.budget = 'Budget is required';
+      valid = false;
+    }
+
+    setErrorFields(errorObj);  // Set the error fields
+
+    if (!valid) {
+      setErrorMessage('Please fill in all the required fields.');
+      return; // Don't submit the form if there are missing fields
+    }
+
+    // Prepare the trip data
     const tripData = {
       email: email,
       trip_name: tripName,

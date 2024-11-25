@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'; 
+import React, { useState, useEffect, useContext } from 'react';
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
