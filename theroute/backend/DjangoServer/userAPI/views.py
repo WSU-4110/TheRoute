@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from achievements.utils import award_achievement
+from UserAchievements.utils import award_achievement
 from .serializers import AchievementSerializer  # Import the serializer for achievements
 
 

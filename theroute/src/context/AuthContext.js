@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
       try {
         const decoded = jwtDecode(storedToken);
         console.log("Decoded Token:", decoded);
-        setUser({ email: decoded.email });
+        setUser({ email: decoded.email, username: decoded.usernam });
       } catch (error) {
         console.error('Invalid token on load:', error);
       }
