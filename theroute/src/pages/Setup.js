@@ -5,9 +5,10 @@ import { AuthContext } from '../context/AuthContext';
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 
+
 export const Setup = () => {
-  const { getAccessToken } = useContext(AuthContext);
-  const [tripName, setTripName] = useState('');
+  
+  const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
   const [tripDistance, setTripDistance] = useState('');

@@ -5,6 +5,8 @@ import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-direct
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
+//import {Link} from 'react-router-dom';
+
 
 
 export default function MapView() {
@@ -221,10 +223,74 @@ export default function MapView() {
     }
   };
 
+  /*
   const saveTrip = async () => {
     // Check if both start and end coordinates are filled
     if (!startCoords || !endCoords) {
-      alert('Both start and end locations must be filled before saving the trip.');
+      setErrorMessage('Both start and end locations must be filled before saving the trip.');
+      return;
+    }
+  
+    // If the inputs are valid, clear any previous error message
+    setErrorMessage('');
+  
+    // Fetch location details (city, state initials) for start and end coordinates
+    const getLocationDetails = async (coordinates) => {
+      try {
+        const response = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${coordinates[0]},${coordinates[1]}.json?access_token=${mapboxgl.accessToken}`
+        );
+        const data = await response.json();
+        if (data.features && data.features.length > 0) {
+          const place = data.features[0];
+  
+          // Extract city and state initials from the response
+          const city = place.context.find((item) => item.id.includes('place'))?.text || 'Unknown';
+          const state = place.context.find((item) => item.id.includes('region'))?.short_code.split('-')[1] || 'Unknown';
+  
+          return { city, state };
+        } else {
+          throw new Error('No location details found');
+        }
+      } catch (error) {
+        console.error('Error fetching location details:', error);
+        return { city: 'Unknown', state: 'Unknown' };
+      }
+    };
+  
+    // Fetch details for start and end locations
+    const startDetails = await getLocationDetails(startCoords);
+    const endDetails = await getLocationDetails(endCoords);
+    const savedEmail = localStorage.getItem('email') || '';
+  
+    // Create trip data to store in localStorage
+    const tripData = {
+      startLocation: `${startDetails.city}, ${startDetails.state}`,
+      endLocation: `${endDetails.city}, ${endDetails.state}`,
+      tripDistance,  // Assuming `tripDistance` is already calculated
+      startDate,
+      endDate,
+      email: savedEmail,
+      budget,
+    };
+  
+    // Log data for testing
+    console.log('Start Location:', tripData.startLocation);
+    console.log('End Location:', tripData.endLocation);
+    console.log('Trip Distance:', tripData.tripDistance);
+  
+  
+    // Save trip data in localStorage
+    localStorage.setItem('tripData', JSON.stringify(tripData));
+  
+    
+    // Optionally, display a success message or redirect
+    alert('Trip saved successfully!');
+  };
+  */
+  const saveTrip = async () => {
+    // Check if both start and end coordinates are filled
+    if (!startCoords || !endCoords) {
       setErrorMessage('Both start and end locations must be filled before saving the trip.');
       return;
     }
@@ -326,10 +392,11 @@ export default function MapView() {
         <div id="start-input"></div>
         <div id="end-input" ></div>
         <div id="waypoint-input" ></div>
+        
       </div>
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
       {errorMessage && <div className="error-message">{errorMessage}</div>}
-      <button className="save" onClick={saveTrip}>Save Trip</button>
+      <button className="add" onClick={saveTrip}>Save Trip</button>
     </div>
   );
 }
