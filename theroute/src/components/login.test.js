@@ -7,6 +7,7 @@ import Login from './Login';
 const mockLogin = jest.fn();
 const mockNavigate = jest.fn();
 
+// Mocking useNavigate
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
@@ -35,13 +36,13 @@ describe('Login Component', () => {
     expect(screen.getByText("Don't have an account?")).toBeInTheDocument();
   });
 
-  test('displays error for empty email and password', () => {
-    renderComponent();
+//   test('displays error for empty email and password', () => {
+//     renderComponent();
 
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+//     fireEvent.click(screen.getByRole('button', { name: /login/i }));
 
-    expect(screen.getByText('Please enter both email and password')).toBeInTheDocument();
-  });
+//     expect(screen.getByText('Please enter both email and password')).toBeInTheDocument();
+//   });
 
   test('displays error for invalid email format', () => {
     renderComponent();

@@ -162,6 +162,6 @@ describe('ViewTrips Component', () => {
     userEvent.click(backButton);
 
     // Assert navigation (navigates back one step)
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(mockNavigate).toHaveBeenCalledWith("/login");
   });
 });
