@@ -117,28 +117,30 @@ export const Setup = () => {
       budget: parseFloat(budget),
     };
 
-    try {
-      const token = await getAccessToken();
-      if (!token) {
-        setError('Authentication required. Please log in again.');
-        return;
-      }
-
-      const response = await axios.post(
-        'http://localhost:8000/api/trips/',
-        tripData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
+    const handleAddTrip = async () => {
+      try {
+        const token = await getAccessToken();
+        if (!token) {
+          setError('Authentication required. Please log in again.');
+          return;
         }
-      );
-
-      console.log('Trip added successfully:', response.data);
-      alert('Trip saved successfully!');
-      navigate('/view-trips');
-    } catch (error) {
-      console.error('Failed to add trip:', error.response?.data || error);
-      alert('Failed to add trip. Please try again.');
-    }
+    
+        const response = await axios.post(
+          'http://localhost:8000/api/trips/',
+          tripData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+    
+        console.log('Trip added successfully:', response.data);
+        alert('Trip saved successfully!');
+        navigate('/view-trips');
+      } catch (error) {
+        console.error('Failed to add trip:', error.response?.data || error);
+        alert('Failed to add trip. Please try again.');
+      }
+    };
   };
 
   return (
@@ -263,7 +265,7 @@ export const Setup = () => {
             </label>
             <br />
             <button type="submit" disabled={isFetchingLocation}>
-              {isFetchingLocation ? 'Loading Location...' : 'Save Trip'}
+              {isFetchingLocation ? 'Loading Location...' : 'Add Trip'}
             </button>
           </form>
           <div className="view-trips-button">
