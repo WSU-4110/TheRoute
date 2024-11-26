@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import '../styles/setup.css';
 import { Link, useNavigate } from 'react-router-dom';
 
+
 export const Setup = () => {
+  
   const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
