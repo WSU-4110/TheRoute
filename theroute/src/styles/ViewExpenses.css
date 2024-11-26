@@ -106,7 +106,7 @@ h1 {
 
 /* Progress Bar Container */
 .progress-bar-container {
-  width: 80%;
+  width: 80%; /*shrinks the bar so it is not covered by nav bar */
   background-color: #918686; 
   border-radius: 3px;
   height: 20px;
@@ -149,8 +149,8 @@ h1 {
 
 .pieChart {
   position: absolute;
-  top: 70%;
-  right: 100px;
+  top: 70%; /* top 70% so it is not blocking the progress bar */
+  right: 100px; /* styling so the chart is moved to the right side of the screen */
   transform: translateY(-50%);
   margin: 20px
 }
