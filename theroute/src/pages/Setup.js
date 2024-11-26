@@ -10,26 +10,36 @@ export const Setup = () => {
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
   const [tripDistance, setTripDistance] = useState('');
-  const [tripDate, setTripDate] = useState('');
-  const [returnDate, setReturnDate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [budget, setBudget] = useState('');
   const [email, setEmail] = useState('');
   const [isFetchingLocation, setIsFetchingLocation] = useState(true);
   const [error, setError] = useState('');
-  const [validationErrors, setValidationErrors] = useState({}); // State for validation errors
+  const [validationErrors, setValidationErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorFields, setErrorFields] = useState([]);
+  const [startAddress, setStartAddress] = useState('');
+  const [endAddress, setEndAddress] = useState('');
   const navigate = useNavigate();
 
   // Initialize state with data from local storage
   useEffect(() => {
-    const savedStartLocation = localStorage.getItem('startLocation') || '';
-    const savedEndLocation = localStorage.getItem('endLocation') || '';
-    const savedTripDistance = localStorage.getItem('tripDistance') || '';
-    const savedEmail = localStorage.getItem('email') || '';
+    const storedTripData = localStorage.getItem('tripData');
+    
+    // If tripData exists, parse it and set the state values
+    if (storedTripData) {
+      const { startLocation, endLocation, tripDistance, email } = JSON.parse(storedTripData);
 
-    setStartLocation(savedStartLocation);
-    setEndLocation(savedEndLocation);
-    setTripDistance(savedTripDistance);
-    setEmail(savedEmail);
+      setStartLocation(startLocation || '');
+      setEndLocation(endLocation || '');
+      setTripDistance(tripDistance || '');
+      setEmail(email || '');
+    }
+
+    // Set start and end addresses from local storage
+    setStartAddress(localStorage.getItem('startAddress') || '');
+    setEndAddress(localStorage.getItem('endAddress') || '');
 
     setIsFetchingLocation(false);
   }, []);
@@ -44,20 +54,20 @@ export const Setup = () => {
     if (!startLocation) errors.startLocation = '*Starting Location is required';
     if (!endLocation) errors.endLocation = '*End Location is required';
     if (!tripDistance) errors.tripDistance = '*Trip Distance is required';
-    if (!tripDate) errors.tripDate = '*Trip Date is required';
-    if (!returnDate) errors.returnDate = '*Return Date is required';
+    if (!startDate) errors.tripDate = '*Trip Date is required';
+    if (!endDate) errors.returnDate = '*Return Date is required';
     if (!email) errors.email = '*Email is required';
     if (!budget) errors.budget = '*Budget is required';
 
     if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors); // Set validation errors
-      return; // Prevent form submission if there are errors
+      setValidationErrors(errors);
+      return;
     }
 
     // Check for empty required fields and display error next to the empty fields
     let valid = true;
     setErrorMessage('');
-    let errorObj = {};  // Initialize an error object
+    let errorObj = {};
 
     if (!tripName) {
       errorObj.tripName = 'Trip Name is required';
@@ -71,12 +81,12 @@ export const Setup = () => {
       errorObj.endLocation = 'End Location is required';
       valid = false;
     }
-    if (!totalDistance) {
-      errorObj.totalDistance = 'Total Distance is required';
+    if (!tripDistance) {
+      errorObj.tripDistance = 'Total Distance is required';
       valid = false;
     }
-    if (!tripDate) {
-      errorObj.tripDate = 'Trip Date is required';
+    if (!startDate) {
+      errorObj.startDate = 'Trip Date is required';
       valid = false;
     }
     if (!endDate) {
@@ -88,11 +98,11 @@ export const Setup = () => {
       valid = false;
     }
 
-    setErrorFields(errorObj);  // Set the error fields
+    setErrorFields(errorObj);
 
     if (!valid) {
       setErrorMessage('Please fill in all the required fields.');
-      return; // Don't submit the form if there are missing fields
+      return;
     }
 
     // Prepare the trip data
@@ -102,8 +112,8 @@ export const Setup = () => {
       start_location: startLocation,
       end_location: endLocation,
       trip_distance: parseFloat(tripDistance),
-      start_date: tripDate,
-      end_date: returnDate,
+      start_date: startDate,
+      end_date: endDate,
       budget: parseFloat(budget),
     };
 
@@ -124,7 +134,7 @@ export const Setup = () => {
 
       console.log('Trip added successfully:', response.data);
       alert('Trip saved successfully!');
-      navigate('/view-trips'); // Redirect to view trips page after success
+      navigate('/view-trips');
     } catch (error) {
       console.error('Failed to add trip:', error.response?.data || error);
       alert('Failed to add trip. Please try again.');
@@ -156,9 +166,11 @@ export const Setup = () => {
               <input
                 className="form-input"
                 type="text"
-                value={startLocation}
+                //value={startLocation}
+                value={startAddress}
                 placeholder="Enter starting location"
                 onChange={(e) => setStartLocation(e.target.value)}
+                readOnly
               />
               {validationErrors.startLocation && (
                 <span className="error-message">{validationErrors.startLocation}</span>
@@ -170,9 +182,11 @@ export const Setup = () => {
               <input
                 className="form-input"
                 type="text"
-                value={endLocation}
+                //value={endLocation}
+                value={endAddress}
                 placeholder="Enter end location"
                 onChange={(e) => setEndLocation(e.target.value)}
+                readOnly
               />
               {validationErrors.endLocation && (
                 <span className="error-message">{validationErrors.endLocation}</span>
@@ -198,8 +212,8 @@ export const Setup = () => {
               <input
                 className="form-input"
                 type="date"
-                value={tripDate}
-                onChange={(e) => setTripDate(e.target.value)}
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
               />
               {validationErrors.tripDate && (
                 <span className="error-message">{validationErrors.tripDate}</span>
@@ -211,8 +225,8 @@ export const Setup = () => {
               <input
                 className="form-input"
                 type="date"
-                value={returnDate}
-                onChange={(e) => setReturnDate(e.target.value)}
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
               />
               {validationErrors.returnDate && (
                 <span className="error-message">{validationErrors.returnDate}</span>
@@ -227,6 +241,7 @@ export const Setup = () => {
                 value={email}
                 placeholder="Enter email"
                 onChange={(e) => setEmail(e.target.value)}
+                readOnly
               />
               {validationErrors.email && (
                 <span className="error-message">{validationErrors.email}</span>
