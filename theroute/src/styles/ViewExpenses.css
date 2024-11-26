@@ -16,7 +16,7 @@
 }
 
 .view-expenses {
-  background-color: #e3c1b1; 
+  background-color: #ffffff; 
   padding: 20px; 
   min-height: 100vh; 
 }
@@ -106,11 +106,12 @@ h1 {
 
 /* Progress Bar Container */
 .progress-bar-container {
-  width: 100%;
+  width: 80%;
   background-color: #918686; 
   border-radius: 3px;
   height: 20px;
-  margin: 20px 0; 
+  margin-left: auto; 
+  margin-right:auto;
   overflow: hidden;
 }
 
@@ -148,8 +149,8 @@ h1 {
 
 .pieChart {
   position: absolute;
-  top: 90%;
-  left: 100px;
+  top: 70%;
+  right: 100px;
   transform: translateY(-50%);
   margin: 20px
 }
