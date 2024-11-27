@@ -1,17 +1,31 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaMap, FaDollarSign, FaHome, FaCar, FaUser, FaSignOutAlt, FaTimes, FaTrophy } from 'react-icons/fa'; // Added FaTrophy icon
 import axios from 'axios';
 import '../styles/SideBar.css';
-import { AuthContext } from '../context/AuthContext'; // Import the AuthContext
+import AuthContext from '../context/AuthContext'; // Import the AuthContext
 
 const Sidebar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useContext(AuthContext); // Access the user from AuthContext
+  const { user, setUser } = useContext(AuthContext); // Access user and setUser from AuthContext
   const username = user?.username; // Get the username directly from the context
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+
+  useEffect(() => {
+    // Fetch user data if not already available
+    if (!user) {
+      axios
+        .get('/api/user/profile') // Adjust the endpoint to your actual API
+        .then(response => {
+          setUser(response.data); // Set the user data in AuthContext
+        })
+        .catch(() => {
+          setUser({ username: 'Guest' }); // Fallback to 'Guest' on error
+        });
+    }
+  }, [user, setUser]);
 
   const getSidebarOptions = () => {
     return (
@@ -41,9 +55,9 @@ const Sidebar = () => {
     <>
       {!isOpen && (
         <div className="hamburger-menu">
-        <button className="sidebar-toggle" onClick={toggleSidebar}>
-          ☰
-        </button>
+          <button className="sidebar-toggle" onClick={toggleSidebar}>
+            ☰
+          </button>
         </div>
       )}
       <div className={`sidebar ${isOpen ? 'open' : ''}`}>
@@ -53,7 +67,7 @@ const Sidebar = () => {
         <div className="profile">
           <FaUser size={32} />
           {/* Render username or fallback to "Guest" if username is empty */}
-          <h2>{username || 'User'}</h2> {/* Use username directly from the context */}
+          <h2>{username || 'User'}</h2>
         </div>
         {getSidebarOptions()}
         <Link to="/login" onClick={toggleSidebar} className="logout">
