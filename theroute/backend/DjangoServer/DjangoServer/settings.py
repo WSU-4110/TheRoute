@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     #'UserAchievements.apps.AchievementsConfig',
     "rest_framework_simplejwt.token_blacklist",
     "userTrips",
-    "achievements",
 ]
 
 # REST Framework settings
@@ -174,18 +173,24 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',  # Set this to DEBUG for detailed logs
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
+<<<<<<< HEAD
             #'level': 'DEBUG',
+=======
+>>>>>>> 8376029 (Commiting before switching branches)
             'propagate': True,
         },
         'userAPI': {  # Add logging for your app
             'handlers': ['console'],
+<<<<<<< HEAD
             #'level': 'DEBUG',
+=======
+>>>>>>> 8376029 (Commiting before switching branches)
             'propagate': True,
         },
     },
 }
+
