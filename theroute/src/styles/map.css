@@ -212,8 +212,8 @@
 }
 
 .suggestions{
-  z-index:40000;
-
+  z-index:10 !important;
+  margin-left: 260px !important;
 }
 
 .suggestions-wrapper{
