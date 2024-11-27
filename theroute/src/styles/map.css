@@ -70,12 +70,12 @@
  
 }
 
-.input{
+.inputs{
   position: absolute;
   top: 10px;
   width: 300px;
   left: 10px;
-  
+  z-index: 1;
 }
 
 /* Ensure the suggestions appear above the input box */
@@ -215,3 +215,21 @@
   z-index: 1000; 
   width: 100px;
 }
+.mapboxgl-ctrl-geocoder li{
+  z-index: 30000;
+  display: block;
+}
+
+.suggestions{
+  z-index:40000;
+
+}
+
+.suggestions-wrapper{
+  z-index: 100000;
+}
+
+
+
+
+

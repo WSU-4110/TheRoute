@@ -1,4 +1,3 @@
-//jest.setup.js
 import '@testing-library/jest-dom';  // For improved assertions
 import 'jest-canvas-mock';           // If you're using canvas mock
 import 'text-encoding';

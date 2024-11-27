@@ -23,3 +23,7 @@ describe('Home Component', () => {
    expect(history.location.pathname).toBe('/login');
  });
 });
+
+
+
+

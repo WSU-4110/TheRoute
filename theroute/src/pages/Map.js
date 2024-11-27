@@ -322,7 +322,7 @@ export default function MapView() {
           )}
         </div>
       )}
-      <div className="input">
+      <div className="inputs">
         <div id="start-input"></div>
         <div id="end-input" ></div>
         <div id="waypoint-input" ></div>

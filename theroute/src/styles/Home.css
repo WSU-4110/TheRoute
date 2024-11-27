@@ -5,7 +5,7 @@
   overflow: hidden; 
 }
 
-/* Background Video */
+/*
 .background-video {
   position: absolute; 
   top: 0;
@@ -16,7 +16,7 @@
   z-index: 1; 
   pointer-events: none; 
 }
-
+*/
 /* Overlay */
 .overlay {
   position: relative; 

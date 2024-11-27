@@ -177,10 +177,12 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
+            #'level': 'DEBUG',
             'propagate': True,
         },
         'userAPI': {  # Add logging for your app
             'handlers': ['console'],
+            #'level': 'DEBUG',
             'propagate': True,
         },
     },
