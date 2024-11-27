@@ -80,3 +80,13 @@ def get_callback_object(ref):
     class_name = ref.split(".")[-1]
     m = importlib.import_module(module)
     return getattr(m, class_name)
+
+
+#def check_achievement_plain(user, achievement_key):
+    #try:
+        #UserAchievement = apps.get_model('achievements', 'UserAchievement')
+        #return UserAchievement.objects.filter(user=user, achievement__key=achievement_key).exists()
+    #except Exception as e:
+        #logger.error(f"Error checking achievement '{achievement_key}' for user '{user.email}': {e}")
+        #return False
+
