@@ -40,27 +40,28 @@ import Map from './pages/Map';
 import { Setup } from './pages/Setup';
 import AddExpense from './components/AddExpenses';
 import ViewExpense from './components/ViewExpenses';
+import ViewAchievements from './components/ViewAchievements'; // Import ViewAchievements
+import AchievementNotifications from './components/AchievementNotifications'; // Import AchievementNotifications
 import Sidebar from './components/SideBar';
 import ViewTrips from './pages/ViewTrips';
-import { AuthProvider } from './context/AuthContext'; // Import AuthProvider
 
 function App() {
   return (
-    <AuthProvider> {/* Wrap the app with AuthProvider */}
-      <Router>
-        <Sidebar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/map" element={<Map />} />
-          <Route path="/setup" element={<Setup />} />
-          <Route path="/add-expense" element={<AddExpense />} />
-          <Route path="/view-expense" element={<ViewExpense />} />
-          <Route path="/view-trips" element={<ViewTrips />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <Router>
+      <Sidebar />
+      <AchievementNotifications />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/map" element={<Map />} />
+        <Route path="/setup" element={<Setup />} />
+        <Route path="/add-expense" element={<AddExpense />} />
+        <Route path="/view-expense" element={<ViewExpense />} />
+        <Route path="/view-trips" element={<ViewTrips />} />
+        <Route path="/view-achievements" element={<ViewAchievements />} /> {/* Add ViewAchievements route */}
+      </Routes>
+    </Router>
   );
 }
 
