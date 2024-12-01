@@ -32,7 +32,7 @@
 }
 
 /* Title */
-h1 {
+.overlay h1 {
   font-family: 'Montserrat', sans-serif;
   font-size: 3rem;
   margin-bottom: 10px;

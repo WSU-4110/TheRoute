@@ -27,26 +27,11 @@
   transform: translateY(-5px);
 }
 
-.delete-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: none; /* Initially hidden */
-  background-color: #e74c3c;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 18px;
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-.trip-card:hover .delete-button {
+.expenses-container:hover .delete-trip {
   display: block; /* Show the button on hover */
 }
 
-.delete-button:hover {
+.delete-trip:hover {
   background-color: #c0392b;
 }
 
@@ -88,7 +73,7 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: larger;
   transition: all 0.3s;
   text-decoration: none;
 }
@@ -103,7 +88,7 @@
 }
 
 /* Hide the delete button by default */
-.delete-button {
+.delete-trip {
   position: absolute;  /* Positioned inside the card */
   top: 0px;  /* Adjust the distance from the top */
   right: 10px;  /* Adjust the distance from the right */
@@ -116,10 +101,11 @@
   opacity: 0;  /* Initially hidden */
   visibility: hidden; /* Hide the button */
   transition: opacity 0.3s ease, visibility 0s linear 0.3s; /* Smooth transition */
+  width: 35px;
 }
 
 /* Show the delete button on hover */
-.trip-card:hover .delete-button {
+.trip-card:hover .delete-trip {
   opacity: 1;  /* Make it visible */
   visibility: visible; /* Ensure the button is visible */
   transition: opacity 0.3s ease, visibility 0s linear 0s; /* Reset transition */

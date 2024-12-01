@@ -54,7 +54,7 @@ const SignUp = () => {
       // Store tokens in localStorage
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
-
+      localStorage.setItem('email', email);
       navigate('/map'); 
     } catch (error) {
       console.error('Registration failed:', error);

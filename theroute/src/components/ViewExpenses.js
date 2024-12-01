@@ -3,7 +3,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
-import { FaHome, FaCar, FaUtensils, FaRunning, FaQuestionCircle, FaShoppingBag, FaTrash } from 'react-icons/fa';  
+import { FaHome, FaCar, FaUtensils, FaRunning, FaQuestionCircle, FaShoppingBag, FaTrash } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import '../styles/ViewExpenses.css';
 
 const ViewExpenses = () => {
@@ -11,38 +12,89 @@ const ViewExpenses = () => {
   const [filteredExpenses, setFilteredExpenses] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [totalBudget, setTotalBudget] = useState(300000);  // Set a total budget (e.g., 300000)
+  const [selectedTrip, setSelectedTrip] = useState(''); // For filtering by trip_name
+  const [totalBudget, setTotalBudget] = useState(0);
   const { getAccessToken } = useContext(AuthContext);
-
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [trips, setTrips] = useState([]);
 
-  /* Loading Data For Pie Chart */
-    const data = [
-        { name: 'Housing', budget: 1000 },
-        { name: 'Transportation', budget: 300 },
-        { name: 'Food', budget: 200 },
-        { name: 'Activities', budget: 1000 },
-        { name: 'Shopping', budget: 1000 },
-        { name: 'Other', budget: 1000 }
-    ];
+  const getTrips = async () => {
+    try {
+      const token = await getAccessToken();
+      if (!token) {
+        setErrorMessage('Authentication required. Please log in again.');
+        return;
+      }
+  
+      // Fetch trips data from the server
+      const response = await axiosInstance.get(`/trips/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      // Extract trip names and budgets
+      const tripsData = response.data.map(trip => ({
+        tripName: trip.trip_name,
+        budget: trip.budget,
+      }));
+  
+      // Store the extracted data
+      setTrips(tripsData);
+      setErrorMessage('');
+    } catch (error) {
+      console.error("Failed to fetch trips:", error.response?.data || error);
+      setErrorMessage("Failed to fetch trips. Please try again.");
+    }
+  };
 
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#808080'];
 
-    const onPieEnter = (_, index) => {
-        setActiveIndex(index);
-    }; 
+  const getCategoryBudget = () => {
+    const categoryBudgets = filteredExpenses.reduce((acc, expense) => {
+      if (!acc[expense.category]) {
+        acc[expense.category] = 0;
+      }
+      acc[expense.category] += expense.amount;
+      return acc;
+    }, {});
+    return categoryBudgets;
+  };
+  
+  const categoryBudgets = getCategoryBudget();
+  
+  const updatedData = Object.keys(categoryBudgets).map(category => ({
+    name: category.charAt(0).toUpperCase() + category.slice(1),
+    budget: categoryBudgets[category],
+  }));
+
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#808080'];
+
+  const onPieEnter = (_, index) => {
+    setActiveIndex(index);
+  };
 
   useEffect(() => {
     fetchExpenses();
+    getTrips(); // Call getTrips when component mounts
   }, []);
 
   useEffect(() => {
-    if (selectedCategory) {
-      setFilteredExpenses(expenses.filter(expense => expense.category.toLowerCase() === selectedCategory.toLowerCase()));
+    // Update totalBudget when selectedTrip changes
+    if (selectedTrip) {
+      const selectedTripData = trips.find(trip => trip.tripName === selectedTrip);
+      setTotalBudget(selectedTripData ? selectedTripData.budget : 0);
     } else {
-      setFilteredExpenses(expenses);
+      setTotalBudget(0);
     }
-  }, [selectedCategory, expenses]);
+  
+    setFilteredExpenses(
+      expenses.filter(expense => {
+        const matchesCategory = selectedCategory
+          ? expense.category.toLowerCase() === selectedCategory.toLowerCase()
+          : true;
+        const matchesTrip = selectedTrip ? expense.trip_name === selectedTrip : true;
+        return matchesCategory && matchesTrip;
+      })
+    );
+  }, [selectedTrip, selectedCategory, expenses, trips]);  
 
   const fetchExpenses = async () => {
     try {
@@ -69,12 +121,11 @@ const ViewExpenses = () => {
         setErrorMessage('Authentication required. Please log in again.');
         return;
       }
-  
+
       await axiosInstance.delete(`/expenses/${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
-      // Remove the deleted expense from local state
+
       setExpenses(expenses.filter(expense => expense.id !== id));
       setErrorMessage('');
     } catch (error) {
@@ -104,23 +155,16 @@ const ViewExpenses = () => {
 
   const formatAmount = (amount) => `$${parseFloat(amount).toFixed(2)}`;
 
-  // Calculate total spent amount and progress percentage
   const totalSpent = filteredExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
-  const progressPercentage = Math.min((totalSpent / totalBudget) * 100, 100);
+  const progressPercentage = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
 
   return (
     <div className="view-expenses">
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
       <h1>Expenses</h1>
       <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
 
-      {/* Display Error Message */}
       {errorMessage && <p className="error">{errorMessage}</p>}
-      
-      {/* Budget Progress Bar */}
+
       <div className="progress-bar-container">
         <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
       </div>

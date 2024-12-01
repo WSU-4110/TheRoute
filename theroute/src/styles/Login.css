@@ -65,7 +65,7 @@ input:focus {
 .login-button {
   width: 100%;
   padding: 10px;
-  background-color: #66b3ff; /* Lighter blue */
+  background-color: #2473c3; /* Lighter blue */
   color: white;
   border: none;
   border-radius: 4px;
@@ -86,6 +86,6 @@ button:hover {
   font-size: 1rem;
 }
 
-h2 {
+.login-container h2 {
  border-bottom: none;
 }

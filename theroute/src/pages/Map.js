@@ -5,7 +5,6 @@ import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-direct
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
-//import {Link} from 'react-router-dom';
 
 
 export default function MapView() {
@@ -225,6 +224,7 @@ export default function MapView() {
   const saveTrip = async () => {
     // Check if both start and end coordinates are filled
     if (!startCoords || !endCoords) {
+      alert('Both start and end locations must be filled before saving the trip.');
       setErrorMessage('Both start and end locations must be filled before saving the trip.');
       return;
     }
@@ -329,7 +329,7 @@ export default function MapView() {
       </div>
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
       {errorMessage && <div className="error-message">{errorMessage}</div>}
-      <button className="add" onClick={saveTrip}>Save Trip</button>
+      <button className="save" onClick={saveTrip}>Save Trip</button>
     </div>
   );
 }
