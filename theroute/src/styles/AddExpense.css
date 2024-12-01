@@ -1,37 +1,6 @@
-.expenses-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-  margin-top: 1em;
-}
-
-.expense-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1em;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.delete-button {
-  padding: 0.5em 1em;
-  color: white;
-  background-color: #e74c3c;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.delete-button:hover {
-  background-color: #c0392b;
-}
-
 .input-field {
-  right: 0;
-  width: 30%;
+  margin: 10px 80px;
+  width: 18%;
   font-size: 20px;
   color: green;
   font-weight: bold;
@@ -53,15 +22,16 @@
   border-width: 4px;
   text-align: center;
   margin-top: 20px;
+  background: none;
 }
 
-.add-dropdown-container {
+.dropdown-container {
   margin: 20px;
   width: 200px;
 }
 
 .add-dropdown {
-  width: 100%;
+  width: 20%;
   padding: 10px;
   font-size: 16px;
   border-radius: 5px;
@@ -69,4 +39,31 @@
   background-color: #f9f9f9;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-left: 60px;
+  text-align: center;
+}
+
+.trip-dropdown {
+  width: 20%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 60px;
+  text-align: center;
+}
+
+.view-button {
+  font-size: larger;
+}
+
+.addexpenses h1 {
+  text-align: center;
+  border-bottom: black;
+  border-bottom: 1.5px solid #000000;
+  padding-bottom: 10px;
+  margin-bottom: 35px;
 }

@@ -5,7 +5,7 @@
   overflow: hidden; 
 }
 
-/* Background Video */
+/*
 .background-video {
   position: absolute; 
   top: 0;
@@ -16,7 +16,7 @@
   z-index: 1; 
   pointer-events: none; 
 }
-
+*/
 /* Overlay */
 .overlay {
   position: relative; 
@@ -32,11 +32,12 @@
 }
 
 /* Title */
-h1 {
+.overlay h1 {
   font-family: 'Montserrat', sans-serif;
   font-size: 3rem;
   margin-bottom: 10px;
   margin-top: -80px;
+  color: white;
 }
 
 p {

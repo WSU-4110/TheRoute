@@ -173,17 +173,14 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',  # Set this to DEBUG for detailed logs
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'DEBUG',
             'propagate': True,
         },
         'userAPI': {  # Add logging for your app
             'handlers': ['console'],
-            'level': 'DEBUG',
             'propagate': True,
         },
     },
