@@ -91,11 +91,6 @@ export const Setup = () => {
     if (!budget) errors.budget = '*Budget is required';
 
     if (Object.keys(errors).length > 0) {
-<<<<<<< HEAD
-      setValidationErrors(errors); // Set validation errors
-      return; // Prevent form submission if there are errors
-=======
->>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
       setValidationErrors(errors);
       return;
     }

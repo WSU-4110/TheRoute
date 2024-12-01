@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-
-import React, { useState, useEffect, useContext } from 'react'; 
-=======
 import React, { useState, useEffect, useContext } from 'react';
->>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
@@ -164,11 +159,7 @@ const ViewExpenses = () => {
 
   return (
     <div className="view-expenses">
-<<<<<<< HEAD
-      <h1>Expenses</h1>
-=======
       <h1 className="expenses-header"><b>{selectedTrip} Expenses</b></h1>
->>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
       <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
 
       {errorMessage && <p className="error">{errorMessage}</p>}
@@ -177,63 +168,6 @@ const ViewExpenses = () => {
         <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
       </div>
       <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
-<<<<<<< HEAD
-      <br></br>      
-      {/* Category Dropdown */}
-      <div classname='dropdown-container'>
-        <select className='dropdown' onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
-          <option value="">All Categories</option>
-          <option value="housing">Housing</option>
-          <option value="transportation">Transportation</option>
-          <option value="food">Food</option>
-          <option value="activities">Activities</option>
-          <option value="shopping">Shopping</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <div className="expenses-container">
-        {filteredExpenses.length > 0 ? (
-          filteredExpenses.map((item) => (
-            <div key={item.id} className="expense-item">
-              <button className="delete-button" onClick={() => handleDeleteExpense(item.id)}>
-                <FaTrash />
-              </button>
-              <p>
-                <div className="category">
-                  {getCategoryIcon(item.category)} {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-                </div>
-                <div className='date'>{new Date(item.date).toLocaleDateString()}</div>
-                <div className="expense-amount"> -{formatAmount(item.amount)}</div>
-                <br></br>
-              </p>
-            </div>
-          ))
-        ) : (
-          <p>No expenses to display for this category.</p>
-        )}
-      </div>
-
-      <div className='pieChart'>
-        <PieChart width={500} height={500}>
-              <Pie
-                  activeIndex={activeIndex}
-                  data={data}
-                  dataKey="budget"
-                  outerRadius={250}
-                  fill="green"
-                  onMouseEnter={onPieEnter}
-                  style={{ cursor: 'pointer', outline: 'none' }} // Ensure no outline on focus
-              >
-                  {data.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-              </Pie>
-              <Tooltip />
-          </PieChart>
-        </div> 
-
-=======
       <br />
 
       <div className="main-box">
@@ -306,7 +240,6 @@ const ViewExpenses = () => {
           <button className='trip'>Add Trip</button>
         </Link>
       </div>
->>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
     </div>
   );
 };

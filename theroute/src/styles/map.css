@@ -189,36 +189,6 @@
   color: #666;
 }
 
-<<<<<<< HEAD
-.mapboxgl-ctrl-geocoder li{
-  z-index: 30000;
-  display: block;
-}
-
-.suggestions{
-  z-index:10 !important;
-  margin-left: 260px !important;
-}
-
-.suggestions-wrapper{
-  z-index: 100000;
-}
-
-.save {
-  width: 80px;
-  position: absolute;  
-  top: 32px; 
-  left: 315px; 
-  z-index: 1000; 
-  visibility: visible; 
-  opacity: 1;  
-  color: #ffffff;
-  background-color: #006ef4;
-}
-
-.save:hover{
-  background-color: #3284ef;
-=======
 .save {
   position: absolute; /* Ensure it stays fixed on the page */
   top: 45px; /* Position it at the bottom */
@@ -235,5 +205,4 @@
 
 .save:hover {
   background-color: #0056b3; /* Slightly darker color on hover */
->>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
 }
