@@ -21,7 +21,7 @@ urlpatterns = [
 
     # User registration, login, logout, and user management
     path('api/register/', user_views.UserRegister.as_view(), name='register'),
-    path('api/login/', user_views.UserLogin.as_view(), name='login'),
+    path('api/login/', user_views.UserLogin, name='login'),  # Removed .as_view()
     path('api/logout/', user_views.UserLogout.as_view(), name='logout'),
     path('api/user/', user_views.UserView.as_view(), name='user'),
 

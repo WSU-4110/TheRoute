@@ -8,6 +8,10 @@ node_modules/
 # Ignore node_modules in backend for clarity
 backend/node_modules/
 backend/DjangoServer/db.sqlite3
+<<<<<<< HEAD
+backend/DjangoServer/TheRoute.sqlite3
+=======
+>>>>>>> main
 
 # testing
 coverage/
@@ -33,4 +37,3 @@ backend/DjangoServer/myenv/
 # Ignore Python cache files
 **/__pycache__/
 *.pyc
-
