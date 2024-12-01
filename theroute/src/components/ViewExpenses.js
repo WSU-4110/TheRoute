@@ -11,7 +11,7 @@ const ViewExpenses = () => {
   const [filteredExpenses, setFilteredExpenses] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedTrip, setSelectedTrip] = useState(''); // For filtering by trip_name
+  const [selectedTrip, setSelectedTrip] = useState('');
   const [totalBudget, setTotalBudget] = useState(0);
   const { getAccessToken } = useContext(AuthContext);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -24,66 +24,35 @@ const ViewExpenses = () => {
         setErrorMessage('Authentication required. Please log in again.');
         return;
       }
-  
-      // Fetch trips data from the server
-      const response = await axiosInstance.get(`/trips/`, {
+      const response = await axiosInstance.get('/trips/', {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
-      // Extract trip names and budgets
       const tripsData = response.data.map(trip => ({
         tripName: trip.trip_name,
         budget: trip.budget,
       }));
-  
-      // Store the extracted data
       setTrips(tripsData);
       setErrorMessage('');
     } catch (error) {
-      console.error("Failed to fetch trips:", error.response?.data || error);
-      setErrorMessage("Failed to fetch trips. Please try again.");
+      console.error('Failed to fetch trips:', error.response?.data || error);
+      setErrorMessage('Failed to fetch trips. Please try again.');
     }
-  };
-
-
-  const getCategoryBudget = () => {
-    const categoryBudgets = filteredExpenses.reduce((acc, expense) => {
-      if (!acc[expense.category]) {
-        acc[expense.category] = 0;
-      }
-      acc[expense.category] += expense.amount;
-      return acc;
-    }, {});
-    return categoryBudgets;
-  };
-  
-  const categoryBudgets = getCategoryBudget();
-  
-  const updatedData = Object.keys(categoryBudgets).map(category => ({
-    name: category.charAt(0).toUpperCase() + category.slice(1),
-    budget: categoryBudgets[category],
-  }));
-
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#808080'];
-
-  const onPieEnter = (_, index) => {
-    setActiveIndex(index);
   };
 
   useEffect(() => {
     fetchExpenses();
-    getTrips(); // Call getTrips when component mounts
+    getTrips();
   }, []);
 
   useEffect(() => {
-    // Update totalBudget when selectedTrip changes
     if (selectedTrip) {
       const selectedTripData = trips.find(trip => trip.tripName === selectedTrip);
       setTotalBudget(selectedTripData ? selectedTripData.budget : 0);
     } else {
-      setTotalBudget(0);
+      const totalAllTripsBudget = trips.reduce((sum, trip) => sum + parseFloat(trip.budget || 0), 0);
+      setTotalBudget(totalAllTripsBudget);
     }
-  
+
     setFilteredExpenses(
       expenses.filter(expense => {
         const matchesCategory = selectedCategory
@@ -93,7 +62,7 @@ const ViewExpenses = () => {
         return matchesCategory && matchesTrip;
       })
     );
-  }, [selectedTrip, selectedCategory, expenses, trips]);  
+  }, [selectedTrip, selectedCategory, expenses, trips]);
 
   const fetchExpenses = async () => {
     try {
@@ -102,11 +71,9 @@ const ViewExpenses = () => {
         setErrorMessage('Authentication required. Please log in again.');
         return;
       }
-
       const response = await axiosInstance.get('/expenses/', {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setExpenses(response.data);
     } catch (error) {
       setErrorMessage('Error fetching expenses');
@@ -120,16 +87,14 @@ const ViewExpenses = () => {
         setErrorMessage('Authentication required. Please log in again.');
         return;
       }
-
       await axiosInstance.delete(`/expenses/${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setExpenses(expenses.filter(expense => expense.id !== id));
       setErrorMessage('');
     } catch (error) {
-      console.error("Failed to delete expense:", error.response?.data || error);
-      setErrorMessage("Failed to delete expense. Please try again.");
+      console.error('Failed to delete expense:', error.response?.data || error);
+      setErrorMessage('Failed to delete expense. Please try again.');
     }
   };
 
@@ -153,23 +118,37 @@ const ViewExpenses = () => {
   };
 
   const formatAmount = (amount) => `$${parseFloat(amount).toFixed(2)}`;
-
   const totalSpent = filteredExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
   const progressPercentage = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+
+  const getCategoryBudget = () => {
+    const categoryBudgets = filteredExpenses.reduce((acc, expense) => {
+      if (!acc[expense.category]) acc[expense.category] = 0;
+      acc[expense.category] += expense.amount;
+      return acc;
+    }, {});
+    return categoryBudgets;
+  };
+
+  const categoryBudgets = getCategoryBudget();
+  const updatedData = Object.keys(categoryBudgets).map(category => ({
+    name: category.charAt(0).toUpperCase() + category.slice(1),
+    budget: categoryBudgets[category],
+  }));
+
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#808080'];
+  const onPieEnter = (_, index) => setActiveIndex(index);
 
   return (
     <div className="view-expenses">
       <h1 className="expenses-header"><b>{selectedTrip} Expenses</b></h1>
       <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
-
       {errorMessage && <p className="error">{errorMessage}</p>}
-
       <div className="progress-bar-container">
         <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
       </div>
       <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
-      <br />
-
+      <br></br>
       <div className="main-box">
         <div className="dropdown-container">
           <select className="dropdown-categories" onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
@@ -181,15 +160,11 @@ const ViewExpenses = () => {
             <option value="shopping">Shopping</option>
             <option value="other">Other</option>
           </select>
-
           <select className="dropdown-trips" onChange={(e) => setSelectedTrip(e.target.value)} value={selectedTrip}>
             <option value="">All Trips</option>
-            {expenses
-              .map(expense => expense.trip_name)
-              .filter((value, index, self) => self.indexOf(value) === index)
-              .map((trip, index) => (
-                <option key={index} value={trip}>{trip}</option>
-              ))}
+            {trips.map((trip, index) => (
+              <option key={index} value={trip.tripName}>{trip.tripName}</option>
+            ))}
           </select>
         </div>
 
@@ -205,8 +180,7 @@ const ViewExpenses = () => {
                     {getCategoryIcon(item.category)} {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
                   </span>
                   <span className="expense-amount"> - {formatAmount(item.amount)}</span>
-                  <br />
-                  <div className='date'>{new Date(item.date).toLocaleDateString()}</div>
+                  <div className="date">{new Date(item.date).toLocaleDateString()}</div>
                 </p>
               </div>
             ))
@@ -224,7 +198,6 @@ const ViewExpenses = () => {
               outerRadius={150}
               fill="green"
               onMouseEnter={onPieEnter}
-              style={{ cursor: 'pointer', outline: 'none' }}
             >
               {updatedData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -234,10 +207,10 @@ const ViewExpenses = () => {
           </PieChart>
         </div>
         <Link to="/add-expense">
-          <button className='expenses'>Add Expenses</button>
+          <button className="expenses">Add Expenses</button>
         </Link>
         <Link to="/setup">
-          <button className='trip'>Add Trip</button>
+          <button className="trip">Add Trip</button>
         </Link>
       </div>
     </div>
