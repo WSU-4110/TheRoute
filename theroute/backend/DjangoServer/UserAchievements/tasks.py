@@ -1,4 +1,4 @@
-from achievements.utils import check_achievement_plain
+from UserAchievements.utils import check_achievement_plain
 from celery.task import task
 
 
