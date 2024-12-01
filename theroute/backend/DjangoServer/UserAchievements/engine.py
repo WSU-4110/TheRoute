@@ -1,7 +1,7 @@
 from django.conf import settings
-from UserAchievements.models import Achievement
-from UserAchievements.utils import construct_callback, check_achievement_plain
-from UserAchievements.signals import achievement_registered
+from achievements.models import Achievement
+from achievements.utils import construct_callback, check_achievement_plain
+from achievements.signals import achievement_registered
 import logging
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ class AchievementEngine(object):
         if user and user.is_authenticated():
             if settings.ACHIEVEMENT_USE_CELERY:
                 # do not try to import if celery is not defined
-                from UserAchievements.tasks import check_achievement_task
+                from achievements.tasks import check_achievement_task
                 check_achievement_task.delay(self, user, key, *args, **kwargs)
             else:
                 check_achievement_plain(self, user, key, *args, **kwargs)
@@ -45,4 +45,3 @@ class AchievementEngine(object):
 
 # create the engine
 engine = AchievementEngine()
-
