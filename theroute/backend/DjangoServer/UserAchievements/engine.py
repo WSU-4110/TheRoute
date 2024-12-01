@@ -45,4 +45,3 @@ class AchievementEngine(object):
 
 # create the engine
 engine = AchievementEngine()
-
