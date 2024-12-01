@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "rest_framework",  # Required for Django REST framework
     "rest_framework_simplejwt",  # For JWT authentication
     "corsheaders",  # To handle CORS
-    "userAPI.apps.UserApiConfig",  # Keep this one
+    'userAPI.apps.UserAPIConfig',
     "userExpenses",  # Another custom app
     'UserAchievements', # Custom app for achievements
     "rest_framework_simplejwt.token_blacklist",

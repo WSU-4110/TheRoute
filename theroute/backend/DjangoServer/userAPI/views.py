@@ -1,5 +1,6 @@
 from django.apps import apps
-from django.contrib.auth import get_user_model, logout, authenticate
+from django.contrib.auth import get_user_model, logout, authenticate, login
+from django.contrib.auth.models import update_last_login
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
@@ -48,7 +49,6 @@ class UserRegister(APIView):
                 )
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(["POST"])
 @permission_classes([permissions.AllowAny])
 def UserLogin(request):
@@ -56,12 +56,24 @@ def UserLogin(request):
     email = data.get("email")
     password = data.get("password")
 
+    # Authenticate the user
     user = authenticate(request, username=email, password=password)
     if user is None:
         if not User.objects.filter(email=email).exists():
             return Response({"error": "User with this email does not exist."}, status=status.HTTP_404_NOT_FOUND)
         return Response({"error": "Incorrect password."}, status=status.HTTP_401_UNAUTHORIZED)
 
+    print(f"[DEBUG] User authenticated: {user.email}")
+
+    # Login the user using the original Django HttpRequest object
+    try:
+        login(request._request, user)
+        update_last_login(None, user)
+        print(f"[DEBUG] User logged in successfully via login(): {user.email}")
+    except Exception as e:
+        print(f"[DEBUG] Error during login(): {e}")
+
+    # Issue tokens
     tokens = get_tokens_for_user(user)
     return Response(
         {
@@ -104,10 +116,20 @@ def list_user_achievements(request):
     """
     API to fetch achievements obtained by the user.
     """
-    UserAchievement = apps.get_model("UserAchievements", "UserAchievement")  # Updated app name
-    user_achievements = UserAchievement.objects.filter(user=request.user)
-    serializer = UserAchievementSerializer(user_achievements, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    UserAchievement = apps.get_model("UserAchievements", "UserAchievement")
+    print(f"[DEBUG] Request User: {request.user}, Is Authenticated: {request.user.is_authenticated}")
+    
+    try:
+        user_achievements = UserAchievement.objects.filter(user=request.user).select_related('achievement')
+        print(f"[DEBUG] User Achievements Queryset: {user_achievements}")
+        serializer = UserAchievementSerializer(user_achievements, many=True)
+        print(f"[DEBUG] Serialized Data: {serializer.data}")
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        print(f"[DEBUG] Error in list_user_achievements: {e}")
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 
 @api_view(["GET"])
