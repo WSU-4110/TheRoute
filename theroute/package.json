@@ -1,7 +1,33 @@
 {
   "name": "theroute",
+<<<<<<< HEAD
   "version": "1.0.0",
   "main": "index.js",
+=======
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@mapbox/mapbox-gl-directions": "^4.3.1",
+    "@mapbox/mapbox-gl-geocoder": "^5.0.3",
+    "@mapbox/search-js-react": "^1.0.0-beta.22",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.7.7",
+    "jwt-decode": "^4.0.0",
+    "mapbox-gl": "^3.8.0",
+    "react": "^18.3.1",
+    "react-burger-menu": "^3.0.9",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.3.0",
+    "react-map-gl": "^7.1.7",
+    "react-native-video": "^6.7.0",
+    "react-router-dom": "^6.27.0",
+    "react-scripts": "^5.0.1",
+    "web-vitals": "^2.1.4",
+    "webpack": "^5.95.0"
+  },
+>>>>>>> bc4e6770691b3cc31ec543b22852ae1824d025d9
   "scripts": {
     "start": "react-scripts start",
     "test": "jest"
