@@ -206,12 +206,20 @@
   color: #666;
 }
 
-.add {
-  margin-right: 970px;
-  margin-top: 50px;
-  position: absolute; 
-  top: 5px; 
-  right: 50px;
-  z-index: 1000; 
+.save {
+  position: absolute; /* Ensure it stays fixed on the page */
+  top: 45px; /* Position it at the bottom */
+  left: 330px; /* Slight offset from the left */
   width: 100px;
+  z-index: 2000; /* Make sure it appears above the map and geocoder */
+  background-color: #007bff; /* Button color */
+  color: white; /* Text color */
+  padding: 10px 20px; /* Add padding */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Show pointer on hover */
+}
+
+.save:hover {
+  background-color: #0056b3; /* Slightly darker color on hover */
 }

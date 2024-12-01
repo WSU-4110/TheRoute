@@ -9,7 +9,7 @@ const Sidebar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useContext(AuthContext); // Access the user from AuthContext
-  const username = user?.username; // Get the username directly from the context
+  const email = localStorage.getItem("email"); // Get the username directly from the context
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -53,7 +53,7 @@ const Sidebar = () => {
         <div className="profile">
           <FaUser size={32} />
           {/* Render username or fallback to "Guest" if username is empty */}
-          <h2>{username || 'User'}</h2> {/* Use username directly from the context */}
+          <h2>{email || 'User'}</h2> {/* Use username directly from the context */}
         </div>
         {getSidebarOptions()}
         <Link to="/login" onClick={toggleSidebar} className="logout">

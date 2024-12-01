@@ -21,6 +21,7 @@ export const Setup = () => {
   const [errorFields, setErrorFields] = useState([]);
   const [startAddress, setStartAddress] = useState('');
   const [endAddress, setEndAddress] = useState('');
+  const [tripNameError, setTripNameError] = useState('');
   const navigate = useNavigate();
 
   // Initialize state with data from local storage
@@ -44,9 +45,39 @@ export const Setup = () => {
     setIsFetchingLocation(false);
   }, []);
 
+  //check if trip already exists
+  const checkTripNameExists = async (name) => {
+    try {
+      const token = await getAccessToken();
+      const response = await axios.get('http://localhost:8000/api/trips/', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      // Check if any trip in the response has the same name
+      const trips = response.data;
+      const nameExists = trips.some(trip => trip.trip_name.toLowerCase() === name.toLowerCase());
+  
+      if (nameExists) {
+        setTripNameError('Trip name already exists. Please choose a different name.');
+        return true;
+      } else {
+        setTripNameError('');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error checking trip name:', error);
+      setTripNameError('Error checking trip name. Please try again.');
+      return true;
+    }
+  };
+
   // Handle form submission to add a new trip
   const handleAddTrip = async (e) => {
     e.preventDefault();
+
+    //check if trip name already exists
+    const nameExists = await checkTripNameExists(tripName);
+    if (nameExists) return;
 
     // Validate fields
     let errors = {};
@@ -107,7 +138,6 @@ export const Setup = () => {
 
     // Prepare the trip data
     const tripData = {
-      email: email,
       trip_name: tripName,
       start_location: startLocation,
       end_location: endLocation,
@@ -117,30 +147,28 @@ export const Setup = () => {
       budget: parseFloat(budget),
     };
 
-    const handleAddTrip = async () => {
-      try {
-        const token = await getAccessToken();
-        if (!token) {
-          setError('Authentication required. Please log in again.');
-          return;
-        }
-    
-        const response = await axios.post(
-          'http://localhost:8000/api/trips/',
-          tripData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-    
-        console.log('Trip added successfully:', response.data);
-        alert('Trip saved successfully!');
-        navigate('/view-trips');
-      } catch (error) {
-        console.error('Failed to add trip:', error.response?.data || error);
-        alert('Failed to add trip. Please try again.');
+    try {
+      const token = await getAccessToken();
+      if (!token) {
+        setError('Authentication required. Please log in again.');
+        return;
       }
-    };
+  
+      const response = await axios.post(
+        'http://localhost:8000/api/trips/',
+        tripData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      console.log('Trip added successfully:', response.data);
+      alert('Trip saved successfully!');
+      navigate('/view-trips');
+    } catch (error) {
+      console.error('Failed to add trip:', error.response?.data || error);
+      alert('Failed to add trip. Please try again.');
+    }
   };
 
   return (
@@ -150,17 +178,14 @@ export const Setup = () => {
           <h2>Add a Trip</h2>
           <form onSubmit={handleAddTrip}>
             <label className="label-name">
-              Trip Name:
-              <input
-                className="form-input"
-                type="text"
-                value={tripName}
-                onChange={(e) => setTripName(e.target.value)}
-                placeholder="Enter trip name"
-              />
-              {validationErrors.tripName && (
-                <span className="error-message">{validationErrors.tripName}</span>
-              )}
+            Trip Name:
+            <input className="form-input" type="text" value={tripName}
+            onChange={(e) => setTripName(e.target.value)}
+            placeholder="Enter trip name"/>
+            {tripNameError && (
+            <span className="error-message">{tripNameError}</span>)}
+            {validationErrors.tripName && (
+            <span className="error-message">{validationErrors.tripName}</span>)}
             </label>
             <br />
             <label className="label-name">
@@ -168,7 +193,6 @@ export const Setup = () => {
               <input
                 className="form-input"
                 type="text"
-                //value={startLocation}
                 value={startAddress}
                 placeholder="Enter starting location"
                 onChange={(e) => setStartLocation(e.target.value)}
@@ -184,7 +208,6 @@ export const Setup = () => {
               <input
                 className="form-input"
                 type="text"
-                //value={endLocation}
                 value={endAddress}
                 placeholder="Enter end location"
                 onChange={(e) => setEndLocation(e.target.value)}

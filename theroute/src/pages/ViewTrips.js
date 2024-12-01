@@ -91,7 +91,7 @@ const ViewTrips = () => {
                 )}
               </div>
 
-              <button className="delete-button" onClick={() => handleDeleteTrip(trip.id)}>
+              <button className="delete-trip" onClick={() => handleDeleteTrip(trip.id)}>
                 <FaTrash />
               </button>
             </div>
@@ -100,7 +100,7 @@ const ViewTrips = () => {
       )}
 
       <div className="button-container">
-        <Link to="/setup" className="back-button">Back</Link>
+        <Link to="/setup" className="back-button">Add Trip</Link>
       </div>
     </div>
   );
