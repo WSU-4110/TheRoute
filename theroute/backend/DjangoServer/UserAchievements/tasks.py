@@ -1,5 +1,6 @@
-from UserAchievements.utils import check_achievement_plain
-from celery import task
+from achievements.utils import check_achievement_plain
+from celery.task import task
+
 
 @task
 def check_achievement_task(sender, user, key, *args, **kwargs):

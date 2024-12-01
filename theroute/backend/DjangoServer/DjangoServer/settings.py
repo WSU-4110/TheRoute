@@ -160,7 +160,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-ACHIEVEMENT_CLASSES = []
+#ACHIEVEMENT_CLASSES = []
 
 
 LOGGING = {

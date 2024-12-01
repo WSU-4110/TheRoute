@@ -36,6 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = UserModel
         fields = ('email', 'username')
 
+
 class UserAchievementSerializer(serializers.ModelSerializer):
     achievement_name = serializers.CharField(source="achievement.name")
     achievement_description = serializers.CharField(source="achievement.description")
