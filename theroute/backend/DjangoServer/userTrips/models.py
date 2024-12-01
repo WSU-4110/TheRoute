@@ -14,4 +14,3 @@ class TripDetails(models.Model):
 
     def __str__(self):
         return self.trip_name
-

@@ -17,7 +17,8 @@ const AuthProvider = ({ children }) => {
       try {
         const decoded = jwtDecode(storedToken);
         console.log("Decoded Token:", decoded);
-        setUser({ email: decoded.email, username: decoded.usernam });
+        setUser({ email: decoded.email, username: decoded.username});
+        console.lof(decoded.user.username);
       } catch (error) {
         console.error('Invalid token on load:', error);
       }
@@ -69,6 +70,8 @@ const AuthProvider = ({ children }) => {
     setAccessToken(null);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
     console.log('User logged out');
   };
 

@@ -1,94 +1,173 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import '../styles/setup.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
 
 export const Setup = () => {
-  const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
+  const { getAccessToken } = useContext(AuthContext);
+  const [tripName, setTripName] = useState('');
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
-  const [returnDate, setReturnDate] = useState('');
-  const [trips, setTrips] = useState([]);
   const [tripDistance, setTripDistance] = useState('');
-  const [tripDate, setTripDate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [budget, setBudget] = useState('');
   const [email, setEmail] = useState('');
-  const [vehicleInfo, setVehicleInfo] = useState('');
-  const [expenses, setExpenses] = useState('');
-  const [plannedLocations, setPlannedLocations] = useState('');
   const [isFetchingLocation, setIsFetchingLocation] = useState(true);
+  const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorFields, setErrorFields] = useState([]);
+  const [startAddress, setStartAddress] = useState('');
+  const [endAddress, setEndAddress] = useState('');
+  const [tripNameError, setTripNameError] = useState('');
   const navigate = useNavigate();
 
-  // Fetch city name based on coordinates
-  const getCityName = async () => {
-    try {
-      setIsFetchingLocation(true);
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${startCoords[0]},${startCoords[1]}.json?access_token=YOUR_MAPBOX_ACCESS_TOKEN`
-      );
-      const data = await response.json();
-      if (data && data.features && data.features.length > 0) {
-        setStartLocation(data.features[0].text);
-      } else {
-        setStartLocation('Unknown Location');
-      }
-    } catch (error) {
-      console.error('Error fetching city name:', error);
-      setStartLocation('Error fetching location');
-    } finally {
-      setIsFetchingLocation(false);
-    }
-  };
-
+  // Initialize state with data from local storage
   useEffect(() => {
-    getCityName();
-  }, [startCoords]);
+    const storedTripData = localStorage.getItem('tripData');
+    
+    // If tripData exists, parse it and set the state values
+    if (storedTripData) {
+      const { startLocation, endLocation, tripDistance, email } = JSON.parse(storedTripData);
 
-  // Fetch all saved trips from the backend
-  const fetchTrips = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/trips');
-      const data = await response.json();
-      console.log("Fetched trips:", data); 
-      setTrips(data);
-    } catch (error) {
-      console.error('Error fetching trips:', error);
+      setStartLocation(startLocation || '');
+      setEndLocation(endLocation || '');
+      setTripDistance(tripDistance || '');
+      setEmail(email || '');
     }
-  };
 
-  useEffect(() => {
-    fetchTrips();
+    // Set start and end addresses from local storage
+    setStartAddress(localStorage.getItem('startAddress') || '');
+    setEndAddress(localStorage.getItem('endAddress') || '');
+
+    setIsFetchingLocation(false);
   }, []);
 
+  //check if trip already exists
+  const checkTripNameExists = async (name) => {
+    try {
+      const token = await getAccessToken();
+      const response = await axios.get('http://localhost:8000/api/trips/', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      // Check if any trip in the response has the same name
+      const trips = response.data;
+      const nameExists = trips.some(trip => trip.trip_name.toLowerCase() === name.toLowerCase());
+  
+      if (nameExists) {
+        setTripNameError('Trip name already exists. Please choose a different name.');
+        return true;
+      } else {
+        setTripNameError('');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error checking trip name:', error);
+      setTripNameError('Error checking trip name. Please try again.');
+      return true;
+    }
+  };
+
   // Handle form submission to add a new trip
-  const handleAddTrip = (e) => {
+  const handleAddTrip = async (e) => {
     e.preventDefault();
 
-    // Get logged-in user's email
-    const userEmail = localStorage.getItem('userEmail');
-    if (!userEmail) {
-      alert('Please log in to save trips');
-      navigate('/login');
+    //check if trip name already exists
+    const nameExists = await checkTripNameExists(tripName);
+    if (nameExists) return;
+
+    // Validate fields
+    let errors = {};
+    if (!tripName) errors.tripName = '*Trip Name is required';
+    if (!startLocation) errors.startLocation = '*Starting Location is required';
+    if (!endLocation) errors.endLocation = '*End Location is required';
+    if (!tripDistance) errors.tripDistance = '*Trip Distance is required';
+    if (!startDate) errors.tripDate = '*Trip Date is required';
+    if (!endDate) errors.returnDate = '*Return Date is required';
+    if (!email) errors.email = '*Email is required';
+    if (!budget) errors.budget = '*Budget is required';
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
       return;
     }
 
+    // Check for empty required fields and display error next to the empty fields
+    let valid = true;
+    setErrorMessage('');
+    let errorObj = {};
+
+    if (!tripName) {
+      errorObj.tripName = 'Trip Name is required';
+      valid = false;
+    }
+    if (!startLocation) {
+      errorObj.startLocation = 'Starting Location is required';
+      valid = false;
+    }
+    if (!endLocation) {
+      errorObj.endLocation = 'End Location is required';
+      valid = false;
+    }
+    if (!tripDistance) {
+      errorObj.tripDistance = 'Total Distance is required';
+      valid = false;
+    }
+    if (!startDate) {
+      errorObj.startDate = 'Trip Date is required';
+      valid = false;
+    }
+    if (!endDate) {
+      errorObj.endDate = 'End Date is required';
+      valid = false;
+    }
+    if (!budget) {
+      errorObj.budget = 'Budget is required';
+      valid = false;
+    }
+
+    setErrorFields(errorObj);
+
+    if (!valid) {
+      setErrorMessage('Please fill in all the required fields.');
+      return;
+    }
+
+    // Prepare the trip data
     const tripData = {
-      startLocation,
-      endLocation,
-      tripDistance,
-      tripDate,
-      returnDate,
-      email: userEmail,  // Use logged-in user's email
-      vehicleInfo,
-      expenses,
-      plannedLocations,
+      trip_name: tripName,
+      start_location: startLocation,
+      end_location: endLocation,
+      trip_distance: parseFloat(tripDistance),
+      start_date: startDate,
+      end_date: endDate,
+      budget: parseFloat(budget),
     };
 
     try {
-      const existingTrips = JSON.parse(localStorage.getItem('trips')) || [];
-      localStorage.setItem('trips', JSON.stringify([...existingTrips, tripData]));
+      const token = await getAccessToken();
+      if (!token) {
+        setError('Authentication required. Please log in again.');
+        return;
+      }
+  
+      const response = await axios.post(
+        'http://localhost:8000/api/trips/',
+        tripData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      console.log('Trip added successfully:', response.data);
       alert('Trip saved successfully!');
+      navigate('/view-trips');
     } catch (error) {
-      console.error('Error saving trip:', error);
-      alert('Error saving trip');
+      console.error('Failed to add trip:', error.response?.data || error);
+      alert('Failed to add trip. Please try again.');
     }
   };
 
@@ -99,120 +178,133 @@ export const Setup = () => {
           <h2>Add a Trip</h2>
           <form onSubmit={handleAddTrip}>
             <label className="label-name">
+            Trip Name:
+            <input className="form-input" type="text" value={tripName}
+            onChange={(e) => setTripName(e.target.value)}
+            placeholder="Enter trip name"/>
+            {tripNameError && (
+            <span className="error-message">{tripNameError}</span>)}
+            {validationErrors.tripName && (
+            <span className="error-message">{validationErrors.tripName}</span>)}
+            </label>
+            <br />
+            <label className="label-name">
               Starting Location:
               <input
                 className="form-input"
                 type="text"
-                value={startLocation}
-                onChange={(e) => setStartLocation(e.target.value)}
+                value={startAddress}
                 placeholder="Enter starting location"
+                onChange={(e) => setStartLocation(e.target.value)}
+                readOnly
               />
+              {validationErrors.startLocation && (
+                <span className="error-message">{validationErrors.startLocation}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               End Location:
               <input
-              className="form-input"
+                className="form-input"
                 type="text"
-                value={endLocation}
-                onChange={(e) => setEndLocation(e.target.value)}
+                value={endAddress}
                 placeholder="Enter end location"
+                onChange={(e) => setEndLocation(e.target.value)}
+                readOnly
               />
+              {validationErrors.endLocation && (
+                <span className="error-message">{validationErrors.endLocation}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               Trip Distance (in miles):
               <input
-              className="form-input"
+                className="form-input"
                 type="number"
                 value={tripDistance}
-                onChange={(e) => setTripDistance(e.target.value)}
                 placeholder="Enter trip distance"
+                onChange={(e) => setTripDistance(e.target.value)}
               />
+              {validationErrors.tripDistance && (
+                <span className="error-message">{validationErrors.tripDistance}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               Trip Date:
               <input
-              className="form-input"
+                className="form-input"
                 type="date"
-                value={tripDate}
-                onChange={(e) => setTripDate(e.target.value)}
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
               />
+              {validationErrors.tripDate && (
+                <span className="error-message">{validationErrors.tripDate}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               Return Date:
               <input
-              className="form-input"
+                className="form-input"
                 type="date"
-                value={returnDate}
-                onChange={(e) => setReturnDate(e.target.value)}
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
               />
+              {validationErrors.returnDate && (
+                <span className="error-message">{validationErrors.returnDate}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
               Email:
               <input
-              className="form-input"
+                className="form-input"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter email"
+                onChange={(e) => setEmail(e.target.value)}
+                readOnly
               />
+              {validationErrors.email && (
+                <span className="error-message">{validationErrors.email}</span>
+              )}
             </label>
             <br />
             <label className="label-name">
-              Vehicle Information:
-              <input
-              className="form-input"
-                type="text"
-                value={vehicleInfo}
-                onChange={(e) => setVehicleInfo(e.target.value)}
-                placeholder="Enter vehicle info"
-              />
-            </label>
-            <br />
-            <label className="label-name">
-              Planned Locations:
+              Budget:
               <input
                 className="form-input"
-                value={plannedLocations}
-                onChange={(e) => setPlannedLocations(e.target.value)}
-                placeholder="Enter planned locations"
-              />
-            </label>
-            <br />
-            <label className="label-name">
-              Expenses:
-              <input
-              className="form-input"
                 type="number"
-                value={expenses}
-                onChange={(e) => setExpenses(e.target.value)}
-                placeholder="Enter expenses"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                placeholder="Enter budget"
               />
+              {validationErrors.budget && (
+                <span className="error-message">{validationErrors.budget}</span>
+              )}
             </label>
             <br />
             <button type="submit" disabled={isFetchingLocation}>
-              {isFetchingLocation ? 'Loading Location...' : 'Save Trip'}
+              {isFetchingLocation ? 'Loading Location...' : 'Add Trip'}
             </button>
           </form>
-          {/* Button to navigate to view saved trips page */}
-        <div className="view-trips-button">
-          <Link to="/view-trips">
-            <button>View Saved Trips</button>
-          </Link>
-        </div>
-        <div className="route-button">
-          <Link to="/map">
-            <button>Go to theRoute!</button>
-          </Link>
+          <div className="view-trips-button">
+            <Link to="/view-trips">
+              <button>View Saved Trips</button>
+            </Link>
+          </div>
+          <div className="route-button">
+            <Link to="/map">
+              <button>Go to theRoute!</button>
+            </Link>
           </div>
         </div>
-
       </div>
     </div>
   );
 };
+
 export default Setup;
