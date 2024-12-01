@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 
 import React, { useState, useEffect, useContext } from 'react'; 
+=======
+import React, { useState, useEffect, useContext } from 'react';
+>>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
 import axiosInstance from './axios';
 import { AuthContext } from '../context/AuthContext';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
@@ -160,7 +164,11 @@ const ViewExpenses = () => {
 
   return (
     <div className="view-expenses">
+<<<<<<< HEAD
       <h1>Expenses</h1>
+=======
+      <h1 className="expenses-header"><b>{selectedTrip} Expenses</b></h1>
+>>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
       <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
 
       {errorMessage && <p className="error">{errorMessage}</p>}
@@ -169,6 +177,7 @@ const ViewExpenses = () => {
         <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
       </div>
       <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
+<<<<<<< HEAD
       <br></br>      
       {/* Category Dropdown */}
       <div classname='dropdown-container'>
@@ -224,6 +233,80 @@ const ViewExpenses = () => {
           </PieChart>
         </div> 
 
+=======
+      <br />
+
+      <div className="main-box">
+        <div className="dropdown-container">
+          <select className="dropdown-categories" onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
+            <option value="">All Categories</option>
+            <option value="housing">Housing</option>
+            <option value="transportation">Transportation</option>
+            <option value="food">Food</option>
+            <option value="activities">Activities</option>
+            <option value="shopping">Shopping</option>
+            <option value="other">Other</option>
+          </select>
+
+          <select className="dropdown-trips" onChange={(e) => setSelectedTrip(e.target.value)} value={selectedTrip}>
+            <option value="">All Trips</option>
+            {expenses
+              .map(expense => expense.trip_name)
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .map((trip, index) => (
+                <option key={index} value={trip}>{trip}</option>
+              ))}
+          </select>
+        </div>
+
+        <div className="expenses-container">
+          {filteredExpenses.length > 0 ? (
+            filteredExpenses.map(item => (
+              <div key={item.id} className="expense-item">
+                <button className="delete-expense" onClick={() => handleDeleteExpense(item.id)}>
+                  <FaTrash />
+                </button>
+                <p>
+                  <span className="category">
+                    {getCategoryIcon(item.category)} {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                  </span>
+                  <span className="expense-amount"> - {formatAmount(item.amount)}</span>
+                  <br />
+                  <div className='date'>{new Date(item.date).toLocaleDateString()}</div>
+                </p>
+              </div>
+            ))
+          ) : (
+            <p>No expenses to display for this category and trip.</p>
+          )}
+        </div>
+
+        <div className="pieChart">
+          <PieChart width={300} height={300}>
+            <Pie
+              activeIndex={activeIndex}
+              data={updatedData}
+              dataKey="budget"
+              outerRadius={150}
+              fill="green"
+              onMouseEnter={onPieEnter}
+              style={{ cursor: 'pointer', outline: 'none' }}
+            >
+              {updatedData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </div>
+        <Link to="/add-expense">
+          <button className='expenses'>Add Expenses</button>
+        </Link>
+        <Link to="/setup">
+          <button className='trip'>Add Trip</button>
+        </Link>
+      </div>
+>>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
     </div>
   );
 };

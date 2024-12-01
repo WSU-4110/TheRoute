@@ -178,17 +178,23 @@ LOGGING = {
         'django': {
             'handlers': ['console'],
 <<<<<<< HEAD
+<<<<<<< HEAD
             #'level': 'DEBUG',
 =======
 >>>>>>> 8376029 (Commiting before switching branches)
+=======
+>>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
             'propagate': True,
         },
         'userAPI': {  # Add logging for your app
             'handlers': ['console'],
 <<<<<<< HEAD
+<<<<<<< HEAD
             #'level': 'DEBUG',
 =======
 >>>>>>> 8376029 (Commiting before switching branches)
+=======
+>>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
             'propagate': True,
         },
     },

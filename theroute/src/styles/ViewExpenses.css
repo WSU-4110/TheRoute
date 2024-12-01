@@ -10,9 +10,15 @@
 }
 
 .view-expenses {
+<<<<<<< HEAD
   background-color: #ffffff; 
   padding: 20px; 
   min-height: 100vh; 
+=======
+  background-color: #ffffff;
+  padding: 20px;
+  min-height: 100vh;
+>>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
 }
 
 .expenses-container {
@@ -96,12 +102,20 @@
 }
 
 .progress-bar-container {
+<<<<<<< HEAD
   width: 80%; /*shrinks the bar so it is not covered by nav bar */
   background-color: #918686; 
   border-radius: 3px;
   height: 20px;
   margin-left: auto; 
   margin-right:auto;
+=======
+  width: 85%;
+  background-color: #d9d3d3;
+  border-radius: 25px;
+  height: 35px;
+  margin: 20px 75px;
+>>>>>>> c092e2bb09deb93fd75c82011f0d221b31a621ea
   overflow: hidden;
 }
 
