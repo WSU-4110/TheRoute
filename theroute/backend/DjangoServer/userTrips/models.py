@@ -4,7 +4,7 @@ from django.conf import settings
 # Updated TripDetails model without stops
 class TripDetails(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='trips')
-    trip_name = models.CharField(max_length=100)
+    trip_name = models.CharField(max_length=100, unique=True)  # Ensure unique trip names
     start_location = models.CharField(max_length=100)
     end_location = models.CharField(max_length=100)
     trip_distance = models.FloatField(default=0)  # Setting the default value to 0

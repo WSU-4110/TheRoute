@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import '../styles/setup.css';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 
 export const Setup = () => {
@@ -28,7 +29,6 @@ export const Setup = () => {
   useEffect(() => {
     const storedTripData = localStorage.getItem('tripData');
     
-    // If tripData exists, parse it and set the state values
     if (storedTripData) {
       const { startLocation, endLocation, tripDistance, email } = JSON.parse(storedTripData);
 
@@ -38,48 +38,15 @@ export const Setup = () => {
       setEmail(email || '');
     }
 
-    // Set start and end addresses from local storage
     setStartAddress(localStorage.getItem('startAddress') || '');
     setEndAddress(localStorage.getItem('endAddress') || '');
 
     setIsFetchingLocation(false);
   }, []);
 
-  //check if trip already exists
-  const checkTripNameExists = async (name) => {
-    try {
-      const token = await getAccessToken();
-      const response = await axios.get('http://localhost:8000/api/trips/', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      // Check if any trip in the response has the same name
-      const trips = response.data;
-      const nameExists = trips.some(trip => trip.trip_name.toLowerCase() === name.toLowerCase());
-  
-      if (nameExists) {
-        setTripNameError('Trip name already exists. Please choose a different name.');
-        return true;
-      } else {
-        setTripNameError('');
-        return false;
-      }
-    } catch (error) {
-      console.error('Error checking trip name:', error);
-      setTripNameError('Error checking trip name. Please try again.');
-      return true;
-    }
-  };
-
-  // Handle form submission to add a new trip
   const handleAddTrip = async (e) => {
     e.preventDefault();
 
-    //check if trip name already exists
-    const nameExists = await checkTripNameExists(tripName);
-    if (nameExists) return;
-
-    // Validate fields
     let errors = {};
     if (!tripName) errors.tripName = '*Trip Name is required';
     if (!startLocation) errors.startLocation = '*Starting Location is required';
@@ -95,7 +62,6 @@ export const Setup = () => {
       return;
     }
 
-    // Check for empty required fields and display error next to the empty fields
     let valid = true;
     setErrorMessage('');
     let errorObj = {};
@@ -136,7 +102,6 @@ export const Setup = () => {
       return;
     }
 
-    // Prepare the trip data
     const tripData = {
       trip_name: tripName,
       start_location: startLocation,
@@ -146,14 +111,13 @@ export const Setup = () => {
       end_date: endDate,
       budget: parseFloat(budget),
     };
-
     try {
       const token = await getAccessToken();
       if (!token) {
         setError('Authentication required. Please log in again.');
         return;
       }
-  
+    
       const response = await axios.post(
         'http://localhost:8000/api/trips/',
         tripData,
@@ -161,7 +125,9 @@ export const Setup = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
+    
+      // Check the response object
+      console.log('Response:', response); // Log the response here
       console.log('Trip added successfully:', response.data);
       alert('Trip saved successfully!');
       navigate('/view-trips');
@@ -169,6 +135,7 @@ export const Setup = () => {
       console.error('Failed to add trip:', error.response?.data || error);
       alert('Failed to add trip. Please try again.');
     }
+    
   };
 
   return (
