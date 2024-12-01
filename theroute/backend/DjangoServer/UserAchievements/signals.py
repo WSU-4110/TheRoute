@@ -13,8 +13,8 @@ def award_first_login_achievement(sender, instance, created, **kwargs):
     Awards the 'First Login' achievement to the user upon account creation.
     """
     if created:
-        Achievement = apps.get_model('achievements', 'Achievement')
-        UserAchievement = apps.get_model('achievements', 'UserAchievement')
+        Achievement = apps.get_model('UserAchievements', 'Achievement')
+        UserAchievement = apps.get_model('UserAchievements', 'UserAchievement')
 
         try:
             # Fetch or create the 'first_login' achievement
@@ -38,8 +38,8 @@ def award_trip_planner_achievement(sender, instance, created, **kwargs):
     Awards the 'Trip Planner' achievement to the user upon successfully planning and setting up their first trip.
     """
     if created:  # Trigger only when a new trip is created
-        Achievement = apps.get_model('achievements', 'Achievement')
-        UserAchievement = apps.get_model('achievements', 'UserAchievement')
+        Achievement = apps.get_model('UserAchievements', 'Achievement')
+        UserAchievement = apps.get_model('UserAchievements', 'UserAchievement')
 
         try:
             # Fetch or create the 'Trip Planner' achievement
