@@ -1,14 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaMap, FaDollarSign, FaHome, FaCar, FaUser, FaSignOutAlt, FaTimes, FaTrophy } from 'react-icons/fa'; // Added FaTrophy icon
-import axios from 'axios';
+import { FaMap, FaDollarSign, FaCar, FaUser, FaSignOutAlt, FaTimes, FaTrophy } from 'react-icons/fa'; // Added FaTrophy icon
 import '../styles/SideBar.css';
-import { AuthContext } from '../context/AuthContext'; // Import the AuthContext
 
 const Sidebar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useContext(AuthContext); // Access the user from AuthContext
   const email = localStorage.getItem("email"); // Get the username directly from the context
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -33,7 +30,7 @@ const Sidebar = () => {
   };
 
   // Only render the sidebar for specified paths
-  if (!['/map', '/add-expense', '/view-expense', '/setup', '/view-achievements'].includes(location.pathname)) {
+  if (!['/map', '/add-expense', '/view-expense', '/setup', '/view-achievements', 'view-trips'].includes(location.pathname)) {
     return null;
   }
 

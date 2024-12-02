@@ -1,8 +1,6 @@
 from django.dispatch import Signal, receiver
 from django.db.models.signals import post_save
 from django.contrib.auth import get_user_model
-from django.db import transaction, IntegrityError
-from django.contrib.auth.signals import user_logged_in
 from django.apps import apps  # Lazy loading models
 
 # Define the custom signal
@@ -10,34 +8,6 @@ achievement_unlocked = Signal()
 
 # Ensure custom user model is used
 User = get_user_model()
-
-# Signal to award the 'First Login' achievement upon user login
-@receiver(user_logged_in)
-def award_first_login_achievement(sender, request, user, **kwargs):
-    Achievement = apps.get_model("UserAchievements", "Achievement")
-    UserAchievement = apps.get_model("UserAchievements", "UserAchievement")
-    
-    try:
-        # Fetch or create the 'First Login' achievement
-        first_login_achievement, _ = Achievement.objects.get_or_create(
-            key="first_login",
-            defaults={
-                "name": "First Login",
-                "description": "Awarded for logging in for the first time.",
-                "category": "General",
-                "bonus": 10,
-            },
-        )
-        
-        # Check if the user already has this achievement
-        UserAchievement.objects.get_or_create(
-            user=user,
-            achievement=first_login_achievement,
-        )
-    
-    except Exception:
-        pass
-
 
 # Signal to award the 'Trip Planner' achievement
 @receiver(post_save, sender=apps.get_model('userTrips', 'TripDetails'))
@@ -51,7 +21,7 @@ def award_trip_planner_achievement(sender, instance, created, **kwargs):
 
         try:
             # Fetch or create the 'Trip Planner' achievement
-            trip_planner_achievement, _ = Achievement.objects.get_or_create(
+            trip_planner_achievement, created = Achievement.objects.get_or_create(
                 key='first_trip_planner',
                 defaults={
                     'name': 'Trip Planner',
@@ -60,11 +30,18 @@ def award_trip_planner_achievement(sender, instance, created, **kwargs):
                     'bonus': 20,
                 }
             )
+            #print(f"[DEBUG] 'Trip Planner' Achievement: {trip_planner_achievement}, Created: {created}")
 
             # Award the achievement only if the user doesn't already have it
-            UserAchievement.objects.get_or_create(user=instance.user, achievement=trip_planner_achievement)
-        except Exception:
-            pass
+            user_achievement, created = UserAchievement.objects.get_or_create(
+                user=instance.user, achievement=trip_planner_achievement
+            )
+            if created:
+                print(f"[DEBUG] 'Trip Planner' achievement awarded to user: {instance.user.username}")
+            else:
+                print(f"[DEBUG] User {instance.user.username} already has 'Trip Planner' achievement")
+        except Exception as e:
+            print(f"[DEBUG] Error awarding 'Trip Planner' achievement: {e}")
 
 
 # Signal to award the 'First Expense' achievement
@@ -79,7 +56,7 @@ def award_first_expense_achievement(sender, instance, created, **kwargs):
 
         try:
             # Fetch or create the 'First Expense' achievement
-            first_expense_achievement, _ = Achievement.objects.get_or_create(
+            first_expense_achievement, created = Achievement.objects.get_or_create(
                 key='first_expense',
                 defaults={
                     'name': 'First Expense',
@@ -88,12 +65,18 @@ def award_first_expense_achievement(sender, instance, created, **kwargs):
                     'bonus': 10,
                 }
             )
+            #print(f"[DEBUG] 'First Expense' Achievement: {first_expense_achievement}, Created: {created}")
 
             # Award the achievement only if the user doesn't already have it
-            if not UserAchievement.objects.filter(user=instance.user, achievement=first_expense_achievement).exists():
-                UserAchievement.objects.create(user=instance.user, achievement=first_expense_achievement)
-        except Exception:
-            pass
+            user_achievement, created = UserAchievement.objects.get_or_create(
+                user=instance.user, achievement=first_expense_achievement
+            )
+            if created:
+                print(f"[DEBUG] 'First Expense' achievement awarded to user: {instance.user.username}")
+            else:
+                print(f"[DEBUG] User {instance.user.username} already has 'First Expense' achievement")
+        except Exception as e:
+            print(f"[DEBUG] Error awarding 'First Expense' achievement: {e}")
 
 
 # Signal to award the 'Planner Signup' achievement
@@ -108,7 +91,7 @@ def award_planner_signup_achievement(sender, instance, created, **kwargs):
 
         try:
             # Fetch or create the 'Planner Signup' achievement
-            planner_signup_achievement, _ = Achievement.objects.get_or_create(
+            planner_signup_achievement, created = Achievement.objects.get_or_create(
                 key='planner_signup',
                 defaults={
                     'name': 'Planner Signup',
@@ -117,8 +100,14 @@ def award_planner_signup_achievement(sender, instance, created, **kwargs):
                     'bonus': 5,
                 }
             )
-
-            # Award the achievement only if the user doesn't already have it
-            UserAchievement.objects.get_or_create(user=instance, achievement=planner_signup_achievement)
-        except Exception:
-            pass
+            
+            # Award the achievement to the user
+            user_achievement, created = UserAchievement.objects.get_or_create(
+                user=instance, achievement=planner_signup_achievement
+            )
+            if created:
+                print(f"[DEBUG] 'Planner Signup' achievement awarded to user: {instance.username}")
+            else:
+                print(f"[DEBUG] User {instance.username} already has 'Planner Signup' achievement")
+        except Exception as e:
+            print(f"[DEBUG] Error awarding 'Planner Signup' achievement: {e}")

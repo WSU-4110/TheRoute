@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom'; 
+import { AuthContext } from '../context/AuthContext'; // Import AuthContext
 import '../styles/SignUp.css'; 
 
 const SignUp = () => {
@@ -10,58 +11,57 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate(); 
+  const { setTokens, setUser } = useContext(AuthContext); // Destructure `setTokens` and `setUser`
+  const { login } = useContext(AuthContext); // Import the login function from context
 
-  const handleSignUp = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+const handleSignUp = async (e) => {
+  e.preventDefault();
 
-    // Validation checks
-    if (!email || !username || !password || !confirmPassword) {
-      setError('Please fill in all fields');
-      return;
-    }
+  if (!email || !username || !password || !confirmPassword) {
+    setError('Please fill in all fields');
+    return;
+  }
 
-    // Check if password is shorter than 8 characters
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long');
-      return;
-    }
+  if (password.length < 8) {
+    setError('Password must be at least 8 characters long');
+    return;
+  }
 
-    // Check if email contains an '@' symbol
-    if (!email.includes('@') || email.length < 8) {
-      setError('Please enter a valid email');
-      return;
-    }
+  if (!email.includes('@') || email.length < 8) {
+    setError('Please enter a valid email');
+    return;
+  }
 
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+  if (password !== confirmPassword) {
+    setError('Passwords do not match');
+    return;
+  }
 
-    // Reset error message
-    setError('');
+  setError('');
 
-    console.log('Signing up with:', { email, username, password });
+  console.log('Signing up with:', { email, username, password });
 
-    try {
-      // Call the backend to check credentials using POST
-      const response = await axios.post('http://127.0.0.1:8000/api/register/', {
-        email,
-        username,
-        password,
-      });
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/api/register/', {
+      email,
+      username,
+      password,
+    });
 
-      // Store tokens in localStorage
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
-      localStorage.setItem('email', email);
-      navigate('/map'); 
-    } catch (error) {
-      console.error('Registration failed:', error);
-      const errorMessage = error.response?.data?.detail || 'Invalid credentials. Please try again.'; 
-      setError(errorMessage);
-    }
-  };
+    const { access, refresh } = response.data.tokens;
+    const user = response.data.user;
+
+    // Use the login function to set the user and save tokens
+    login(user, access, refresh);
+
+    navigate('/map'); 
+  } catch (error) {
+    console.error('[DEBUG] Registration failed:', error);
+    const errorMessage = error.response?.data?.detail || 'Invalid credentials. Please try again.'; 
+    setError(errorMessage);
+  }
+};
+
 
   const handleRegisterClick = () => {
     navigate('/login'); 
