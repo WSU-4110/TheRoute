@@ -141,7 +141,7 @@ const ViewExpenses = () => {
   
   console.log(updatedData); // Log the data for the pie chart
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#808080'];
+  const COLORS = ['#0088FE', '#00C49F', '#FFDE21', '#FF8042', '#A020F0', '#808080'];
   const onPieEnter = (_, index) => setActiveIndex(index);
 
   const renderCustomizedLabel = () => {
