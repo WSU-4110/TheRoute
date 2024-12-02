@@ -12,12 +12,6 @@ class Achievement(models.Model):
     bonus = models.IntegerField(default=0)
     callback = models.TextField()
 
-<<<<<<< HEAD
-    class Meta:
-        db_table = "UserAchievements_achievement"  # Explicit table name
-
-=======
->>>>>>> fd8c18d5f5be4bef224619c9519d05fe10c52d71
     def __str__(self):
         return f"Achievement({self.name}, {self.bonus})"
 
@@ -25,30 +19,14 @@ class UserAchievement(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-<<<<<<< HEAD
-        related_name='UserAchievements_userachievement'
-=======
         related_name='achievement_userachievements'
->>>>>>> fd8c18d5f5be4bef224619c9519d05fe10c52d71
     )
     achievement = models.ForeignKey(
         'UserAchievements.Achievement',  # Corrected reference
         on_delete=models.CASCADE,
-<<<<<<< HEAD
-        related_name='UserAchievements_userachievement'
-    )
-    registered_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = "UserAchievements_userachievement"  # Explicit table name
-
-    def __str__(self):
-        return f"{self.user.username} - {self.achievement.name}"
-=======
         related_name='achievement_userachievements'
     )
     registered_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.achievement.name}"
->>>>>>> fd8c18d5f5be4bef224619c9519d05fe10c52d71
