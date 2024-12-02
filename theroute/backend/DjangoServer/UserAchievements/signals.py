@@ -6,30 +6,8 @@ from django.apps import apps  # Lazy loading models
 # Define the custom signal
 achievement_unlocked = Signal()
 
-# Signal to award the 'First Login' achievement
-@receiver(post_save, sender=get_user_model())
-def award_first_login_achievement(sender, instance, created, **kwargs):
-    """
-    Awards the 'First Login' achievement to the user upon account creation.
-    """
-    if created:
-        Achievement = apps.get_model('UserAchievements', 'Achievement')
-        UserAchievement = apps.get_model('UserAchievements', 'UserAchievement')
-
-        try:
-            # Fetch or create the 'first_login' achievement
-            first_login_achievement, _ = Achievement.objects.get_or_create(
-                key='first_login',
-                defaults={'name': 'First Login', 'description': 'Awarded for logging in for the first time'}
-            )
-            # Award the achievement to the user
-            UserAchievement.objects.get_or_create(user=instance, achievement=first_login_achievement)
-
-            # Emit the custom signal
-            achievement_unlocked.send(sender=sender, user=instance, achievement=first_login_achievement)
-        except Exception as e:
-            print(f"Error awarding 'First Login' achievement: {e}")
-
+# Ensure custom user model is used
+User = get_user_model()
 
 # Signal to award the 'Trip Planner' achievement
 @receiver(post_save, sender=apps.get_model('userTrips', 'TripDetails'))
@@ -52,7 +30,7 @@ def award_trip_planner_achievement(sender, instance, created, **kwargs):
                     'bonus': 20,
                 }
             )
-            print(f"[DEBUG] 'Trip Planner' Achievement: {trip_planner_achievement}, Created: {created}")
+            #print(f"[DEBUG] 'Trip Planner' Achievement: {trip_planner_achievement}, Created: {created}")
 
             # Award the achievement only if the user doesn't already have it
             user_achievement, created = UserAchievement.objects.get_or_create(
@@ -87,7 +65,7 @@ def award_first_expense_achievement(sender, instance, created, **kwargs):
                     'bonus': 10,
                 }
             )
-            print(f"[DEBUG] 'First Expense' Achievement: {first_expense_achievement}, Created: {created}")
+            #print(f"[DEBUG] 'First Expense' Achievement: {first_expense_achievement}, Created: {created}")
 
             # Award the achievement only if the user doesn't already have it
             user_achievement, created = UserAchievement.objects.get_or_create(
@@ -122,8 +100,7 @@ def award_planner_signup_achievement(sender, instance, created, **kwargs):
                     'bonus': 5,
                 }
             )
-            print(f"[DEBUG] 'Planner Signup' Achievement: {planner_signup_achievement}, Created: {created}")
-
+            
             # Award the achievement to the user
             user_achievement, created = UserAchievement.objects.get_or_create(
                 user=instance, achievement=planner_signup_achievement

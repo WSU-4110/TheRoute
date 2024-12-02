@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaMap, FaDollarSign, FaCar, FaUser, FaSignOutAlt, FaTimes, FaTrophy } from 'react-icons/fa'; 
+import { FaMap, FaDollarSign, FaCar, FaUser, FaSignOutAlt, FaTimes, FaTrophy } from 'react-icons/fa'; // Added FaTrophy icon
 import '../styles/SideBar.css';
 
 const Sidebar = () => {
@@ -30,7 +30,7 @@ const Sidebar = () => {
   };
 
   // Only render the sidebar for specified paths
-  if (!['/map', '/add-expense', '/view-expense', '/setup', '/view-achievements', '/view-trips'].includes(location.pathname)) {
+  if (!['/map', '/add-expense', '/view-expense', '/setup', '/view-achievements', 'view-trips'].includes(location.pathname)) {
     return null;
   }
 

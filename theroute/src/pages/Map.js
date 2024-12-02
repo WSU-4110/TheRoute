@@ -327,9 +327,9 @@ export default function MapView() {
         <div id="end-input" ></div>
         <div id="waypoint-input" ></div>
       </div>
+      <button className="save" onClick={saveTrip}>Save Trip</button>
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
       {errorMessage && <div className="error-message">{errorMessage}</div>}
-      <button className="save" onClick={saveTrip}>Save Trip</button>
     </div>
   );
 }
