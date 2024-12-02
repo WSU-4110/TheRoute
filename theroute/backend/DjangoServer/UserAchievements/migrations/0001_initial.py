@@ -35,8 +35,4 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='achievement_userachievements', to=settings.AUTH_USER_MODEL)),
             ],
         ),
-<<<<<<< HEAD
     ]
-=======
-    ]
->>>>>>> fd8c18d5f5be4bef224619c9519d05fe10c52d71

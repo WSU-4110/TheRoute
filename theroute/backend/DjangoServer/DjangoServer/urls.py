@@ -34,8 +34,8 @@ urlpatterns = [
     path('api/', include(router.urls)),
 
     # User achievements endpoints
-    #path('api/achievements/list/', user_views.list_user_achievements, name='list_user_achievements'),
-    #path('api/achievements/details/<int:achievement_id>/', user_views.achievement_details, name='achievement_details'),
-    #path('api/achievements/award/<str:achievement_key>/', user_views.award_achievement_view, name='award_achievement'),
-    #path('api/achievements/all/', user_views.list_all_achievements, name='list_all_achievements'),
+    path('api/achievements/list/', user_views.list_user_achievements, name='list_user_achievements'),
+    path('api/achievements/details/<int:achievement_id>/', user_views.achievement_details, name='achievement_details'),
+    path('api/achievements/award/<str:achievement_key>/', user_views.award_achievement_view, name='award_achievement'),
+    path('api/achievements/all/', user_views.list_all_achievements, name='list_all_achievements'),
 ]

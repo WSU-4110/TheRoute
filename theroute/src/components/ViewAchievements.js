@@ -66,7 +66,7 @@ const ViewAchievements = () => {
         return moneyIcon;
       case 'first_trip_planner':
         return mapIcon;
-      case 'signup': // Updated to match the key for "Planner Signup"
+      case 'planner_signup': // Updated to match the key for "Planner Signup"
         return signupIcon;
       default:
         return '/default-icon.png'; // Default icon
