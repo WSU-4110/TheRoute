@@ -53,6 +53,7 @@ const ViewExpenses = () => {
       setTotalBudget(totalAllTripsBudget);
     }
 
+    // Filter expenses based on selected trip and category
     setFilteredExpenses(
       expenses.filter(expense => {
         const matchesCategory = selectedCategory
@@ -123,32 +124,68 @@ const ViewExpenses = () => {
 
   const getCategoryBudget = () => {
     const categoryBudgets = filteredExpenses.reduce((acc, expense) => {
+      const amount = parseFloat(expense.amount) || 0; // Ensure amount is a valid number
       if (!acc[expense.category]) acc[expense.category] = 0;
-      acc[expense.category] += expense.amount;
+      acc[expense.category] += amount;
       return acc;
     }, {});
     return categoryBudgets;
   };
-
+  
   const categoryBudgets = getCategoryBudget();
+  
   const updatedData = Object.keys(categoryBudgets).map(category => ({
     name: category.charAt(0).toUpperCase() + category.slice(1),
-    budget: categoryBudgets[category],
+    budget: parseFloat(categoryBudgets[category].toFixed(2)) || 0, // Ensure no NaN values
   }));
+  
+  console.log(updatedData); // Log the data for the pie chart
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#808080'];
   const onPieEnter = (_, index) => setActiveIndex(index);
 
+  const renderCustomizedLabel = () => {
+    return (
+      <g>
+        
+        <circle
+          cx="300"  // Center x-coordinate (same as text)
+          cy="300"  // Center y-coordinate (same as text)
+          r="80"    // Radius of the circle, adjust as needed
+          fill="white"
+        />
+        
+        
+        <text
+          x="300"
+          y="290"  // Adjust the vertical position to center it perfectly
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="black"
+          fontSize="24"
+          fontWeight="bold"
+        >
+          ${totalSpent.toFixed(2)}
+        </text>
+        
+        
+        <text
+          x="300"
+          y="330"  
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="black"
+          fontSize="18"
+        >
+          Total
+        </text>
+      </g>
+    );
+  };
+
   return (
     <div className="view-expenses">
-      <h1 className="expenses-header"><b>{selectedTrip} Expenses</b></h1>
-      <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
-      {errorMessage && <p className="error">{errorMessage}</p>}
-      <div className="progress-bar-container">
-        <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
-      </div>
-      <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
-      <br></br>
+      <h1 className="expenses-header"><b>{selectedTrip ? selectedTrip : 'All Trips'} Expenses</b></h1>
       <div className="main-box">
         <div className="dropdown-container">
           <select className="dropdown-categories" onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
@@ -166,7 +203,20 @@ const ViewExpenses = () => {
               <option key={index} value={trip.tripName}>{trip.tripName}</option>
             ))}
           </select>
+          <Link to="/add-expense">
+            <button className="expenses">Add Expenses</button>
+          </Link>
+          <Link to="/setup">
+            <button className="trip">Add Trip</button>
+          </Link>
         </div>
+        <br></br>
+        <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
+      {errorMessage && <p className="error">{errorMessage}</p>}
+      <div className="progress-bar-container">
+        <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
+      </div>
+      <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
 
         <div className="expenses-container">
           {filteredExpenses.length > 0 ? (
@@ -190,13 +240,15 @@ const ViewExpenses = () => {
         </div>
 
         <div className="pieChart">
-          <PieChart width={300} height={300}>
+          <PieChart width={600} height={600}>
             <Pie
               activeIndex={activeIndex}
               data={updatedData}
               dataKey="budget"
-              outerRadius={150}
+              outerRadius={175}  
               fill="green"
+              label={renderCustomizedLabel} 
+              labelLine={false} 
               onMouseEnter={onPieEnter}
             >
               {updatedData.map((entry, index) => (
@@ -206,12 +258,6 @@ const ViewExpenses = () => {
             <Tooltip />
           </PieChart>
         </div>
-        <Link to="/add-expense">
-          <button className="expenses">Add Expenses</button>
-        </Link>
-        <Link to="/setup">
-          <button className="trip">Add Trip</button>
-        </Link>
       </div>
     </div>
   );

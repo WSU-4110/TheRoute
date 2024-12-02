@@ -68,17 +68,21 @@ const AddExpense = () => {
       console.log("Expense added successfully:", response.data);
       setResult('Expense Added!');
       setError('');
+      alert('Expense added successfully.')
     } catch (error) {
       console.error("Failed to add expense:", error.response?.data || error);
       setError("Failed to add expense. Please try again.");
+      alert('Failed to add expense. Please try again.')
     }
   };
 
   return (
+   <div className='addexpenses-screen'>
     <div className='addexpenses'>
       <h1>Add Expense</h1>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleAddExpense}>
+        <label className="label-name">Stored Trips: </label>
         <div className="dropdown-container">
           <select
             className="trip-dropdown"
@@ -96,7 +100,8 @@ const AddExpense = () => {
             )}
           </select>
         </div>
-
+        
+        <label className="label-name">Trip Categories: </label>
         <div className="dropdown-container">
           <select
             className="add-dropdown"
@@ -113,7 +118,7 @@ const AddExpense = () => {
             <option value="shopping">Shopping</option>
           </select>
         </div>
-
+        <label className="label-name">Expense Amount: </label>
         <input
           className="input-field"
           type="number"
@@ -125,15 +130,14 @@ const AddExpense = () => {
 
         <div className="button-click">
           <button type="submit">Add Expense</button>
-          {result && <p>{result}</p>}
         </div>
-
         <div className="view-button">
           <Link to="/view-expense">
             <button>View Expenses</button>
           </Link>
         </div>
       </form>
+    </div>
     </div>
   );
 };
