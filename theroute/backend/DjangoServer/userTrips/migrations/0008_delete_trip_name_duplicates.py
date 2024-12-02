@@ -11,8 +11,8 @@ def remove_duplicates(apps, schema_editor):
         duplicate_trips = TripDetails.objects.filter(trip_name=trip_name).order_by('id')[1:]  # Exclude the first one
         
         # Delete all but the first duplicate
-        duplicate_trips.delete()
-
+        for trip in duplicate_trips:
+            trip.delete()  # Delete each duplicate individually
 class Migration(migrations.Migration):
 
     dependencies = [
