@@ -30,7 +30,7 @@ def award_trip_planner_achievement(sender, instance, created, **kwargs):
                     'bonus': 20,
                 }
             )
-            print(f"[DEBUG] 'Trip Planner' Achievement: {trip_planner_achievement}, Created: {created}")
+            #print(f"[DEBUG] 'Trip Planner' Achievement: {trip_planner_achievement}, Created: {created}")
 
             # Award the achievement only if the user doesn't already have it
             user_achievement, created = UserAchievement.objects.get_or_create(
@@ -65,7 +65,7 @@ def award_first_expense_achievement(sender, instance, created, **kwargs):
                     'bonus': 10,
                 }
             )
-            print(f"[DEBUG] 'First Expense' Achievement: {first_expense_achievement}, Created: {created}")
+            #print(f"[DEBUG] 'First Expense' Achievement: {first_expense_achievement}, Created: {created}")
 
             # Award the achievement only if the user doesn't already have it
             user_achievement, created = UserAchievement.objects.get_or_create(
@@ -100,8 +100,7 @@ def award_planner_signup_achievement(sender, instance, created, **kwargs):
                     'bonus': 5,
                 }
             )
-            print(f"[DEBUG] 'Planner Signup' Achievement: {planner_signup_achievement}, Created: {created}")
-
+            
             # Award the achievement to the user
             user_achievement, created = UserAchievement.objects.get_or_create(
                 user=instance, achievement=planner_signup_achievement
