@@ -3,15 +3,17 @@ from django.db import migrations, models
 def remove_duplicates(apps, schema_editor):
     TripDetails = apps.get_model('userTrips', 'TripDetails')  # Replace 'userTrips' with the actual app name if it's different
     
-    # Remove duplicates, keeping only the first record for each trip_name
+    # Get all trip names that have duplicates
     duplicates = TripDetails.objects.values('trip_name').annotate(count=models.Count('trip_name')).filter(count__gt=1)
     
     for duplicate in duplicates:
         trip_name = duplicate['trip_name']
-        duplicate_trips = TripDetails.objects.filter(trip_name=trip_name).order_by('id')[1:]  # Exclude the first one
+        # Fetch all duplicate trips, ordered by their ID, and excluding the first one
+        duplicate_trips = TripDetails.objects.filter(trip_name=trip_name).order_by('id')[1:]
         
-        # Delete all but the first duplicate
-        duplicate_trips.delete()
+        # Delete all but the first record for each duplicate
+        for trip in duplicate_trips:
+            trip.delete()
 
 class Migration(migrations.Migration):
 
