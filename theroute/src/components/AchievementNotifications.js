@@ -13,21 +13,34 @@ const AchievementNotifications = () => {
   const { getAccessToken, user } = useContext(AuthContext); // Destructure `user` from context
   const location = useLocation(); // Get current route
 
-  // Memoized showNotification function
   const showNotification = useCallback((achievement) => {
+    console.log('[DEBUG] Attempting to show notification for:', achievement);
+
+    // Prevent showing notifications if the user is not authenticated or on the login page
+    if (!user) {
+      console.warn('[DEBUG] User is not authenticated. Notification suppressed.');
+      return;
+    }
+    if (location.pathname === '/login') {
+      console.warn('[DEBUG] User is on the login page. Notification suppressed.');
+      return;
+    }
+
     setNotifications((prev) => {
       // Prevent duplicate notifications
       if (prev.some((n) => n.id === achievement.achievement_id)) {
+        console.log('[DEBUG] Duplicate notification detected. Skipping:', achievement);
         return prev;
       }
 
       const newNotification = {
         id: achievement.achievement_id,
         title: `Achievement Unlocked!`,
-        description: achievement.description,
-        icon: getAchievementIcon(achievement.key),
+        description: achievement.achievement_description,
+        icon: getAchievementIcon(achievement.achievement_key),
       };
 
+      console.log('[DEBUG] New notification created:', newNotification);
       return [...prev, newNotification];
     });
 
@@ -36,22 +49,39 @@ const AchievementNotifications = () => {
       setNotifications((prev) =>
         prev.filter((n) => n.id !== achievement.achievement_id)
       );
+      console.log('[DEBUG] Notification removed for:', achievement);
     }, 5000);
-  }, []); // No dependencies since it doesn't rely on anything external
+  }, [user, location.pathname]); // Updated dependencies
 
   const checkForNewAchievements = useCallback(async () => {
+    console.log('[DEBUG] checkForNewAchievements called.');
     try {
       const token = await getAccessToken();
       if (!token) {
+        console.warn('[DEBUG] No access token available. Skipping API call.');
         return;
       }
 
+      if (!user) {
+        console.warn('[DEBUG] User is not authenticated. Skipping API call.');
+        return;
+      }
+
+      if (location.pathname === '/login') {
+        console.warn('[DEBUG] User is on the login page. Skipping API call.');
+        return;
+      }
+
+      console.log('[DEBUG] Making API call to /achievements/list/');
       const response = await axiosInstance.get('/achievements/list/', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const obtainedAchievements = response.data;
+      console.log('[DEBUG] API Response for achievements:', obtainedAchievements);
+
       if (!obtainedAchievements || obtainedAchievements.length === 0) {
+        console.log('[DEBUG] No new achievements obtained from API.');
         return;
       }
 
@@ -59,7 +89,9 @@ const AchievementNotifications = () => {
       let storedAchievements;
       try {
         storedAchievements = JSON.parse(localStorage.getItem('userAchievements') || '[]');
+        console.log('[DEBUG] Stored achievements in LocalStorage:', storedAchievements);
       } catch (error) {
+        console.error('[DEBUG] Error parsing LocalStorage achievements:', error);
         storedAchievements = [];
       }
 
@@ -71,39 +103,60 @@ const AchievementNotifications = () => {
           )
       );
 
+      if (newAchievements.length > 0) {
+        console.log('[DEBUG] New achievements detected:', newAchievements);
+      } else {
+        console.log('[DEBUG] No new achievements to display.');
+      }
+
       newAchievements.forEach((achievement) => {
         showNotification(achievement);
       });
 
       // Update LocalStorage to include all obtained achievements
       localStorage.setItem('userAchievements', JSON.stringify(obtainedAchievements));
+      console.log('[DEBUG] Updated LocalStorage with achievements:', obtainedAchievements);
     } catch (error) {
-      // Handle errors silently
+      console.error('[DEBUG] Error fetching achievements:', error.response?.data || error.message);
     }
-  }, [getAccessToken, showNotification]);
+  }, [getAccessToken, showNotification, user, location.pathname]); // Updated dependencies
 
   useEffect(() => {
     let interval;
 
     const startPolling = async () => {
+      console.log('[DEBUG] Starting polling for achievements...');
       const token = await getAccessToken();
-      if (!token || !user || location.pathname === '/login') {
+
+      // Check if the user is authenticated and not on the login page
+      if (!token) {
+        console.warn('[DEBUG] No token found. Polling aborted.');
+        return;
+      }
+      if (!user) {
+        console.warn('[DEBUG] User is not authenticated. Polling aborted.');
+        return;
+      }
+      if (location.pathname === '/login') {
+        console.warn('[DEBUG] User is on the login page. Polling aborted.');
         return;
       }
 
+      console.log('[DEBUG] Polling initialized with a 3-second delay.');
       setTimeout(() => {
         interval = setInterval(() => {
           checkForNewAchievements();
-        }, 10000);
+        }, 10000); // Poll every 10 seconds
       }, 3000); // 3-second delay
     };
 
     startPolling();
 
     return () => {
-      if (interval) clearInterval(interval);
+      if (interval) clearInterval(interval); // Clear polling on component unmount
+      console.log('[DEBUG] Polling stopped.');
     };
-  }, [getAccessToken, user, location.pathname, checkForNewAchievements]); // Updated dependencies
+  }, [getAccessToken, user, location.pathname, checkForNewAchievements]);
 
   const getAchievementIcon = (key) => {
     switch (key) {
@@ -113,12 +166,14 @@ const AchievementNotifications = () => {
         return moneyIcon;
       case 'first_trip_planner':
         return mapIcon;
-      case 'signup':
+      case 'planner_signup': // Fixed missing key
         return signupIcon;
       default:
+        console.warn('[DEBUG] No icon found for key:', key);
         return '/default-icon.png'; // Default fallback icon
     }
   };
+  
 
   return (
     <div className="achievement-notifications">

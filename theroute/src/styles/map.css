@@ -191,8 +191,6 @@
 
 .save {
   position: absolute; 
-  top: 90%;
-  left: 20px; 
   width: 100px;
   z-index: 2000; 
   background-color: #007bff; 
@@ -201,10 +199,12 @@
   border: none; 
   border-radius: 5px; 
   cursor: pointer; 
+  left: 335px;
+  top: 45px;
 }
 
 .save:hover {
-  background-color: #0056b3; /* Slightly darker color on hover */
+  background-color: #0056b3; 
 }
 
 .suggestions-wrapper{
