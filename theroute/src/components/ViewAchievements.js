@@ -4,7 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import keyIcon from '../assets/key.png';
 import moneyIcon from '../assets/money.png';
 import mapIcon from '../assets/treasure-map.png';
-import signupIcon from '../assets/write.png'; // Updated icon for "Planner Signup"
+import signupIcon from '../assets/write.png';
 import '../styles/ViewAchievements.css';
 
 const ViewAchievements = () => {

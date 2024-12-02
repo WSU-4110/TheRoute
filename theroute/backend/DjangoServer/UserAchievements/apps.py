@@ -1,17 +1,30 @@
-# achievements/apps.py
+# UserAchievements/apps.py
 from django.apps import AppConfig
+from django.contrib.auth.signals import user_logged_in
+import logging
 
-
-class AchievementsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'  # Optional
+class UserAchievementsConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
     name = 'UserAchievements'
 
     def ready(self):
         """
-        Import signals to ensure they are registered when the app is loaded.
-        This method is called once when the app is ready, ensuring signal handlers are active.
+        Called when the app is ready.
+        Ensures signals are registered and logs their status.
         """
+        # Setup logging for debugging
+        logger = logging.getLogger(__name__)
+
+        # Debug log for app readiness
+        logger.info("Initializing UserAchievements app...")
+
         try:
-            import UserAchievements.signals  # Import signals to register them
+            # Import signals to register them
+            import UserAchievements.signals
+            logger.info("Signals for UserAchievements successfully registered.")
         except ImportError as e:
-            raise ImportError(f"Error importing signals in 'achievements': {e}")
+            logger.error(f"Error importing signals for UserAchievements: {e}")
+            raise ImportError(f"Could not import signals: {e}")
+
+        # Confirm the app is ready
+        logger.info("UserAchievements app is ready.")

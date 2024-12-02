@@ -25,7 +25,6 @@ def award_achievement(user, achievement_key):
     """
     Award an achievement to a user based on the provided achievement key.
     """
-    logger.debug(f"Attempting to award achievement '{achievement_key}' to user '{user.email}'")
     try:
         # Lazy model loading to avoid circular import issues
         Achievement = apps.get_model('achievements', 'Achievement')
@@ -46,10 +45,6 @@ def award_achievement(user, achievement_key):
                 user=user,
                 achievement=achievement
             )
-
-            logger.info(f"Achievement '{achievement_key}' awarded successfully to user '{user.email}'")
-        else:
-            logger.info(f"User '{user.email}' already has achievement '{achievement_key}'")
     except Achievement.DoesNotExist:
         logger.error(f"Achievement with key '{achievement_key}' does not exist.")
     except Exception as e:
@@ -68,7 +63,6 @@ def construct_callback(obj):
     """
     Constructs a callback reference for an object.
     """
-    logger.debug(f"Constructing callback from {obj}: {obj.__module__}.{obj.__name__}")
     return f"{obj.__module__}.{obj.__name__}"
 
 

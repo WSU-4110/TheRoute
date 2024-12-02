@@ -1,74 +1,134 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import axiosInstance from './axios';
+import { useLocation } from 'react-router-dom'; // To track current route
 import { AuthContext } from '../context/AuthContext';
-import '../styles/AchievementNotifications.css';
+import axiosInstance from './axios';
+import '../styles/AchievementNotifications.css'; // Notification styles
+import keyIcon from '../assets/key.png';
+import moneyIcon from '../assets/money.png';
+import mapIcon from '../assets/treasure-map.png';
+import signupIcon from '../assets/write.png'; // Icons for achievements
 
 const AchievementNotifications = () => {
-  const [newAchievements, setNewAchievements] = useState([]);
-  const { getAccessToken } = useContext(AuthContext);
+  const [notifications, setNotifications] = useState([]); // Store active notifications
+  const { getAccessToken, user } = useContext(AuthContext); // Destructure `user` from context
+  const location = useLocation(); // Get current route
 
-  // Function to fetch and process achievements
-  const fetchAchievements = useCallback(async () => {
+  // Memoized showNotification function
+  const showNotification = useCallback((achievement) => {
+    setNotifications((prev) => {
+      // Prevent duplicate notifications
+      if (prev.some((n) => n.id === achievement.achievement_id)) {
+        return prev;
+      }
+
+      const newNotification = {
+        id: achievement.achievement_id,
+        title: `Achievement Unlocked!`,
+        description: achievement.description,
+        icon: getAchievementIcon(achievement.key),
+      };
+
+      return [...prev, newNotification];
+    });
+
+    // Automatically remove notification after 5 seconds
+    setTimeout(() => {
+      setNotifications((prev) =>
+        prev.filter((n) => n.id !== achievement.achievement_id)
+      );
+    }, 5000);
+  }, []); // No dependencies since it doesn't rely on anything external
+
+  const checkForNewAchievements = useCallback(async () => {
     try {
       const token = await getAccessToken();
-      if (!token) return;
+      if (!token) {
+        return;
+      }
 
-      // Fetch the user's achievements from the backend
       const response = await axiosInstance.get('/achievements/list/', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const obtainedAchievements = response.data.map((achievement) => achievement.achievement_id);
+      const obtainedAchievements = response.data;
+      if (!obtainedAchievements || obtainedAchievements.length === 0) {
+        return;
+      }
 
-      // Get previously stored achievements from localStorage
-      const storedAchievements = JSON.parse(localStorage.getItem('userAchievements')) || [];
+      // Fetch stored achievements from LocalStorage
+      let storedAchievements;
+      try {
+        storedAchievements = JSON.parse(localStorage.getItem('userAchievements') || '[]');
+      } catch (error) {
+        storedAchievements = [];
+      }
 
-      // Identify newly obtained achievements
-      const newlyObtained = obtainedAchievements.filter(
-        (id) => !storedAchievements.includes(id)
+      // Filter out new achievements
+      const newAchievements = obtainedAchievements.filter(
+        (achievement) =>
+          !storedAchievements.some(
+            (stored) => stored.achievement_id === achievement.achievement_id
+          )
       );
 
-      if (newlyObtained.length > 0) {
-        // Fetch details of new achievements
-        const newAchievementDetails = response.data.filter((achievement) =>
-          newlyObtained.includes(achievement.achievement_id)
-        );
+      newAchievements.forEach((achievement) => {
+        showNotification(achievement);
+      });
 
-        // Update state with new achievements
-        setNewAchievements((prev) => [...prev, ...newAchievementDetails]);
-
-        // Update localStorage with the latest achievements
-        localStorage.setItem('userAchievements', JSON.stringify(obtainedAchievements));
-      }
+      // Update LocalStorage to include all obtained achievements
+      localStorage.setItem('userAchievements', JSON.stringify(obtainedAchievements));
     } catch (error) {
-      console.error('Error fetching achievements:', error);
+      // Handle errors silently
     }
-  }, [getAccessToken]);
+  }, [getAccessToken, showNotification]);
 
-  // Set up periodic polling for new achievements
   useEffect(() => {
-    fetchAchievements(); // Fetch immediately on mount
-    const interval = setInterval(fetchAchievements, 10000); // Poll every 10 seconds
-    return () => clearInterval(interval); // Clean up the interval on unmount
-  }, [fetchAchievements]);
+    let interval;
 
-  // Remove a notification
-  const removeNotification = (id) => {
-    setNewAchievements((prev) =>
-      prev.filter((achievement) => achievement.achievement_id !== id)
-    );
+    const startPolling = async () => {
+      const token = await getAccessToken();
+      if (!token || !user || location.pathname === '/login') {
+        return;
+      }
+
+      setTimeout(() => {
+        interval = setInterval(() => {
+          checkForNewAchievements();
+        }, 10000);
+      }, 3000); // 3-second delay
+    };
+
+    startPolling();
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [getAccessToken, user, location.pathname, checkForNewAchievements]); // Updated dependencies
+
+  const getAchievementIcon = (key) => {
+    switch (key) {
+      case 'first_login':
+        return keyIcon;
+      case 'first_expense':
+        return moneyIcon;
+      case 'first_trip_planner':
+        return mapIcon;
+      case 'signup':
+        return signupIcon;
+      default:
+        return '/default-icon.png'; // Default fallback icon
+    }
   };
 
   return (
     <div className="achievement-notifications">
-      {newAchievements.map((achievement) => (
-        <div key={achievement.achievement_id} className="notification">
-          <h3>Achievement Unlocked!</h3>
-          <p>{achievement.achievement_name}</p>
-          <p>{achievement.achievement_description}</p>
-          <button onClick={() => removeNotification(achievement.achievement_id)}>
-            Dismiss
-          </button>
+      {notifications.map((notification) => (
+        <div key={notification.id} className="achievement-notification">
+          <img src={notification.icon} alt="Achievement Icon" />
+          <div className="achievement-details">
+            <h4>{notification.title}</h4>
+            <p>{notification.description}</p>
+          </div>
         </div>
       ))}
     </div>

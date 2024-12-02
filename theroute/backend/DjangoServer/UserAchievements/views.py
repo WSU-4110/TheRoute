@@ -1,6 +1,5 @@
 from django.shortcuts import render
-from .models import UserAchievement
-from achievements.models import Achievement
+from UserAchievements.models import Achievement, UserAchievement
 
 def user_achievements_view(request):
     user_achievements = UserAchievement.objects.filter(user=request.user)

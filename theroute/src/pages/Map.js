@@ -1,21 +1,39 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../styles/map.css';
 
+
 export default function MapView() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef();
-  const directionsControlRef = useRef();
+  const directionsControlRef = useRef(null);
+  const navigate = useNavigate();
 
   const [startCoords, setStartCoords] = useState([-83.06680531, 42.35908111]);
   const [endCoords, setEndCoords] = useState(null);
   const [waypoints, setWaypoints] = useState([]);
   const [weather, setWeather] = useState(null);
   const [isWeatherExpanded, setIsWeatherExpanded] = useState(false);
+  const [instructions, setInstructions] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [tripDistance, setTripDistance] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [email, setEmail] = useState('');
+  const [budget, setBudget] = useState('');
+  const [cityInput, setCityInput] = useState('');
+  const [startLocation, setStartLocation] = useState('');
+  const [endLocation, setEndLocation] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');  // Error state
+
+  useEffect(() => { //user email from local storage
+    const storedEmail = localStorage.getItem('userEmail'); // Example of fetching user data from localStorage
+    setEmail(storedEmail);
+  }, []);
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_KEY;
@@ -71,22 +89,6 @@ export default function MapView() {
     };
   }, []);
 
-  const handleGeocoderResult = (type, coordinates) => {
-    if (type === 'start') {
-      setStartCoords(coordinates);
-      directionsControlRef.current.setOrigin(coordinates);
-    } else if (type === 'end') {
-      setEndCoords(coordinates);
-      directionsControlRef.current.setDestination(coordinates);
-    } else if (type === 'waypoint') {
-      setWaypoints((prevWaypoints) => {
-        const newWaypoints = [...prevWaypoints, coordinates];
-        directionsControlRef.current.addWaypoint(prevWaypoints.length, coordinates);
-        return newWaypoints;
-      });
-    }
-  };
-
   const addGeocoder = (type, placeholder) => {
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
@@ -96,7 +98,7 @@ export default function MapView() {
 
     geocoder.on('result', (event) => {
       const location = event.result.geometry.coordinates;
-      handleGeocoderResult(type, location);
+      handleGeocoderResult(type, location, event.result);
     });
 
     const container = document.getElementById(`${type}-input`);
@@ -104,8 +106,18 @@ export default function MapView() {
       container.appendChild(geocoder.onAdd(mapInstanceRef.current));
     }
   };
-  
-  
+
+  // New useEffect for calculating the trip distance
+  useEffect(() => {
+    if (directionsControlRef.current) {
+      directionsControlRef.current.on('route', (e) => {
+      const route = e.route[0];  // Get the first route
+      const distance = route.distance / 1000;  // Convert distance from meters to kilometers
+      setTripDistance(distance.toFixed(2));  // Store the distance with 2 decimal places
+      });
+    }
+  }, [directionsControlRef.current]); // This will run whenever directionsControlRef changes
+
 
   useEffect(() => {
     addGeocoder('start', 'Enter start location');
@@ -186,12 +198,96 @@ export default function MapView() {
     });
   };
   
-
   useEffect(() => {
     if (mapInstanceRef.current && waypoints.length > 0) {
       addMarkers();
     }
   }, [waypoints]);
+
+  
+  const handleGeocoderResult = (type, coordinates) => {
+    if (type === 'start') {
+      setStartCoords(coordinates);
+      directionsControlRef.current.setOrigin(coordinates);
+    } else if (type === 'end') {
+      setEndCoords(coordinates);
+      directionsControlRef.current.setDestination(coordinates);
+    } else if (type === 'waypoint') {
+      setWaypoints((prevWaypoints) => {
+        const newWaypoints = [...prevWaypoints, coordinates];
+        directionsControlRef.current.addWaypoint(prevWaypoints.length, coordinates);
+        return newWaypoints;
+      });
+    }
+  };
+
+  const saveTrip = async () => {
+    // Check if both start and end coordinates are filled
+    if (!startCoords || !endCoords) {
+      alert('Both start and end locations must be filled before saving the trip.');
+      setErrorMessage('Both start and end locations must be filled before saving the trip.');
+      return;
+    }
+  
+    // If the inputs are valid, clear any previous error message
+    setErrorMessage('');
+  
+    // Fetch location details (city, state initials) and full address for start and end coordinates
+    const getLocationDetails = async (coordinates) => {
+      try {
+        const response = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${coordinates[0]},${coordinates[1]}.json?access_token=${mapboxgl.accessToken}`
+        );
+        const data = await response.json();
+        if (data.features && data.features.length > 0) {
+          const place = data.features[0];
+  
+          // Extract city and state initials from the response
+          const city = place.context.find((item) => item.id.includes('place'))?.text || 'Unknown';
+          const state = place.context.find((item) => item.id.includes('region'))?.short_code.split('-')[1] || 'Unknown';
+          const fullAddress = place.place_name || 'Unknown address'; // Full address
+  
+          return { city, state, fullAddress };
+        } else {
+          throw new Error('No location details found');
+        }
+      } catch (error) {
+        console.error('Error fetching location details:', error);
+        return { city: 'Unknown', state: 'Unknown', fullAddress: 'Unknown address' };
+      }
+    };
+  
+    // Fetch details for start and end locations
+    const startDetails = await getLocationDetails(startCoords);
+    const endDetails = await getLocationDetails(endCoords);
+    const savedEmail = localStorage.getItem('email') || '';
+    localStorage.setItem("startAddress", startDetails.fullAddress);
+    localStorage.setItem('endAddress', endDetails.fullAddress);
+  
+    // Create trip data to store in localStorage
+    const tripData = {
+      startLocation: `${startDetails.city}, ${startDetails.state}`,
+      endLocation: `${endDetails.city}, ${endDetails.state}`,
+      tripDistance,  // Assuming `tripDistance` is already calculated
+      startDate,
+      endDate,
+      email: savedEmail,
+      budget,
+    };
+  
+    // Log data for testing
+    console.log('Start Location:', tripData.startLocation);
+    console.log('End Location:', tripData.endLocation);
+    console.log('Start Address:', tripData.startAddress);
+    console.log('End Address:', tripData.endAddress);
+    console.log('Trip Distance:', tripData.tripDistance);
+  
+    // Save trip data in localStorage
+    localStorage.setItem('tripData', JSON.stringify(tripData));
+  
+    // Optionally, display a success message or redirect
+    alert('Trip saved successfully!');
+  };
 
   return (
     <div>
@@ -226,13 +322,14 @@ export default function MapView() {
           )}
         </div>
       )}
-      <div className="input">
+      <div className="inputs">
         <div id="start-input"></div>
         <div id="end-input" ></div>
         <div id="waypoint-input" ></div>
       </div>
-    
       <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      <button className="save" onClick={saveTrip}>Save Trip</button>
     </div>
   );
 }

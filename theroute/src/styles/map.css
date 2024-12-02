@@ -70,12 +70,12 @@
  
 }
 
-.input{
+.inputs{
   position: absolute;
   top: 10px;
   width: 300px;
   left: 10px;
-  
+  z-index: 1;
 }
 
 /* Ensure the suggestions appear above the input box */
@@ -92,6 +92,11 @@
   z-index: 10; /* Keep the input field above the map */
 }
 
+.input-field{
+  padding-top: 12px;
+  padding-bottom: 12px;
+  box-shadow:0 1px 0 0 #ddd;
+}
 
 .mapboxgl-ctrl-geocoder-dropdown{
   z-index: 4000;
@@ -103,29 +108,7 @@
   left: 20px; 
   z-index: 10;
   width: 100%;
-}
-
-  .trip-button {
-    position: absolute; 
-    top: 5px; 
-    right: 50px;
-    z-index: 1000; 
-  }
-  
-  .trip-button button {
-    padding: 10px 15px; /* Adjust padding for the button */
-    background-color: #007bff; /* Button color */
-    color: white; /* Text color */
-    border: none; /* Remove default border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Font size */
-  }
-  
-  .trip-button button:hover {
-    background-color: #0056b3; /* Darker color on hover */
-  }
-  
+}  
   
 .weather-overlay {
   position: absolute;
@@ -206,10 +189,20 @@
   color: #666;
 }
 
+.save {
+  position: absolute; /* Ensure it stays fixed on the page */
+  top: 45px; /* Position it at the bottom */
+  left: 330px; /* Slight offset from the left */
+  width: 100px;
+  z-index: 2000; /* Make sure it appears above the map and geocoder */
+  background-color: #007bff; /* Button color */
+  color: white; /* Text color */
+  padding: 10px 20px; /* Add padding */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Show pointer on hover */
+}
 
-
-
-
-
-
-
+.save:hover {
+  background-color: #0056b3; /* Slightly darker color on hover */
+}

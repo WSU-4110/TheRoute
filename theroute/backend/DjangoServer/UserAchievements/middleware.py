@@ -21,4 +21,3 @@ class AutoAchievementChecker(object):
         check_achievement_plain(self, user, obj.key)
 
     return response
-

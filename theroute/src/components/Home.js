@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
-import backgroundVideo from '../styles/video.mp4'; 
+import backgroundVideo from '../assets/road_video.mp4'; 
 
 const Home = () => {
   const navigate = useNavigate();
