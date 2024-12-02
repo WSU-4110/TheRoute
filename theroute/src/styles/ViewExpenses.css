@@ -1,8 +1,8 @@
 .view-expenses h1 {
   color: black;
-  text-align: center;
+  text-align: left;
   font-size: 35px;
-  margin: 0 auto 40px auto; /* Center horizontally with auto margins */
+  margin: 0 auto 40px auto; 
   border-bottom: 2px solid black;
   padding-bottom: 10px;
   width: 100%; 
@@ -25,17 +25,17 @@
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
-  overflow: visible; /* Ensure button is visible */
+  overflow: visible; 
 }
 
 .expense-item {
   position: relative;
   background-color: #ffffff;
-  padding: 20px; /* Increased padding for more space */
+  padding: 20px; 
   margin-bottom: 5px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  min-height: 60px; /* Ensure enough height */
+  min-height: 60px; 
 }
 
 .expense-item .category {
@@ -118,16 +118,15 @@
 }
 
 .dropdown-container {
-  display: flex;         /* Enable flexbox layout */
-  justify-content: flex-start; /* Align items horizontally */
-  align-items: center;    /* Align items vertically */
-  gap: 20px;              /* Adds spacing between the dropdowns */
-  width: 100%;            /* Optional: Adjust based on layout */
+  display: flex;         
+  justify-content: flex-start; 
+  align-items: center;    
+  gap: 20px;              
+  width: 100%;            
 }
 
-.dropdown-categories, 
-.dropdown-trips {
-  width: auto;            /* Adjust width based on content */
+.dropdown-categories {
+  width: auto;            
   padding: 10px;
   font-size: 16px;
   border-radius: 5px;
@@ -136,24 +135,37 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-left: 100px;
+  text-align: center;
+}
+
+.dropdown-trips {
+  width: auto;            
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 50px;
+  text-align: center;
 }
 
 .pieChart {
   position: absolute;
-  top: 70%; /* top 70% so it is not blocking the progress bar */
-  right: 100px; /* styling so the chart is moved to the right side of the screen */
+  top: 75%;
+  right: 5px; 
   transform: translateY(-50%);
-  margin: 20px
 }
 
 .trip {
   font-size: larger;
   width: 100%;
-  margin-top: 20px;
+  margin-left: 105px;
 }
 
 .expenses {
   font-size: larger;
   width: 100%;
-  margin-top: -30px;
+  margin-left: 200px;
 }

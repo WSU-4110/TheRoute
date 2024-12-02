@@ -34,3 +34,4 @@ backend/DjangoServer/myenv/
 **/__pycache__/
 *.pyc
 theroute/package-lock.json
+theroute/package.json
