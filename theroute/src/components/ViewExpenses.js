@@ -186,20 +186,20 @@ const ViewExpenses = () => {
   return (
     <div className="view-expenses">
       <div className="expenses-header">
-        <h1><b> Expenses</b></h1>
+        <h1 className="top-box"><b> Expenses</b></h1>
       </div>
       <div className="main-box">
       
         <div className="filters">
-        <div className="dropdown-container">
+        <div className="dropdown-container-1">
           <select className="dropdown-categories" onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
-            <option className="box" value="">All Categories</option>
-            <option className="box" value="housing">Housing</option>
-            <option className="box" value="transportation">Transportation</option>
-            <option className="box" value="food">Food</option>
-            <option className="box" value="activities">Activities</option>
-            <option className="box" value="shopping">Shopping</option>
-            <option className="box" value="other">Other</option>
+            <option className="box-option" value="">All Categories</option>
+            <option className="box-option" value="housing">Housing</option>
+            <option className="box-option" value="transportation">Transportation</option>
+            <option className="box-option" value="food">Food</option>
+            <option className="box-option" value="activities">Activities</option>
+            <option className="box-option" value="shopping">Shopping</option>
+            <option className="box-option" value="other">Other</option>
           </select>
           <select className="dropdown-trips" onChange={(e) => setSelectedTrip(e.target.value)} value={selectedTrip}>
             <option value="">All Trips</option>
@@ -207,24 +207,26 @@ const ViewExpenses = () => {
               <option key={index} value={trip.tripName}>{trip.tripName}</option>
             ))}
           </select>
-          <div className="options">
+        
           <Link to="/add-expense">
             <button className="expenses">Add Expenses</button>
           </Link>
           <Link to="/setup">
             <button className="trip">Add Trip</button>
           </Link>
-          </div>
+          
         </div>
-        <br></br>
-        <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
+        <div className="container-for-boxes">
+        <div className="box-2">
+            <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
+            
+          {errorMessage && <p className="error">{errorMessage}</p>}
+          <div className="progress-bar-container">
+            <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
         </div>
-      {errorMessage && <p className="error">{errorMessage}</p>}
-      <div className="progress-bar-container">
-        <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
-      </div>
-      <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
-
+          <p className="progress-text">{`$${totalSpent.toFixed(2)} of $${totalBudget} spent`}</p>
+        </div>
+        <div className="box-1">
         <div className="expenses-container">
           {filteredExpenses.length > 0 ? (
             filteredExpenses.map(item => (
@@ -245,25 +247,30 @@ const ViewExpenses = () => {
             <p>No expenses to display for this category and trip.</p>
           )}
         </div>
-
-        <div className="pieChart">
-          <PieChart width={600} height={600}>
-            <Pie
-              activeIndex={activeIndex}
-              data={updatedData}
-              dataKey="budget"
-              outerRadius={175}  
-              fill="green"
-              label={renderCustomizedLabel} 
-              labelLine={false} 
-              onMouseEnter={onPieEnter}
-            >
-              {updatedData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
+        </div>
+        </div>
+        <div className="box-3">
+          <div className="pieChart">
+            <p className="spending">Spending</p>
+            <PieChart width={600} height={600}>
+              <Pie
+                activeIndex={activeIndex}
+                data={updatedData}
+                dataKey="budget"
+                outerRadius={205}  
+                fill="green"
+                label={renderCustomizedLabel} 
+                labelLine={false} 
+                onMouseEnter={onPieEnter}
+              >
+                {updatedData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </div>
+          </div>
         </div>
       </div>
     </div>
