@@ -29,6 +29,7 @@ export default function MapView() {
   const [startLocation, setStartLocation] = useState('');
   const [endLocation, setEndLocation] = useState('');
   const [errorMessage, setErrorMessage] = useState('');  // Error state
+  const [waypointWeather, setWaypointWeather] = useState(null); // New state for waypoint weather
 
   useEffect(() => { //user email from local storage
     const storedEmail = localStorage.getItem('userEmail'); // Example of fetching user data from localStorage
@@ -135,9 +136,20 @@ export default function MapView() {
   // Effect for fetching weather information when endCoords change
   useEffect(() => {
     if (endCoords) {
-      fetchWeather(endCoords[1], endCoords[0]);
+      fetchWeather(endCoords[1], endCoords[0]).then(data => {
+        setWeather(data); // Set weather for end location only
+      });
     }
   }, [endCoords]);
+
+  // New effect for fetching weather information when waypoints change
+  useEffect(() => {
+    waypoints.forEach(async (coords) => {
+      const weatherData = await fetchWeather(coords[1], coords[0]);
+      
+      
+    });
+  }, [waypoints]);
 
   const fetchWeather = async (lat, lon) => {
     try {
@@ -154,15 +166,14 @@ export default function MapView() {
         throw new Error('Invalid weather data');
       }
 
-      // Update weather state only if the data has changed
-      setWeather(weatherData);
+      return weatherData; // Return the fetched weather data
     } catch (error) {
       console.error('Error fetching weather:', error);
-      setWeather(null);
+      return null; // Return null in case of error
     }
   };
 
-  const addMarkers = () => {
+  const addMarkers = async () => {
     const startMarker = new mapboxgl.Marker({ color: 'green' })
       .setLngLat(startCoords)
       .addTo(mapInstanceRef.current);
@@ -185,17 +196,24 @@ export default function MapView() {
       endMarker.togglePopup();
     }
   
-    waypoints.forEach((coordinates, index) => {
+    // Fetch weather for waypoints and add to markers
+    for (const [index, coordinates] of waypoints.entries()) {
+      const weatherData = await fetchWeather(coordinates[1], coordinates[0]); // Fetch weather for each waypoint
+      const weatherInfo = weatherData ? `
+        <p>Weather: ${Math.round(weatherData.main.temp)}°F</p>
+        <p>Description: ${weatherData.weather[0].description}</p>
+      ` : '<p>Weather data not available</p>';
+
       const marker = new mapboxgl.Marker()
         .setLngLat(coordinates)
         .addTo(mapInstanceRef.current);
-  
+
       const popup = new mapboxgl.Popup({ offset: 25 })
-        .setHTML(`<h3>Waypoint ${index + 1}</h3><p>Coordinates: ${coordinates.join(', ')}</p><p>Date: ${new Date().toLocaleDateString()}</p>`);
-  
+        .setHTML(`<h3>Waypoint ${index + 1}</h3><p>Coordinates: ${coordinates.join(', ')}</p><p>Date: ${new Date().toLocaleDateString()}</p>${weatherInfo}`);
+
       marker.setPopup(popup);
       marker.togglePopup();
-    });
+    }
   };
   
   useEffect(() => {
@@ -311,6 +329,27 @@ export default function MapView() {
             </p>
             <p className="weather-description">{weather.weather[0].description}</p>
           </div>
+
+          {/* Display weather for waypoints if available */}
+          {waypointWeather && (
+            <div className="waypoint-weather">
+              <h3 className="weather-title">Weather at Waypoint</h3>
+              <div className="weather-basic-info">
+                <div className="weather-main">
+                  <img
+                    src={`http://openweathermap.org/img/w/${waypointWeather.weather[0].icon}.png`}
+                    alt={waypointWeather.weather[0].description}
+                  />
+                  <p className="temp-main">{Math.round(waypointWeather.main.temp)}°F</p>
+                </div>
+                <p className="temp-range">
+                  H: {Math.round(waypointWeather.main.temp_max)}°F  
+                  L: {Math.round(waypointWeather.main.temp_min)}°F
+                </p>
+                <p className="weather-description">{waypointWeather.weather[0].description}</p>
+              </div>
+            </div>
+          )}
 
           {isWeatherExpanded && (
             <div className="weather-details">

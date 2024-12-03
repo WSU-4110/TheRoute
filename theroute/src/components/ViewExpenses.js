@@ -185,17 +185,21 @@ const ViewExpenses = () => {
 
   return (
     <div className="view-expenses">
-      <h1 className="expenses-header"><b>{selectedTrip ? selectedTrip : 'All Trips'} Expenses</b></h1>
+      <div className="expenses-header">
+        <h1><b> Expenses</b></h1>
+      </div>
       <div className="main-box">
+      
+        <div className="filters">
         <div className="dropdown-container">
           <select className="dropdown-categories" onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
-            <option value="">All Categories</option>
-            <option value="housing">Housing</option>
-            <option value="transportation">Transportation</option>
-            <option value="food">Food</option>
-            <option value="activities">Activities</option>
-            <option value="shopping">Shopping</option>
-            <option value="other">Other</option>
+            <option className="box" value="">All Categories</option>
+            <option className="box" value="housing">Housing</option>
+            <option className="box" value="transportation">Transportation</option>
+            <option className="box" value="food">Food</option>
+            <option className="box" value="activities">Activities</option>
+            <option className="box" value="shopping">Shopping</option>
+            <option className="box" value="other">Other</option>
           </select>
           <select className="dropdown-trips" onChange={(e) => setSelectedTrip(e.target.value)} value={selectedTrip}>
             <option value="">All Trips</option>
@@ -203,15 +207,18 @@ const ViewExpenses = () => {
               <option key={index} value={trip.tripName}>{trip.tripName}</option>
             ))}
           </select>
+          <div className="options">
           <Link to="/add-expense">
             <button className="expenses">Add Expenses</button>
           </Link>
           <Link to="/setup">
             <button className="trip">Add Trip</button>
           </Link>
+          </div>
         </div>
         <br></br>
         <p className="progress-text">{`${progressPercentage.toFixed(2)}%`}</p>
+        </div>
       {errorMessage && <p className="error">{errorMessage}</p>}
       <div className="progress-bar-container">
         <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
